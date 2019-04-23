@@ -2,7 +2,7 @@
   "name": "yafe",
   "version": "0.1.0",
   "description": "Yet Another Flow Engine",
-  "main": "index.js",
+  "main": "dist/index.js",
   "keywords": [
     "flow",
     "engine",
@@ -10,5 +10,17 @@
     "dependency"
   ],
   "author": "Daniel Duarte <danieldd.ar@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^1.17.0",
+    "tslint": "^5.16.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.4.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "files": ["dist/**/*"]
 }

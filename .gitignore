@@ -1,2 +1,6 @@
-# IDE Files
+# IDE files
 /.idea/
+
+# Node.js files
+/node_modules/
+/dist/
