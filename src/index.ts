@@ -17,7 +17,7 @@ FlowManager.run({
         tasks: {
             getProductInfo: {
                 requires: ['prodInfoConfig'],
-                provides: ['prodInfo'],
+                provides: 'prodInfo',
                 resolver: {
                     name: 'CallService',
                     params: {
@@ -27,7 +27,7 @@ FlowManager.run({
             },
             getPriceInfo: {
                 requires: ['priceInfoConfig'],
-                provides: ['priceInfo'],
+                provides: 'priceInfo',
                 resolver: {
                     name: 'CallService',
                     params: {
@@ -37,7 +37,7 @@ FlowManager.run({
             },
             merge: {
                 requires: ['prodInfo', 'priceInfo'],
-                provides: ['result'],
+                provides: 'result',
                 resolver: {
                     name: 'MergeJson',
                     params: {

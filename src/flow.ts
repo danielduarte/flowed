@@ -9,7 +9,7 @@ export interface TaskSpec {
 
     requires?: string[];
 
-    provides?: string[];
+    provides?: string;
 
     resolver: TaskResolverSpec;
 }
@@ -75,10 +75,9 @@ export class Flow {
         for (let taskCode in tasks) if (tasks.hasOwnProperty(taskCode)) {
             const taskSpec = tasks[taskCode];
             const task = new Task(taskCode, taskSpec);
-            const goalsProvided = taskSpec.provides || [];
-            for (let i = 0; i < goalsProvided.length; i++) {
-                const goal = goalsProvided[i];
-                this.tasksByGoal[goal] = task;
+            const goalProvided = taskSpec.provides;
+            if (goalProvided) {
+                this.tasksByGoal[goalProvided] = task;
             }
         }
     }
@@ -156,7 +155,7 @@ export class Task {
 
     run(params: GenericValueMap, resolverClass: TaskResolverClass): any {
 
-        console.log(`+ Running task ${this.code}: ${this.spec.resolver}(`, params, ')');
+        console.log(`+ Running task ${this.code}: ${this.spec.resolver.name}(`, params, ')');
 
         const resolver = new resolverClass();
         return resolver.exec(params);
