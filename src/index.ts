@@ -14,57 +14,125 @@ class CallService implements TaskResolverInterface {
         });
     }
 }
+
 class MergeJson implements TaskResolverInterface {
     exec(params: GenericValueMap = {}): any {
         return Object.assign({}, params.obj1, params.obj2);
     }
 }
 
+class DummyResolver implements TaskResolverInterface {
+    exec(params: GenericValueMap = {}): any {
+
+        return new Promise(function (resolve, reject) {
+            setTimeout(() => {
+                resolve(true);
+            }, 4000);
+        });
+    }
+}
+
+// FlowManager.run({
+//         tasks: {
+//             getProductInfo: {
+//                 requires: ['prodInfoConfig'],
+//                 provides: 'prodInfo',
+//                 resolver: {
+//                     name: 'CallService',
+//                     params: {
+//                         connectionParams: 'prodInfoConfig',
+//                     },
+//                 },
+//             },
+//             getPriceInfo: {
+//                 requires: ['priceInfoConfig'],
+//                 provides: 'priceInfo',
+//                 resolver: {
+//                     name: 'CallService',
+//                     params: {
+//                         connectionParams: 'priceInfoConfig',
+//                     },
+//                 },
+//             },
+//             merge: {
+//                 requires: ['prodInfo', 'priceInfo'],
+//                 provides: 'result',
+//                 resolver: {
+//                     name: 'MergeJson',
+//                     params: {
+//                         obj1: 'prodInfo',
+//                         obj2: 'priceInfo',
+//                     }
+//                 },
+//             },
+//         },
+//         goal: 'result',
+//     },
+//     {
+//         prodInfoConfig: {
+//             url: 'http://products',
+//             port: 80,
+//         },
+//         priceInfoConfig: {
+//             url: 'http://price',
+//             port: 8080,
+//         }
+//     },
+//     [CallService, MergeJson]
+// );
+
+
+
 FlowManager.run({
         tasks: {
-            getProductInfo: {
-                requires: ['prodInfoConfig'],
-                provides: 'prodInfo',
+            A: {
+                provides: 'a',
                 resolver: {
-                    name: 'CallService',
-                    params: {
-                        connectionParams: 'prodInfoConfig',
-                    },
+                    name: 'DummyResolver',
                 },
             },
-            getPriceInfo: {
-                requires: ['priceInfoConfig'],
-                provides: 'priceInfo',
+            B: {
+                provides: 'b',
                 resolver: {
-                    name: 'CallService',
-                    params: {
-                        connectionParams: 'priceInfoConfig',
-                    },
+                    name: 'DummyResolver',
                 },
             },
-            merge: {
-                requires: ['prodInfo', 'priceInfo'],
-                provides: 'result',
+            C: {
+                requires: ['a', 'b'],
+                provides: 'c',
                 resolver: {
-                    name: 'MergeJson',
-                    params: {
-                        obj1: 'prodInfo',
-                        obj2: 'priceInfo',
-                    }
+                    name: 'DummyResolver',
+                },
+            },
+            D: {
+                provides: 'd',
+                resolver: {
+                    name: 'DummyResolver',
+                },
+            },
+            E: {
+                requires: ['c', 'd'],
+                provides: 'e',
+                resolver: {
+                    name: 'DummyResolver',
+                },
+            },
+            F: {
+                provides: 'f',
+                resolver: {
+                    name: 'DummyResolver',
+                },
+            },
+            G: {
+                requires: ['e', 'f'],
+                provides: 'g',
+                resolver: {
+                    name: 'DummyResolver',
                 },
             },
         },
-        goal: 'result',
+        goal: 'g',
     },
-    {
-        prodInfoConfig: {
-            url: 'http://products',
-            port: 80,
-        },
-        priceInfoConfig: {
-            url: 'http://price',
-            port: 8080,
-        }
-    },
-    [CallService, MergeJson]
+    {},
+    [DummyResolver]
 );

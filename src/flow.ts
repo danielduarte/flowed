@@ -45,7 +45,7 @@ export class TaskResolver implements TaskResolverInterface {
 
 export class FlowManager {
 
-    static run(flowSpec: FlowSpec, params: GenericValueMap = {}, resolvers: TaskResolverClass[] = []) {
+    static async run(flowSpec: FlowSpec, params: GenericValueMap = {}, resolvers: TaskResolverClass[] = []) {
 
         const resolversMap: TaskResolverClassMap = {};
         for (let i = 0; i < resolvers.length; i++) {
@@ -54,7 +54,7 @@ export class FlowManager {
         }
 
         const flow = new Flow(flowSpec, resolversMap);
-        return flow.run(params);
+        return await flow.run(params);
     }
 }
 
