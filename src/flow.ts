@@ -82,34 +82,42 @@ export class Flow {
         }
     }
 
-    run(params: GenericValueMap = {}) {
+    async run(params: GenericValueMap = {}) {
 
         if (!this.spec.hasOwnProperty('goal')) {
             throw new Error(`The flow does not have a default goal specified.'`);
         }
 
-        return this.provide(this.spec.goal || '', params);
+        return await this.provide(this.spec.goal || '', params);
     }
 
-    provide(goal: string, externalParams: GenericValueMap = {}) {
-        console.log('- Providing goal:', goal);
+    async provide(goal: string, externalParams: GenericValueMap = {}) {
         const task = this.getTaskForGoal(goal);
-        console.log('- Needs task', task.code);
 
         if (!this.resolvers.hasOwnProperty(task.spec.resolver.name)) {
             throw new Error(`Task resolver class not found '${task.spec.resolver.name}'.`);
         }
 
         const goalsRequired = task.getRequirements();
+
         const goalResults: GenericValueMap = {};
+        const goalResultPromises: Promise<any>[] = [];
+        const goalResultName: string[] = [];
+
         for (let i = 0; i < goalsRequired.length; i++) {
             const requiredGoal = goalsRequired[i];
 
             if (externalParams.hasOwnProperty(requiredGoal)) {
                 goalResults[requiredGoal] = externalParams[requiredGoal];
             } else {
-                goalResults[requiredGoal] = this.provide(requiredGoal, externalParams);
+                goalResultPromises.push(this.provide(requiredGoal, externalParams));
+                goalResultName.push(requiredGoal);
             }
+        }
+
+        const goalPromisesResolved: any[] = await Promise.all(goalResultPromises);
+        for (let i = 0; i < goalPromisesResolved.length; i++) {
+            goalResults[goalResultName[i]] = goalPromisesResolved[i];
         }
 
         const params: GenericValueMap = {};
@@ -121,8 +129,9 @@ export class Flow {
             }
         }
 
-        const taskResult = task.run(params, this.resolvers[task.spec.resolver.name]);
-        console.log('Task result:', taskResult);
+        console.log(`Starting task ${task.code} to provide ${task.spec.provides}`);
+        const taskResult = await task.run(params, this.resolvers[task.spec.resolver.name]);
+        console.log(`Finished task ${task.code} providing ${task.spec.provides} =`, taskResult);
 
         return taskResult;
     }
@@ -153,11 +162,8 @@ export class Task {
         return this.spec.requires || [];
     }
 
-    run(params: GenericValueMap, resolverClass: TaskResolverClass): any {
-
-        console.log(`+ Running task ${this.code}: ${this.spec.resolver.name}(`, params, ')');
-
+    async run(params: GenericValueMap, resolverClass: TaskResolverClass): Promise<any> {
         const resolver = new resolverClass();
-        return resolver.exec(params);
+        return await resolver.exec(params);
     }
 }

@@ -2,9 +2,16 @@ import {FlowManager, GenericValueMap, TaskResolverInterface} from './flow';
 
 class CallService implements TaskResolverInterface {
     exec(params: GenericValueMap = {}): any {
-        return params.connectionParams.url === 'http://products' ?
+
+        const result = params.connectionParams.url === 'http://products' ?
             { name: 'Cacerola', sku: 'ABC123' } :
             { value: 1088.99, currency: 'ARS' };
+
+        return new Promise(function (resolve, reject) {
+            setTimeout(() => {
+                resolve(result);
+            }, 4000);
+        });
     }
 }
 class MergeJson implements TaskResolverInterface {
