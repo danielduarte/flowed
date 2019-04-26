@@ -1,4 +1,4 @@
-import {FlowManager, GenericValueMap, TaskResolverInterface} from './flow';
+import {FlowManager, GenericValueMap, TaskResolverInterface} from './flow-by-goal';
 
 class CallService implements TaskResolverInterface {
     exec(params: GenericValueMap = {}): any {
