@@ -14,8 +14,12 @@ export class Flow {
         this.spec = spec;
         this.tasks = {};
         this.runStatus = {
+            runningTasks: [],
             tasksReady: [],
             tasksByReq: {},
+            expectedResults: [],
+            results: {},
+            resolveFlowCallback: (results: GenericValueMap) => {},
         };
 
         this.parseSpec();
@@ -34,8 +38,12 @@ export class Flow {
 
     public resetRunStatus() {
         this.runStatus = {
+            runningTasks: [],
             tasksReady: [],
             tasksByReq: {},
+            expectedResults: [],
+            results: {},
+            resolveFlowCallback: (results: GenericValueMap) => {},
         };
 
         for (const taskCode in this.tasks) if (this.tasks.hasOwnProperty(taskCode)) {
@@ -59,10 +67,17 @@ export class Flow {
         this.printStatus();
     }
 
-    public run(params: GenericValueMap = {}) {
+    public run(params: GenericValueMap = {}, expectedResults: string[] = []): Promise<GenericValueMap> {
 
+        // @todo Check if it is not running already
+
+        this.runStatus.expectedResults = [...expectedResults];
         this.supplyParameters(params);
         this.startReadyTasks();
+
+        return new Promise(resolve => {
+            this.runStatus.resolveFlowCallback = resolve;
+        });
     }
 
     protected supplyParameters(params: GenericValueMap) {
@@ -72,8 +87,8 @@ export class Flow {
         }
     }
 
-    public isFinished() {
-        return this.runStatus.tasksReady.length === 0;
+    public isRunning() {
+        return this.runStatus.runningTasks.length > 0;
     }
 
     protected startReadyTasks() {
@@ -84,6 +99,7 @@ export class Flow {
         for (let i = 0; i < readyTasks.length; i++) {
             const task = readyTasks[i];
 
+            this.runStatus.runningTasks.push(task.getCode());
             task.run().then(() => {
                 this.taskFinished(task);
             });
@@ -98,6 +114,10 @@ export class Flow {
 
         console.log(`✔ Finished task ${task.getCode()}, results:`, taskResults);
 
+        this.runStatus.runningTasks.splice(
+            this.runStatus.runningTasks.indexOf(task.getCode()), 1
+        );
+
         for (let i = 0; i < taskProvisions.length; i++) {
             const resultName = taskProvisions[i];
             const result = taskResults[resultName];
@@ -108,6 +128,15 @@ export class Flow {
         this.printStatus();
 
         this.startReadyTasks();
+
+        if (!this.isRunning()) {
+            this.flowFinished(this.runStatus.results);
+        }
+    }
+
+    protected flowFinished(results: GenericValueMap) {
+        console.log('◼ Flow finished with results:', results);
+        this.runStatus.resolveFlowCallback(results);
     }
 
     public supplyResult(resultName: string, result: any) {
@@ -133,6 +162,12 @@ export class Flow {
                 }
             }
         }
+
+        // If the result is required as flow output, it is provided
+        const isExpectedResult = this.runStatus.expectedResults.indexOf(resultName) > -1;
+        if (isExpectedResult) {
+            this.runStatus.results[resultName] = result;
+        }
     }
 
     public printStatus() {
@@ -143,11 +178,19 @@ export class Flow {
 
 export interface FlowRunStatus {
 
+    runningTasks: string[];
+
     tasksReady: Task[];
 
     tasksByReq: {
         [req: string]: TaskMap,
     };
+
+    expectedResults: string[];
+
+    results: GenericValueMap,
+
+    resolveFlowCallback: (results: GenericValueMap) => void,
 }
 
 export interface GenericValueMap {

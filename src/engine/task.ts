@@ -75,7 +75,7 @@ export class Task {
         }
 
         return new Promise((resolve) => {
-            setTimeout(resolve, 1000);
+            setTimeout(resolve, 500);
         });
     }
 }

@@ -29,7 +29,7 @@ FlowManager.run({
             },
             G: {
                 requires: ['d3', 'e3'],
-                provides: [],
+                provides: ['g1'],
             },
         },
     },
@@ -37,8 +37,12 @@ FlowManager.run({
         param1: 'PARAM1',
         param2: 'PARAM2',
         param3: 'PARAM3',
-    }
-);
+    },
+    ['g1', 'g2'],
+).then(result => {
+    console.log('FLOW FINISHED:', result);
+});
+
 
 // FlowManager.run({
 //         tasks: {
