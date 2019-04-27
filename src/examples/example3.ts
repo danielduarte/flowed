@@ -7,7 +7,6 @@ namespace MathFn {
     export class Sqr {
 
         public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
-
             return {
                 result: params.x * params.x
             };
@@ -17,7 +16,6 @@ namespace MathFn {
     export class Sqrt {
 
         public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
-
             return {
                 result: Math.sqrt(params.x)
             };
@@ -27,7 +25,6 @@ namespace MathFn {
     export class Sum {
 
         public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
-
             return {
                 result: params.x + params.y
             };
@@ -42,24 +39,27 @@ export function example3() {
                     requires: ['c1'],
                     provides: ['c1^2'],
                     resolver: {
-                        name: 'sqrt',
+                        name: 'sqr',
                         params: { x: 'c1' },
+                        results: { result: 'c1^2' },
                     },
                 },
                 sqr2: {
                     requires: ['c2'],
                     provides: ['c2^2'],
                     resolver: {
-                        name: 'sqrt',
+                        name: 'sqr',
                         params: { x: 'c2' },
+                        results: { result: 'c2^2' },
                     },
                 },
                 sum: {
-                    requires: ['c1^1', 'c1^2'],
+                    requires: ['c1^2', 'c2^2'],
                     provides: ['sum'],
                     resolver: {
                         name: 'sum',
                         params: { x: 'c1^2', y: 'c2^2' },
+                        results: { result: 'sum' },
                     },
                 },
                 sqrt: {
@@ -68,6 +68,7 @@ export function example3() {
                     resolver: {
                         name: 'sqrt',
                         params: { x: 'sum' },
+                        results: { result: 'result' },
                     },
                 },
             },

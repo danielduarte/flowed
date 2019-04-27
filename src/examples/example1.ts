@@ -33,6 +33,7 @@ export function example1() {
                     resolver: {
                         name: 'timer',
                         params: {},
+                        results: {},
                     },
                 },
                 C: {
@@ -41,6 +42,7 @@ export function example1() {
                     resolver: {
                         name: 'direct',
                         params: {},
+                        results: {},
                     },
                 },
                 A: {
@@ -49,6 +51,7 @@ export function example1() {
                     resolver: {
                         name: 'timer',
                         params: {},
+                        results: {},
                     },
                 },
                 D: {
@@ -57,6 +60,7 @@ export function example1() {
                     resolver: {
                         name: 'timer',
                         params: {},
+                        results: {},
                     },
                 },
                 E: {
@@ -65,6 +69,7 @@ export function example1() {
                     resolver: {
                         name: 'timer',
                         params: {},
+                        results: {},
                     },
                 },
                 F: {
@@ -73,6 +78,7 @@ export function example1() {
                     resolver: {
                         name: 'direct',
                         params: {},
+                        results: {},
                     },
                 },
                 G: {
@@ -81,6 +87,7 @@ export function example1() {
                     resolver: {
                         name: 'timer',
                         params: {},
+                        results: {},
                     },
                 },
             },

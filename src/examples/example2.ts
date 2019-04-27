@@ -20,6 +20,7 @@ export function example2() {
                     resolver: {
                         name: 'dummy',
                         params: {},
+                        results: {},
                     },
                 },
                 B: {
@@ -28,6 +29,7 @@ export function example2() {
                     resolver: {
                         name: 'dummy',
                         params: {},
+                        results: {},
                     },
                 },
                 C: {
@@ -36,6 +38,7 @@ export function example2() {
                     resolver: {
                         name: 'dummy',
                         params: {},
+                        results: {},
                     },
                 },
                 D: {
@@ -44,6 +47,7 @@ export function example2() {
                     resolver: {
                         name: 'dummy',
                         params: {},
+                        results: {},
                     },
                 },
                 E: {
@@ -52,6 +56,7 @@ export function example2() {
                     resolver: {
                         name: 'dummy',
                         params: {},
+                        results: {},
                     },
                 },
                 F: {
@@ -60,6 +65,7 @@ export function example2() {
                     resolver: {
                         name: 'dummy',
                         params: {},
+                        results: {},
                     },
                 },
                 G: {
@@ -68,6 +74,7 @@ export function example2() {
                     resolver: {
                         name: 'dummy',
                         params: {},
+                        results: {},
                     },
                 },
             },

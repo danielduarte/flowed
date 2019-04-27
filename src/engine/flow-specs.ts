@@ -23,9 +23,16 @@ export interface TaskResolverSpec {
     name: string;
 
     params: TaskParamsMap;
+
+    results: TaskResultsMap;
 }
 
 export interface TaskParamsMap {
+
+    [code: string]: any;
+}
+
+export interface TaskResultsMap {
 
     [code: string]: any;
 }

@@ -76,32 +76,47 @@ export class Task {
 
         return new Promise(resolve => {
 
-            const params = this.mapParams(this.runStatus.solvedReqs);
+            const params = this.mapParamsForResolver(this.runStatus.solvedReqs);
 
             resolver.exec(params, this).then(resolverValue => {
+
+                const results = this.mapResultsFromResolver(resolverValue);
 
                 // @todo Filter results
                 // for (let i = 0; i < this.spec.provides.length; i++) {
                 //     const resultName = this.spec.provides[i];
-                //     const result = resolverValue[resultName];
+                //     const result = results[resultName];
                 //     this.runStatus.solvedResults[resultName] = result;
                 // }
-                this.runStatus.solvedResults = resolverValue;
+                this.runStatus.solvedResults = results;
 
                 resolve(this.runStatus.solvedResults);
             });
         });
     }
 
-    protected mapParams(solvedReqs: GenericValueMap) {
+    protected mapParamsForResolver(solvedReqs: GenericValueMap) {
         const params: GenericValueMap = {};
 
-        for (const paramName in this.spec.resolver.params) if (this.spec.resolver.params.hasOwnProperty(paramName)) {
-            const paramValue = this.spec.resolver.params[paramName];
-            params[paramName] = paramValue;
+        for (const resolverParamName in this.spec.resolver.params) if (this.spec.resolver.params.hasOwnProperty(resolverParamName)) {
+            const taskParamName = this.spec.resolver.params[resolverParamName];
+            const paramValue = solvedReqs[taskParamName];
+            params[resolverParamName] = paramValue;
         }
 
         return params;
+    }
+
+    protected mapResultsFromResolver(resolverResults: GenericValueMap) {
+        const results: GenericValueMap = {};
+
+        for (const resolverResultName in this.spec.resolver.results) if (this.spec.resolver.results.hasOwnProperty(resolverResultName)) {
+            const taskResultName = this.spec.resolver.results[resolverResultName];
+            const resolverResult = resolverResults[resolverResultName];
+            results[taskResultName] = resolverResult;
+        }
+
+        return results;
     }
 }
 
