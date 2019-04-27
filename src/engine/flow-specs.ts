@@ -15,5 +15,17 @@ export interface TaskSpec {
 
     provides: string[];
 
-    resolver: string,
+    resolver: TaskResolverSpec,
+}
+
+export interface TaskResolverSpec {
+
+    name: string;
+
+    params: TaskParamsMap;
+}
+
+export interface TaskParamsMap {
+
+    [code: string]: any;
 }

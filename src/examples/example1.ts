@@ -30,37 +30,58 @@ export function example1() {
                 B: {
                     requires: ['param1'],
                     provides: ['b1'],
-                    resolver: 'timer',
+                    resolver: {
+                        name: 'timer',
+                        params: {},
+                    },
                 },
                 C: {
                     requires: ['param2'],
                     provides: ['c1', 'c2'],
-                    resolver: 'direct',
+                    resolver: {
+                        name: 'direct',
+                        params: {},
+                    },
                 },
                 A: {
                     requires: ['b1', 'c1', 'c2'],
                     provides: ['a4', 'a5'],
-                    resolver: 'timer',
+                    resolver: {
+                        name: 'timer',
+                        params: {},
+                    },
                 },
                 D: {
                     requires: ['a4', 'a5'],
                     provides: ['d3'],
-                    resolver: 'timer',
+                    resolver: {
+                        name: 'timer',
+                        params: {},
+                    },
                 },
                 E: {
                     requires: ['a5', 'f1'],
                     provides: ['e3'],
-                    resolver: 'timer',
+                    resolver: {
+                        name: 'timer',
+                        params: {},
+                    },
                 },
                 F: {
                     requires: ['param3'],
                     provides: ['f1'],
-                    resolver: 'direct',
+                    resolver: {
+                        name: 'direct',
+                        params: {},
+                    },
                 },
                 G: {
                     requires: ['d3', 'e3'],
                     provides: ['g1'],
-                    resolver: 'timer',
+                    resolver: {
+                        name: 'timer',
+                        params: {},
+                    },
                 },
             },
         },

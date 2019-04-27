@@ -32,7 +32,7 @@ export class Task {
     }
 
     public getResolverName() {
-        return this.spec.resolver;
+        return this.spec.resolver.name;
     }
 
     protected parseSpec() {
@@ -76,7 +76,9 @@ export class Task {
 
         return new Promise(resolve => {
 
-            resolver.exec(this.runStatus.solvedReqs, this).then(resolverValue => {
+            const params = this.mapParams(this.runStatus.solvedReqs);
+
+            resolver.exec(params, this).then(resolverValue => {
 
                 // @todo Filter results
                 // for (let i = 0; i < this.spec.provides.length; i++) {
@@ -89,6 +91,17 @@ export class Task {
                 resolve(this.runStatus.solvedResults);
             });
         });
+    }
+
+    protected mapParams(solvedReqs: GenericValueMap) {
+        const params: GenericValueMap = {};
+
+        for (const paramName in this.spec.resolver.params) if (this.spec.resolver.params.hasOwnProperty(paramName)) {
+            const paramValue = this.spec.resolver.params[paramName];
+            params[paramName] = paramValue;
+        }
+
+        return params;
     }
 }
 

@@ -17,37 +17,58 @@ export function example2() {
                 A: {
                     requires: [],
                     provides: ['a'],
-                    resolver: 'dummy',
+                    resolver: {
+                        name: 'dummy',
+                        params: {},
+                    },
                 },
                 B: {
                     requires: [],
                     provides: ['b'],
-                    resolver: 'dummy',
+                    resolver: {
+                        name: 'dummy',
+                        params: {},
+                    },
                 },
                 C: {
                     requires: ['a', 'b'],
                     provides: ['c'],
-                    resolver: 'dummy',
+                    resolver: {
+                        name: 'dummy',
+                        params: {},
+                    },
                 },
                 D: {
                     requires: [],
                     provides: ['d'],
-                    resolver: 'dummy',
+                    resolver: {
+                        name: 'dummy',
+                        params: {},
+                    },
                 },
                 E: {
                     requires: ['c', 'd'],
                     provides: ['e'],
-                    resolver: 'dummy',
+                    resolver: {
+                        name: 'dummy',
+                        params: {},
+                    },
                 },
                 F: {
                     requires: [],
                     provides: ['f'],
-                    resolver: 'dummy',
+                    resolver: {
+                        name: 'dummy',
+                        params: {},
+                    },
                 },
                 G: {
                     requires: ['e', 'f'],
                     provides: ['g'],
-                    resolver: 'dummy',
+                    resolver: {
+                        name: 'dummy',
+                        params: {},
+                    },
                 },
             },
         },
