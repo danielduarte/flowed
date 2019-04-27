@@ -1,3 +1,3 @@
 import * as Examples from './examples';
 
-Examples.example3();
+Examples.example4();
