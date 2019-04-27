@@ -1,4 +1,4 @@
-import {FlowSpec} from './flow-spec'
+import {FlowSpec} from './flow-specs'
 import {Flow} from './flow'
 
 

@@ -4,28 +4,33 @@ import {FlowManager} from './engine/flow-manager';
 FlowManager.run({
         tasks: {
             A: {
-                provides: 'a',
+                requires: [],
+                provides: ['a'],
             },
             B: {
-                provides: 'b',
+                requires: [],
+                provides: ['b'],
             },
             C: {
                 requires: ['a', 'b'],
+                provides: ['c'],
             },
             D: {
-                provides: 'd'
+                requires: [],
+                provides: ['d'],
             },
             E: {
                 requires: ['c', 'd'],
-                provides: 'e'
+                provides: ['e'],
             },
             F: {
-                provides: 'f'
+                requires: [],
+                provides: ['f'],
             },
             G: {
                 requires: ['e', 'f'],
-                provides: 'g'
+                provides: ['g'],
             },
-        }
-    }
+        },
+    },
 );
