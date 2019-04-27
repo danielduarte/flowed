@@ -58,8 +58,18 @@ export class Flow {
 
         this.printStatus();
     }
-    public run() {
+
+    public run(params: GenericValueMap = {}) {
+
+        this.supplyParameters(params);
         this.startReadyTasks();
+    }
+
+    protected supplyParameters(params: GenericValueMap) {
+        for (const paramCode in params) if (params.hasOwnProperty(paramCode)) {
+            const paramValue = params[paramCode];
+            this.supplyResult(paramCode, paramValue);
+        }
     }
 
     public isFinished() {
@@ -92,28 +102,7 @@ export class Flow {
             const resultName = taskProvisions[i];
             const result = taskResults[resultName];
 
-            const suppliesSomeTask = this.runStatus.tasksByReq.hasOwnProperty(resultName);
-
-            // Checks if the task result is required by other tasks.
-            // If it is not, it is probably a flow output value.
-            if (suppliesSomeTask) {
-                const suppliedTasks = this.runStatus.tasksByReq[resultName];
-                const suppliedTaskCodes = Object.keys(suppliedTasks);
-                for (let j = 0; j < suppliedTaskCodes.length; j++) {
-                    const taskCode = suppliedTaskCodes[j];
-                    const suppliedTask = suppliedTasks[taskCode];
-
-                    suppliedTask.supplyReq(resultName, result);
-                    delete suppliedTasks[taskCode];
-                    if (Object.keys(suppliedTasks).length === 0) {
-                        delete this.runStatus.tasksByReq[resultName];
-                    }
-
-                    if (suppliedTask.isReadyToRun()) {
-                        this.runStatus.tasksReady.push(suppliedTask);
-                    }
-                }
-            }
+            this.supplyResult(resultName, result);
         }
 
         this.printStatus();
@@ -121,7 +110,32 @@ export class Flow {
         this.startReadyTasks();
     }
 
-    printStatus() {
+    public supplyResult(resultName: string, result: any) {
+        const suppliesSomeTask = this.runStatus.tasksByReq.hasOwnProperty(resultName);
+
+        // Checks if the task result is required by other tasks.
+        // If it is not, it is probably a flow output value.
+        if (suppliesSomeTask) {
+            const suppliedTasks = this.runStatus.tasksByReq[resultName];
+            const suppliedTaskCodes = Object.keys(suppliedTasks);
+            for (let j = 0; j < suppliedTaskCodes.length; j++) {
+                const taskCode = suppliedTaskCodes[j];
+                const suppliedTask = suppliedTasks[taskCode];
+
+                suppliedTask.supplyReq(resultName, result);
+                delete suppliedTasks[taskCode];
+                if (Object.keys(suppliedTasks).length === 0) {
+                    delete this.runStatus.tasksByReq[resultName];
+                }
+
+                if (suppliedTask.isReadyToRun()) {
+                    this.runStatus.tasksReady.push(suppliedTask);
+                }
+            }
+        }
+    }
+
+    public printStatus() {
         // Uncomment to debug
         // console.log('▣ Run status:', this.runStatus);
     }
@@ -134,4 +148,8 @@ export interface FlowRunStatus {
     tasksByReq: {
         [req: string]: TaskMap,
     };
+}
+
+export interface GenericValueMap {
+    [key: string]: any;
 }
