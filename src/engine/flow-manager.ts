@@ -1,5 +1,5 @@
 import {FlowSpec} from './flow-specs'
-import {Flow, GenericValueMap} from './flow'
+import {Flow, GenericValueMap, TaskResolverMap} from './flow'
 
 
 export class FlowManager {
@@ -8,8 +8,9 @@ export class FlowManager {
         flowSpec: FlowSpec,
         params: GenericValueMap = {},
         expectedResults: string[] = [],
+        resolvers: TaskResolverMap = {},
     ): Promise<GenericValueMap> {
         const flow = new Flow(flowSpec);
-        return flow.run(params, expectedResults);
+        return flow.run(params, expectedResults, resolvers);
     }
 }

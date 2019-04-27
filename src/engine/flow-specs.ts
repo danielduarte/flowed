@@ -14,4 +14,6 @@ export interface TaskSpec {
     requires: string[];
 
     provides: string[];
+
+    resolver: string,
 }

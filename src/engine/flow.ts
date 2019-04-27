@@ -17,6 +17,7 @@ export class Flow {
             runningTasks: [],
             tasksReady: [],
             tasksByReq: {},
+            resolvers: {},
             expectedResults: [],
             results: {},
             resolveFlowCallback: (results: GenericValueMap) => {},
@@ -41,6 +42,7 @@ export class Flow {
             runningTasks: [],
             tasksReady: [],
             tasksByReq: {},
+            resolvers: {},
             expectedResults: [],
             results: {},
             resolveFlowCallback: (results: GenericValueMap) => {},
@@ -67,11 +69,17 @@ export class Flow {
         this.printStatus();
     }
 
-    public run(params: GenericValueMap = {}, expectedResults: string[] = []): Promise<GenericValueMap> {
+    public run(
+        params: GenericValueMap = {},
+        expectedResults: string[] = [],
+        resolvers: TaskResolverMap = {},
+    ): Promise<GenericValueMap> {
 
         // @todo Check if it is not running already
 
         this.runStatus.expectedResults = [...expectedResults];
+        this.runStatus.resolvers = resolvers;
+
         this.supplyParameters(params);
         this.startReadyTasks();
 
@@ -100,7 +108,15 @@ export class Flow {
             const task = readyTasks[i];
 
             this.runStatus.runningTasks.push(task.getCode());
-            task.run().then(() => {
+
+            const hasResolver = this.runStatus.resolvers.hasOwnProperty(task.getResolverName());
+            if (!hasResolver) {
+                throw new Error(`Task resolver ${task.getResolverName()} for task ${task.getCode()} has no definition. Defined resolvers are [${Object.keys(this.runStatus.resolvers).join(', ')}].`);
+            }
+
+            const taskResolver = this.runStatus.resolvers[task.getResolverName()];
+
+            task.run(taskResolver).then(() => {
                 this.taskFinished(task);
             });
 
@@ -114,6 +130,7 @@ export class Flow {
 
         console.log(`✔ Finished task ${task.getCode()}, results:`, taskResults);
 
+        // Remove the task from running tasks collection
         this.runStatus.runningTasks.splice(
             this.runStatus.runningTasks.indexOf(task.getCode()), 1
         );
@@ -186,6 +203,8 @@ export interface FlowRunStatus {
         [req: string]: TaskMap,
     };
 
+    resolvers: TaskResolverMap;
+
     expectedResults: string[];
 
     results: GenericValueMap,
@@ -195,4 +214,17 @@ export interface FlowRunStatus {
 
 export interface GenericValueMap {
     [key: string]: any;
+}
+
+export class TaskResolver {
+
+    public exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+        return new Promise<GenericValueMap>(() => {});
+    }
+}
+
+export type TaskResolverClass = typeof TaskResolver;
+
+export class TaskResolverMap {
+    [key: string]: TaskResolverClass;
 }

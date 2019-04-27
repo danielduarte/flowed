@@ -1,4 +1,5 @@
 import {TaskSpec} from './flow-specs';
+import {GenericValueMap, TaskResolverClass} from "./flow";
 
 
 export class Task {
@@ -28,6 +29,10 @@ export class Task {
 
     public getSpec() {
         return this.spec;
+    }
+
+    public getResolverName() {
+        return this.spec.resolver;
     }
 
     protected parseSpec() {
@@ -65,21 +70,29 @@ export class Task {
         this.runStatus.solvedReqs[reqName] = value;
     }
 
-    // @todo Check if the type TaskResult is needed
-    public run(): Promise<TaskResult> {
+    public run(taskResolverConstructor: TaskResolverClass): Promise<GenericValueMap> {
 
-        for (let i = 0; i < this.runStatus.pendingResults.length; i++) {
-            const resultName = this.runStatus.pendingResults[i];
-            const result = resultName.repeat(4);
-            this.runStatus.solvedResults[resultName] = result;
-        }
+        const resolver = new taskResolverConstructor();
 
-        return new Promise((resolve) => {
-            setTimeout(resolve, 500);
+        return new Promise(resolve => {
+
+            resolver.exec(this.runStatus.solvedReqs, this).then(resolverValue => {
+
+                // @todo Filter results
+                // for (let i = 0; i < this.spec.provides.length; i++) {
+                //     const resultName = this.spec.provides[i];
+                //     const result = resolverValue[resultName];
+                //     this.runStatus.solvedResults[resultName] = result;
+                // }
+                this.runStatus.solvedResults = resolverValue;
+
+                resolve(this.runStatus.solvedResults);
+            });
         });
     }
 }
 
+// @todo Check if this is needed
 export class TaskResult {
 }
 
@@ -96,6 +109,7 @@ export interface TaskRunStatus {
         [name: string]: any,
     };
 
+    // @todo Check if this is needed
     pendingResults: string[];
 
     solvedResults: {
