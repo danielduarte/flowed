@@ -1,169 +1,161 @@
 export interface TaskResolverSpec {
+  name: string;
 
-    name: string;
-
-    params?: GenericValueMap;
+  params?: GenericValueMap;
 }
 
 export interface TaskSpec {
+  requires?: string[];
 
-    requires?: string[];
+  provides?: string;
 
-    provides?: string;
-
-    resolver: TaskResolverSpec;
+  resolver: TaskResolverSpec;
 }
 
 export interface FlowSpec {
+  tasks?: {
+    [key: string]: TaskSpec;
+  };
 
-    tasks?: {
-        [key: string]: TaskSpec
-    };
-
-    goal?: string;
+  goal?: string;
 }
 
 export interface GenericValueMap {
-    [key: string]: any;
+  [key: string]: any;
 }
 
 export type TaskResolverClass = typeof TaskResolver;
 
 export interface TaskResolverClassMap {
-    [key: string]: TaskResolverClass;
+  [key: string]: TaskResolverClass;
 }
 
 export interface TaskResolverInterface {
-    exec(params: GenericValueMap): any;
+  exec(params: GenericValueMap): any;
 }
 
 export class TaskResolver implements TaskResolverInterface {
-    exec(params: GenericValueMap = {}): any {
-        throw new Error(`This class must not be used directly. It must me extended.'`);
-    }
+  exec(params: GenericValueMap = {}): any {
+    throw new Error(`This class must not be used directly. It must me extended.'`);
+  }
 }
 
 export class FlowManager {
-
-    static async run(flowSpec: FlowSpec, params: GenericValueMap = {}, resolvers: TaskResolverClass[] = []) {
-
-        const resolversMap: TaskResolverClassMap = {};
-        for (let i = 0; i < resolvers.length; i++) {
-            const resolverClass = resolvers[i];
-            resolversMap[resolverClass.name] = resolverClass;
-        }
-
-        const flow = new Flow(flowSpec, resolversMap);
-        return await flow.run(params);
+  static async run(flowSpec: FlowSpec, params: GenericValueMap = {}, resolvers: TaskResolverClass[] = []) {
+    const resolversMap: TaskResolverClassMap = {};
+    for (let i = 0; i < resolvers.length; i++) {
+      const resolverClass = resolvers[i];
+      resolversMap[resolverClass.name] = resolverClass;
     }
+
+    const flow = new Flow(flowSpec, resolversMap);
+    return await flow.run(params);
+  }
 }
 
 export class Flow {
+  protected spec: FlowSpec;
 
-    protected spec: FlowSpec;
+  protected resolvers: TaskResolverClassMap;
 
-    protected resolvers: TaskResolverClassMap;
+  protected tasksByGoal: { [key: string]: Task } = {};
 
-    protected tasksByGoal: {[key: string]: Task} = {};
+  constructor(spec: FlowSpec, resolvers: TaskResolverClassMap) {
+    this.spec = spec;
+    this.resolvers = resolvers;
 
-    constructor(spec: FlowSpec, resolvers: TaskResolverClassMap) {
-        this.spec = spec;
-        this.resolvers = resolvers;
+    const tasks = spec.tasks || {};
 
-        const tasks = spec.tasks || {};
-
-        for (let taskCode in tasks) if (tasks.hasOwnProperty(taskCode)) {
-            const taskSpec = tasks[taskCode];
-            const task = new Task(taskCode, taskSpec);
-            const goalProvided = taskSpec.provides;
-            if (goalProvided) {
-                this.tasksByGoal[goalProvided] = task;
-            }
+    for (let taskCode in tasks)
+      if (tasks.hasOwnProperty(taskCode)) {
+        const taskSpec = tasks[taskCode];
+        const task = new Task(taskCode, taskSpec);
+        const goalProvided = taskSpec.provides;
+        if (goalProvided) {
+          this.tasksByGoal[goalProvided] = task;
         }
+      }
+  }
+
+  async run(params: GenericValueMap = {}) {
+    if (!this.spec.hasOwnProperty('goal')) {
+      throw new Error(`The flow does not have a default goal specified.'`);
     }
 
-    async run(params: GenericValueMap = {}) {
+    return await this.provide(this.spec.goal || '', params);
+  }
 
-        if (!this.spec.hasOwnProperty('goal')) {
-            throw new Error(`The flow does not have a default goal specified.'`);
-        }
+  async provide(goal: string, externalParams: GenericValueMap = {}) {
+    const task = this.getTaskForGoal(goal);
 
-        return await this.provide(this.spec.goal || '', params);
+    if (!this.resolvers.hasOwnProperty(task.spec.resolver.name)) {
+      throw new Error(`Task resolver class not found '${task.spec.resolver.name}'.`);
     }
 
-    async provide(goal: string, externalParams: GenericValueMap = {}) {
-        const task = this.getTaskForGoal(goal);
+    const goalsRequired = task.getRequirements();
 
-        if (!this.resolvers.hasOwnProperty(task.spec.resolver.name)) {
-            throw new Error(`Task resolver class not found '${task.spec.resolver.name}'.`);
-        }
+    const goalResults: GenericValueMap = {};
+    const goalResultPromises: Promise<any>[] = [];
+    const goalResultName: string[] = [];
 
-        const goalsRequired = task.getRequirements();
+    for (let i = 0; i < goalsRequired.length; i++) {
+      const requiredGoal = goalsRequired[i];
 
-        const goalResults: GenericValueMap = {};
-        const goalResultPromises: Promise<any>[] = [];
-        const goalResultName: string[] = [];
-
-        for (let i = 0; i < goalsRequired.length; i++) {
-            const requiredGoal = goalsRequired[i];
-
-            if (externalParams.hasOwnProperty(requiredGoal)) {
-                goalResults[requiredGoal] = externalParams[requiredGoal];
-            } else {
-                goalResultPromises.push(this.provide(requiredGoal, externalParams));
-                goalResultName.push(requiredGoal);
-            }
-        }
-
-        const goalPromisesResolved: any[] = await Promise.all(goalResultPromises);
-        for (let i = 0; i < goalPromisesResolved.length; i++) {
-            goalResults[goalResultName[i]] = goalPromisesResolved[i];
-        }
-
-        const params: GenericValueMap = {};
-        for (let taskParam in task.spec.resolver.params) if (task.spec.resolver.params.hasOwnProperty(taskParam)) {
-            const taskParamGoal = task.spec.resolver.params[taskParam];
-
-            if (goalResults.hasOwnProperty(taskParamGoal)) {
-                params[taskParam] = goalResults[taskParamGoal];
-            }
-        }
-
-        console.log(`Starting task ${task.code} to provide ${task.spec.provides}`);
-        const taskResult = await task.run(params, this.resolvers[task.spec.resolver.name]);
-        console.log(`Finished task ${task.code} providing ${task.spec.provides} =`, taskResult);
-
-        return taskResult;
+      if (externalParams.hasOwnProperty(requiredGoal)) {
+        goalResults[requiredGoal] = externalParams[requiredGoal];
+      } else {
+        goalResultPromises.push(this.provide(requiredGoal, externalParams));
+        goalResultName.push(requiredGoal);
+      }
     }
 
-
-    getTaskForGoal(goal: string): Task {
-
-        if (!this.tasksByGoal.hasOwnProperty(goal)) {
-            throw new Error(`Flow definition error: Cannot satisfy goal '${goal}.'`);
-        }
-
-        return this.tasksByGoal[goal];
+    const goalPromisesResolved: any[] = await Promise.all(goalResultPromises);
+    for (let i = 0; i < goalPromisesResolved.length; i++) {
+      goalResults[goalResultName[i]] = goalPromisesResolved[i];
     }
+
+    const params: GenericValueMap = {};
+    for (let taskParam in task.spec.resolver.params)
+      if (task.spec.resolver.params.hasOwnProperty(taskParam)) {
+        const taskParamGoal = task.spec.resolver.params[taskParam];
+
+        if (goalResults.hasOwnProperty(taskParamGoal)) {
+          params[taskParam] = goalResults[taskParamGoal];
+        }
+      }
+
+    console.log(`Starting task ${task.code} to provide ${task.spec.provides}`);
+    const taskResult = await task.run(params, this.resolvers[task.spec.resolver.name]);
+    console.log(`Finished task ${task.code} providing ${task.spec.provides} =`, taskResult);
+
+    return taskResult;
+  }
+
+  getTaskForGoal(goal: string): Task {
+    if (!this.tasksByGoal.hasOwnProperty(goal)) {
+      throw new Error(`Flow definition error: Cannot satisfy goal '${goal}.'`);
+    }
+
+    return this.tasksByGoal[goal];
+  }
 }
 
 export class Task {
+  public code: string;
 
-    public code: string;
+  public spec: TaskSpec;
 
-    public spec: TaskSpec;
+  constructor(code: string, spec: TaskSpec) {
+    this.code = code;
+    this.spec = spec;
+  }
 
-    constructor(code: string, spec: TaskSpec) {
-        this.code = code;
-        this.spec = spec;
-    }
+  getRequirements() {
+    return this.spec.requires || [];
+  }
 
-    getRequirements() {
-        return this.spec.requires || [];
-    }
-
-    async run(params: GenericValueMap, resolverClass: TaskResolverClass): Promise<any> {
-        const resolver = new resolverClass();
-        return await resolver.exec(params);
-    }
+  async run(params: GenericValueMap, resolverClass: TaskResolverClass): Promise<any> {
+    const resolver = new resolverClass();
+    return await resolver.exec(params);
+  }
 }

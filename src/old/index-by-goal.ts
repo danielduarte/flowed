@@ -1,35 +1,34 @@
-import {FlowManager, GenericValueMap, TaskResolverInterface} from './flow-by-goal';
+import { FlowManager, GenericValueMap, TaskResolverInterface } from './flow-by-goal';
 
 class CallService implements TaskResolverInterface {
-    exec(params: GenericValueMap = {}): any {
+  exec(params: GenericValueMap = {}): any {
+    const result =
+      params.connectionParams.url === 'http://products'
+        ? { name: 'Cacerola', sku: 'ABC123' }
+        : { value: 1088.99, currency: 'ARS' };
 
-        const result = params.connectionParams.url === 'http://products' ?
-            { name: 'Cacerola', sku: 'ABC123' } :
-            { value: 1088.99, currency: 'ARS' };
-
-        return new Promise(function (resolve, reject) {
-            setTimeout(() => {
-                resolve(result);
-            }, 4000);
-        });
-    }
+    return new Promise(function(resolve, reject) {
+      setTimeout(() => {
+        resolve(result);
+      }, 4000);
+    });
+  }
 }
 
 class MergeJson implements TaskResolverInterface {
-    exec(params: GenericValueMap = {}): any {
-        return Object.assign({}, params.obj1, params.obj2);
-    }
+  exec(params: GenericValueMap = {}): any {
+    return Object.assign({}, params.obj1, params.obj2);
+  }
 }
 
 class DummyResolver implements TaskResolverInterface {
-    exec(params: GenericValueMap = {}): any {
-
-        return new Promise(function (resolve, reject) {
-            setTimeout(() => {
-                resolve(true);
-            }, 4000);
-        });
-    }
+  exec(params: GenericValueMap = {}): any {
+    return new Promise(function(resolve, reject) {
+      setTimeout(() => {
+        resolve(true);
+      }, 4000);
+    });
+  }
 }
 
 // FlowManager.run({
@@ -81,58 +80,57 @@ class DummyResolver implements TaskResolverInterface {
 //     [CallService, MergeJson]
 // );
 
-
-
-FlowManager.run({
-        tasks: {
-            A: {
-                provides: 'a',
-                resolver: {
-                    name: 'DummyResolver',
-                },
-            },
-            B: {
-                provides: 'b',
-                resolver: {
-                    name: 'DummyResolver',
-                },
-            },
-            C: {
-                requires: ['a', 'b'],
-                provides: 'c',
-                resolver: {
-                    name: 'DummyResolver',
-                },
-            },
-            D: {
-                provides: 'd',
-                resolver: {
-                    name: 'DummyResolver',
-                },
-            },
-            E: {
-                requires: ['c', 'd'],
-                provides: 'e',
-                resolver: {
-                    name: 'DummyResolver',
-                },
-            },
-            F: {
-                provides: 'f',
-                resolver: {
-                    name: 'DummyResolver',
-                },
-            },
-            G: {
-                requires: ['e', 'f'],
-                provides: 'g',
-                resolver: {
-                    name: 'DummyResolver',
-                },
-            },
+FlowManager.run(
+  {
+    tasks: {
+      A: {
+        provides: 'a',
+        resolver: {
+          name: 'DummyResolver',
         },
-        goal: 'g',
+      },
+      B: {
+        provides: 'b',
+        resolver: {
+          name: 'DummyResolver',
+        },
+      },
+      C: {
+        requires: ['a', 'b'],
+        provides: 'c',
+        resolver: {
+          name: 'DummyResolver',
+        },
+      },
+      D: {
+        provides: 'd',
+        resolver: {
+          name: 'DummyResolver',
+        },
+      },
+      E: {
+        requires: ['c', 'd'],
+        provides: 'e',
+        resolver: {
+          name: 'DummyResolver',
+        },
+      },
+      F: {
+        provides: 'f',
+        resolver: {
+          name: 'DummyResolver',
+        },
+      },
+      G: {
+        requires: ['e', 'f'],
+        provides: 'g',
+        resolver: {
+          name: 'DummyResolver',
+        },
+      },
     },
-    {},
-    [DummyResolver]
+    goal: 'g',
+  },
+  {},
+  [DummyResolver],
 );

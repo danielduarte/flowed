@@ -1,38 +1,31 @@
-
 export interface FlowSpec {
-    tasks: TaskSpecMap;
+  tasks: TaskSpecMap;
 }
 
 export class TaskSpecMap {
-
-    [code: string]: TaskSpec;
+  [code: string]: TaskSpec;
 }
 
-
 export interface TaskSpec {
+  requires: string[];
 
-    requires: string[];
+  provides: string[];
 
-    provides: string[];
-
-    resolver: TaskResolverSpec,
+  resolver: TaskResolverSpec;
 }
 
 export interface TaskResolverSpec {
+  name: string;
 
-    name: string;
+  params: TaskParamsMap;
 
-    params: TaskParamsMap;
-
-    results: TaskResultsMap;
+  results: TaskResultsMap;
 }
 
 export interface TaskParamsMap {
-
-    [code: string]: any;
+  [code: string]: any;
 }
 
 export interface TaskResultsMap {
-
-    [code: string]: any;
+  [code: string]: any;
 }
