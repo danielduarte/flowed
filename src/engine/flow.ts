@@ -1,3 +1,4 @@
+/* tslint:disable:no-empty */
 import {FlowSpec} from './flow-specs';
 import {Task, TaskMap} from './task';
 
@@ -20,21 +21,10 @@ export class Flow {
             resolvers: {},
             expectedResults: [],
             results: {},
-            resolveFlowCallback: (results: GenericValueMap) => {},
+            resolveFlowCallback: (results: GenericValueMap) => {}, // tslint:disable:no-empty
         };
 
         this.parseSpec();
-    }
-
-    protected parseSpec() {
-        for (const taskCode in this.spec.tasks) if (this.spec.tasks.hasOwnProperty(taskCode)) {
-            const taskSpec = this.spec.tasks[taskCode];
-            const task = new Task(taskCode, taskSpec);
-
-            this.tasks[taskCode] = task;
-        }
-
-        this.resetRunStatus();
     }
 
     public resetRunStatus() {
@@ -48,7 +38,7 @@ export class Flow {
             resolveFlowCallback: (results: GenericValueMap) => {},
         };
 
-        for (const taskCode in this.tasks) if (this.tasks.hasOwnProperty(taskCode)) {
+        for (const taskCode in this.tasks) { if (this.tasks.hasOwnProperty(taskCode)) {
             const task = this.tasks[taskCode];
             task.resetRunStatus();
 
@@ -57,14 +47,13 @@ export class Flow {
             }
 
             const taskReqs = task.getSpec().requires;
-            for (let i = 0; i < taskReqs.length; i++) {
-                const req = taskReqs[i];
+            for (const req of taskReqs) {
                 if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
                     this.runStatus.tasksByReq[req] = {};
                 }
                 this.runStatus.tasksByReq[req][task.getCode()] = task;
             }
-        }
+        }}
 
         this.printStatus();
     }
@@ -88,25 +77,69 @@ export class Flow {
         });
     }
 
-    protected supplyParameters(params: GenericValueMap) {
-        for (const paramCode in params) if (params.hasOwnProperty(paramCode)) {
-            const paramValue = params[paramCode];
-            this.supplyResult(paramCode, paramValue);
-        }
-    }
-
     public isRunning() {
         return this.runStatus.runningTasks.length > 0;
     }
+
+    public supplyResult(resultName: string, result: any) {
+        const suppliesSomeTask = this.runStatus.tasksByReq.hasOwnProperty(resultName);
+
+        // Checks if the task result is required by other tasks.
+        // If it is not, it is probably a flow output value.
+        if (suppliesSomeTask) {
+            const suppliedTasks = this.runStatus.tasksByReq[resultName];
+            const suppliedTaskCodes = Object.keys(suppliedTasks);
+            for (const taskCode of suppliedTaskCodes) {
+                const suppliedTask = suppliedTasks[taskCode];
+
+                suppliedTask.supplyReq(resultName, result);
+                delete suppliedTasks[taskCode];
+                if (Object.keys(suppliedTasks).length === 0) {
+                    delete this.runStatus.tasksByReq[resultName];
+                }
+
+                if (suppliedTask.isReadyToRun()) {
+                    this.runStatus.tasksReady.push(suppliedTask);
+                }
+            }
+        }
+
+        // If the result is required as flow output, it is provided
+        const isExpectedResult = this.runStatus.expectedResults.indexOf(resultName) > -1;
+        if (isExpectedResult) {
+            this.runStatus.results[resultName] = result;
+        }
+    }
+
+    public printStatus() {
+        // Uncomment to debug
+        // console.log('▣ Run status:', this.runStatus);
+    }
+
+    protected parseSpec() {
+        for (const taskCode in this.spec.tasks) { if (this.spec.tasks.hasOwnProperty(taskCode)) {
+            const taskSpec = this.spec.tasks[taskCode];
+            const task = new Task(taskCode, taskSpec);
+
+            this.tasks[taskCode] = task;
+        }}
+
+        this.resetRunStatus();
+    }
+
+    protected supplyParameters(params: GenericValueMap) {
+        for (const paramCode in params) { if (params.hasOwnProperty(paramCode)) {
+            const paramValue = params[paramCode];
+            this.supplyResult(paramCode, paramValue);
+        }
+    }}
 
     protected startReadyTasks() {
 
         const readyTasks = this.runStatus.tasksReady;
         this.runStatus.tasksReady = [];
 
-        for (let i = 0; i < readyTasks.length; i++) {
-            const task = readyTasks[i];
-
+        for (const task of readyTasks) {
             this.runStatus.runningTasks.push(task.getCode());
 
             const hasResolver = this.runStatus.resolvers.hasOwnProperty(task.getResolverName());
@@ -135,10 +168,8 @@ export class Flow {
             this.runStatus.runningTasks.indexOf(task.getCode()), 1
         );
 
-        for (let i = 0; i < taskProvisions.length; i++) {
-            const resultName = taskProvisions[i];
+        for (const resultName of taskProvisions) {
             const result = taskResults[resultName];
-
             this.supplyResult(resultName, result);
         }
 
@@ -154,42 +185,6 @@ export class Flow {
     protected flowFinished(results: GenericValueMap) {
         console.log('◼ Flow finished with results:', results);
         this.runStatus.resolveFlowCallback(results);
-    }
-
-    public supplyResult(resultName: string, result: any) {
-        const suppliesSomeTask = this.runStatus.tasksByReq.hasOwnProperty(resultName);
-
-        // Checks if the task result is required by other tasks.
-        // If it is not, it is probably a flow output value.
-        if (suppliesSomeTask) {
-            const suppliedTasks = this.runStatus.tasksByReq[resultName];
-            const suppliedTaskCodes = Object.keys(suppliedTasks);
-            for (let j = 0; j < suppliedTaskCodes.length; j++) {
-                const taskCode = suppliedTaskCodes[j];
-                const suppliedTask = suppliedTasks[taskCode];
-
-                suppliedTask.supplyReq(resultName, result);
-                delete suppliedTasks[taskCode];
-                if (Object.keys(suppliedTasks).length === 0) {
-                    delete this.runStatus.tasksByReq[resultName];
-                }
-
-                if (suppliedTask.isReadyToRun()) {
-                    this.runStatus.tasksReady.push(suppliedTask);
-                }
-            }
-        }
-
-        // If the result is required as flow output, it is provided
-        const isExpectedResult = this.runStatus.expectedResults.indexOf(resultName) > -1;
-        if (isExpectedResult) {
-            this.runStatus.results[resultName] = result;
-        }
-    }
-
-    public printStatus() {
-        // Uncomment to debug
-        // console.log('▣ Run status:', this.runStatus);
     }
 }
 

@@ -1,10 +1,10 @@
-import {FlowSpec} from './flow-specs'
 import {Flow, GenericValueMap, TaskResolverMap} from './flow'
+import {FlowSpec} from './flow-specs'
 
 
 export class FlowManager {
 
-    static run(
+    public static run(
         flowSpec: FlowSpec,
         params: GenericValueMap = {},
         expectedResults: string[] = [],

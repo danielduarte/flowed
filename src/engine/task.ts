@@ -1,5 +1,5 @@
-import {TaskSpec} from './flow-specs';
 import {GenericValueMap, TaskResolverClass} from "./flow";
+import {TaskSpec} from './flow-specs';
 
 
 export class Task {
@@ -33,10 +33,6 @@ export class Task {
 
     public getResolverName() {
         return this.spec.resolver.name;
-    }
-
-    protected parseSpec() {
-        this.resetRunStatus();
     }
 
     public resetRunStatus() {
@@ -95,13 +91,18 @@ export class Task {
         });
     }
 
+    protected parseSpec() {
+        this.resetRunStatus();
+    }
+
     protected mapParamsForResolver(solvedReqs: GenericValueMap) {
         const params: GenericValueMap = {};
 
-        for (const resolverParamName in this.spec.resolver.params) if (this.spec.resolver.params.hasOwnProperty(resolverParamName)) {
+        for (const resolverParamName in this.spec.resolver.params) { if (this.spec.resolver.params.hasOwnProperty(resolverParamName)) {
             const taskParamName = this.spec.resolver.params[resolverParamName];
             const paramValue = solvedReqs[taskParamName];
             params[resolverParamName] = paramValue;
+        }
         }
 
         return params;
@@ -110,10 +111,11 @@ export class Task {
     protected mapResultsFromResolver(resolverResults: GenericValueMap) {
         const results: GenericValueMap = {};
 
-        for (const resolverResultName in this.spec.resolver.results) if (this.spec.resolver.results.hasOwnProperty(resolverResultName)) {
+        for (const resolverResultName in this.spec.resolver.results) { if (this.spec.resolver.results.hasOwnProperty(resolverResultName)) {
             const taskResultName = this.spec.resolver.results[resolverResultName];
             const resolverResult = resolverResults[resolverResultName];
             results[taskResultName] = resolverResult;
+        }
         }
 
         return results;

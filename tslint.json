@@ -1,3 +1,18 @@
 {
-  "extends": ["tslint:recommended", "tslint-config-prettier"]
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-prettier"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "src/examples/*",
+      "src/old/*"
+    ]
+  },
+  "rules": {
+    "interface-name": false,
+    "max-classes-per-file": false,
+    "object-literal-sort-keys": false,
+    "no-console": false
+  }
 }
