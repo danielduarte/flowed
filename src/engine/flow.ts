@@ -26,6 +26,7 @@ export class Flow {
   }
 
   public resetRunStatus() {
+    // @todo Avoid initializing twice.
     this.runStatus = {
       runningTasks: [],
       tasksReady: [],

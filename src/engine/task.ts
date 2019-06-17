@@ -34,6 +34,7 @@ export class Task {
   }
 
   public resetRunStatus() {
+    // @todo Avoid initializing twice.
     this.runStatus = {
       pendingReqs: [...this.spec.requires],
       solvedReqs: {},

@@ -28,7 +28,7 @@ export function example1() {
           resolver: {
             name: 'timer',
             params: {},
-            results: {},
+            results: { a: 'b1' },
           },
         },
         C: {
@@ -46,7 +46,7 @@ export function example1() {
           resolver: {
             name: 'timer',
             params: {},
-            results: {},
+            results: { a: 'a4' }, // @todo invert this mapping to support same result mapped to multiple provisions? To be analyzed. Similar case for params?
           },
         },
         D: {
