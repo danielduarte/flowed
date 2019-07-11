@@ -80,6 +80,7 @@ class DummyResolver implements TaskResolverInterface {
 //     [CallService, MergeJson]
 // );
 
+// noinspection JSIgnoredPromiseFromCall
 FlowManager.run(
   {
     tasks: {

@@ -1,4 +1,3 @@
-/* tslint:disable:no-empty */
 import { FlowSpec } from './flow-specs';
 import { Task, TaskMap } from './task';
 
@@ -19,7 +18,8 @@ export class Flow {
       resolvers: {},
       expectedResults: [],
       results: {},
-      resolveFlowCallback: (results: GenericValueMap) => {}, // tslint:disable:no-empty
+      // tslint:disable-next-line:no-empty
+      resolveFlowCallback: (results: GenericValueMap) => {},
     };
 
     this.parseSpec();
@@ -34,6 +34,7 @@ export class Flow {
       resolvers: {},
       expectedResults: [],
       results: {},
+      // tslint:disable-next-line:no-empty
       resolveFlowCallback: (results: GenericValueMap) => {},
     };
 
@@ -143,6 +144,7 @@ export class Flow {
     this.runStatus.tasksReady = [];
 
     for (const task of readyTasks) {
+      // @todo Check if this should be done after  checking if resolver exists
       this.runStatus.runningTasks.push(task.getCode());
 
       const hasResolver = this.runStatus.resolvers.hasOwnProperty(task.getResolverName());
@@ -217,6 +219,7 @@ export interface GenericValueMap {
 
 export class TaskResolver {
   public exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+    // tslint:disable-next-line:no-empty
     return new Promise<GenericValueMap>(() => {});
   }
 }
