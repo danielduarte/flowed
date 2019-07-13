@@ -5,7 +5,6 @@
   ],
   "linterOptions": {
     "exclude": [
-      "src/examples/*",
       "src/old/*"
     ]
   },
@@ -13,6 +12,6 @@
     "interface-name": false,
     "max-classes-per-file": false,
     "object-literal-sort-keys": false,
-    "no-console": false
+    "no-namespace": false
   }
 }

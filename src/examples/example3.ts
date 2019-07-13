@@ -1,6 +1,6 @@
+import { GenericValueMap } from '../engine/flow';
 import { FlowManager } from '../engine/flow-manager';
 import { Task } from '../engine/task';
-import { GenericValueMap } from '../engine/flow';
 import { ExampleFunction } from './types';
 
 namespace MathFn {

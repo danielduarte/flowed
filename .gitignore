@@ -4,3 +4,6 @@
 # Node.js files
 /node_modules/
 /dist/
+
+# Test generated files
+/.nyc_output

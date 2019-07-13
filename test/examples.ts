@@ -4,7 +4,7 @@ import * as Examples from  '../src/examples'
 import { ExampleMap } from '../src/examples/types';
 
 describe('Examples', function () {
-  this.timeout('3s');
+  this.timeout('2.5s');
 
   it('run without errors', () => {
     type MapPromise = Promise<GenericValueMap>;

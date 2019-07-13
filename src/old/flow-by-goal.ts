@@ -38,7 +38,7 @@ export interface TaskResolverInterface {
 }
 
 export class TaskResolver implements TaskResolverInterface {
-  exec(params: GenericValueMap = {}): any {
+  public exec(params: GenericValueMap = {}): any {
     throw new Error(`This class must not be used directly. It must me extended.'`);
   }
 }
