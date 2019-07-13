@@ -58,7 +58,7 @@ export class Task {
   public supplyReq(reqName: string, value: any) {
     const reqIndex = this.runStatus.pendingReqs.indexOf(reqName);
     if (reqIndex === -1) {
-      throw new Error(`Requirement ${reqName} for task ${this.code} is not valid or has already been supplied.`);
+      throw new Error(`Requirement '${reqName}' for task '${this.code}' is not valid or has already been supplied.`);
     }
 
     this.runStatus.pendingReqs.splice(reqIndex, 1);
