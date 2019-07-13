@@ -27,7 +27,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json -t verbose",
     "test": "mocha --require ts-node/register test/**/*.ts",
-    "start": "node ."
+    "start": "npm run test"
   },
   "files": [
     "dist/**/*"

@@ -1,3 +1,6 @@
+import { debug as rawDebug } from 'debug';
+const debug = rawDebug('yafe:deprecated');
+
 export interface TaskResolverSpec {
   name: string;
 
