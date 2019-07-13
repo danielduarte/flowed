@@ -1,6 +1,7 @@
 import { FlowManager } from '../engine/flow-manager';
 import { Task } from '../engine/task';
 import { GenericValueMap } from '../engine/flow';
+import { ExampleFunction } from './types';
 
 namespace MathFn {
   export class Sqr {
@@ -28,7 +29,7 @@ namespace MathFn {
   }
 }
 
-export function example3() {
+export const example3: ExampleFunction = () => {
   return FlowManager.run(
     {
       tasks: {
@@ -81,4 +82,4 @@ export function example3() {
       sum: MathFn.Sum,
     },
   );
-}
+};

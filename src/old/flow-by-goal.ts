@@ -124,9 +124,9 @@ export class Flow {
         }
       }
 
-    console.log(`Starting task ${task.code} to provide ${task.spec.provides}`);
+    debug(`Starting task ${task.code} to provide ${task.spec.provides}`);
     const taskResult = await task.run(params, this.resolvers[task.spec.resolver.name]);
-    console.log(`Finished task ${task.code} providing ${task.spec.provides} =`, taskResult);
+    debug(`Finished task ${task.code} providing ${task.spec.provides} =`, taskResult);
 
     return taskResult;
   }

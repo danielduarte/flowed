@@ -1,6 +1,7 @@
 import { FlowManager } from '../engine/flow-manager';
 import { GenericValueMap } from '../engine/flow';
 import { Task } from '../engine/task';
+import { ExampleFunction } from './types';
 
 class TimerResolver {
   public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
@@ -18,9 +19,9 @@ class DirectResolver {
   }
 }
 
-export function example6() {
+export const example6: ExampleFunction = () => {
   return FlowManager.runFromFile(
-    'src/examples/example6.json',
+    'src/examples/example6.yafe.json',
     {
       param1: 'PARAM1',
       param2: 'PARAM2',
@@ -31,7 +32,5 @@ export function example6() {
       timer: TimerResolver,
       direct: DirectResolver,
     },
-  ).then(result => {
-    console.log('FLOW FINISHED:', result);
-  });
-}
+  );
+};

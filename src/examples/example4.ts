@@ -1,6 +1,7 @@
 import { FlowManager } from '../engine/flow-manager';
 import { Task } from '../engine/task';
 import { GenericValueMap } from '../engine/flow';
+import { ExampleFunction } from './types';
 
 class CallMicroservice {
   public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
@@ -32,7 +33,7 @@ class SimpleMerge {
   }
 }
 
-export function example4() {
+export const example4: ExampleFunction = () => {
   return FlowManager.run(
     {
       tasks: {
@@ -76,4 +77,4 @@ export function example4() {
       simpleMerge: SimpleMerge,
     },
   );
-}
+};

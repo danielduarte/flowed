@@ -1,5 +1,7 @@
+import { debug as rawDebug } from 'debug';
 import { FlowSpec } from './flow-specs';
 import { Task, TaskMap } from './task';
+const debug = rawDebug('yafe:flow');
 
 export class Flow {
   protected spec: FlowSpec;
@@ -19,7 +21,9 @@ export class Flow {
       expectedResults: [],
       results: {},
       // tslint:disable-next-line:no-empty
-      resolveFlowCallback: (results: GenericValueMap) => {},
+      resolveFlowCallback: (results: GenericValueMap) => {
+        throw new Error('Flow resolution callback must be overwritten.');
+      },
     };
 
     this.parseSpec();
@@ -35,7 +39,9 @@ export class Flow {
       expectedResults: [],
       results: {},
       // tslint:disable-next-line:no-empty
-      resolveFlowCallback: (results: GenericValueMap) => {},
+      resolveFlowCallback: (results: GenericValueMap) => {
+        throw new Error('Flow resolution callback must be overwritten.');
+      },
     };
 
     for (const taskCode in this.tasks) {
@@ -70,12 +76,19 @@ export class Flow {
     this.runStatus.expectedResults = [...expectedResults];
     this.runStatus.resolvers = resolvers;
 
+    const resultPromise = new Promise<GenericValueMap>(resolve => {
+      this.runStatus.resolveFlowCallback = resolve;
+    });
+
     this.supplyParameters(params);
     this.startReadyTasks();
 
-    return new Promise(resolve => {
-      this.runStatus.resolveFlowCallback = resolve;
-    });
+    // Notify flow finished when flow has no tasks
+    if (Object.keys(this.spec.tasks).length === 0) {
+      this.flowFinished(this.runStatus.results);
+    }
+
+    return resultPromise;
   }
 
   public isRunning() {
@@ -150,7 +163,7 @@ export class Flow {
       const hasResolver = this.runStatus.resolvers.hasOwnProperty(task.getResolverName());
       if (!hasResolver) {
         throw new Error(
-          `Task resolver ${task.getResolverName()} for task ${task.getCode()} has no definition. Defined resolvers are [${Object.keys(
+          `Task resolver '${task.getResolverName()}' for task '${task.getCode()}' has no definition. Defined resolvers are: [${Object.keys(
             this.runStatus.resolvers,
           ).join(', ')}].`,
         );
@@ -162,7 +175,7 @@ export class Flow {
         this.taskFinished(task);
       });
 
-      console.log(`► Task ${task.getCode()} started, params: `, task.getParams());
+      debug(`► Task ${task.getCode()} started, params:`, task.getParams());
     }
   }
 
@@ -170,7 +183,7 @@ export class Flow {
     const taskProvisions = task.getSpec().provides;
     const taskResults = task.getResults();
 
-    console.log(`✔ Finished task ${task.getCode()}, results:`, taskResults);
+    debug(`✔ Finished task ${task.getCode()}, results:`, taskResults);
 
     // Remove the task from running tasks collection
     this.runStatus.runningTasks.splice(this.runStatus.runningTasks.indexOf(task.getCode()), 1);
@@ -190,7 +203,7 @@ export class Flow {
   }
 
   protected flowFinished(results: GenericValueMap) {
-    console.log('◼ Flow finished with results:', results);
+    debug('◼ Flow finished with results:', results);
     this.runStatus.resolveFlowCallback(results);
   }
 }

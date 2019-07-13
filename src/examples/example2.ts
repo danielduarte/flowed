@@ -1,6 +1,7 @@
 import { FlowManager } from '../engine/flow-manager';
 import { Task } from '../engine/task';
 import { GenericValueMap } from '../engine/flow';
+import { ExampleFunction } from './types';
 
 class DummyResolver {
   public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
@@ -8,7 +9,7 @@ class DummyResolver {
   }
 }
 
-export function example2() {
+export const example2: ExampleFunction = () => {
   return FlowManager.run(
     {
       tasks: {
@@ -83,4 +84,4 @@ export function example2() {
       dummy: DummyResolver,
     },
   );
-}
+};
