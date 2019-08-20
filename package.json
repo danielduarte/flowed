@@ -12,14 +12,14 @@
   "author": "Daniel Duarte <danieldd.ar@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.0",
     "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
-    "mocha": "^6.1.4",
+    "mocha": "^6.2.0",
     "nyc": "^14.1.1",
     "prettier": "^1.18.2",
     "ts-node": "^8.3.0",
-    "tslint": "^5.18.0",
+    "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.5.3"
   },
@@ -34,8 +34,8 @@
     "dist/**/*"
   ],
   "dependencies": {
-    "@types/debug": "^4.1.4",
-    "@types/node": "^12.6.2",
+    "@types/debug": "^4.1.5",
+    "@types/node": "^12.7.2",
     "debug": "^4.1.1"
   }
 }
