@@ -10,6 +10,7 @@
     "interface-name": false,
     "max-classes-per-file": false,
     "object-literal-sort-keys": false,
-    "no-namespace": false
+    "no-namespace": false,
+    "no-empty": false
   }
 }

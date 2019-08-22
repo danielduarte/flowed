@@ -2,7 +2,28 @@ import { debug as rawDebug } from 'debug';
 import { FlowSpec } from './flow-specs';
 import { Task, TaskMap } from './task';
 const debug = rawDebug('yafe:flow');
-import { GenericValueMap, TaskResolverMap } from '../types';
+import { FlowRunStatus, GenericValueMap, TaskResolverMap } from '../types';
+
+export enum FlowState {
+  Ready,
+  Running,
+  Finished,
+  Pausing,
+  Paused,
+  Stopping,
+  Stopped,
+}
+
+export enum FlowTransition {
+  Start,
+  Finished,
+  Reset,
+  Pause,
+  Paused,
+  Resume,
+  Stop,
+  Stopped,
+}
 
 export class Flow {
   protected spec: FlowSpec;
@@ -11,11 +32,71 @@ export class Flow {
 
   protected runStatus: FlowRunStatus;
 
+  protected transitions: { [state: string]: { [transition: string]: { newState: FlowState; action: () => void } } } = {
+    Ready: {
+      Start: {
+        newState: FlowState.Running,
+        action: () => {},
+      },
+    },
+    Running: {
+      Finish: {
+        // Automatic transition
+        newState: FlowState.Finished,
+        action: () => {},
+      },
+      Paused: {
+        newState: FlowState.Pausing,
+        action: () => {},
+      },
+      Stop: {
+        newState: FlowState.Stopping,
+        action: () => {},
+      },
+    },
+    Finished: {
+      Reset: {
+        newState: FlowState.Ready,
+        action: () => {},
+      },
+    },
+    Pausing: {
+      Paused: {
+        // Automatic transition
+        newState: FlowState.Paused,
+        action: () => {},
+      },
+    },
+    Stopping: {
+      Stopped: {
+        // Automatic transition
+        newState: FlowState.Stopped,
+        action: () => {},
+      },
+    },
+    Paused: {
+      Stop: {
+        newState: FlowState.Stopping,
+        action: () => {},
+      },
+      Resume: {
+        newState: FlowState.Running,
+        action: () => {},
+      },
+    },
+    Stopped: {
+      Reset: {
+        newState: FlowState.Ready,
+        action: () => {},
+      },
+    },
+  };
+
   public constructor(spec: FlowSpec) {
     this.spec = spec;
     this.tasks = {};
     this.runStatus = {
-      state: FlowState.Stopped,
+      state: FlowState.Ready,
       runningTasks: [],
       tasksReady: [],
       tasksByReq: {},
@@ -31,10 +112,30 @@ export class Flow {
     this.parseSpec();
   }
 
+  public start() {
+    this.execTransition(FlowTransition.Start);
+  }
+
+  public pause() {
+    this.execTransition(FlowTransition.Pause);
+  }
+
+  public resume() {
+    this.execTransition(FlowTransition.Resume);
+  }
+
+  public stop() {
+    this.execTransition(FlowTransition.Stop);
+  }
+
+  public reset() {
+    this.execTransition(FlowTransition.Reset);
+  }
+
   public resetRunStatus() {
     // @todo Avoid initializing twice.
     this.runStatus = {
-      state: FlowState.Stopped,
+      state: FlowState.Ready,
       runningTasks: [],
       tasksReady: [],
       tasksByReq: {},
@@ -132,7 +233,17 @@ export class Flow {
     // Uncomment to debug
     // console.log('▣ Run status:', this.runStatus);
   }
+  protected execTransition(transition: FlowTransition) {
+    const currentState = this.runStatus.state;
+    const possibleTransitions = this.transitions[currentState];
+    if (!possibleTransitions.hasOwnProperty(transition)) {
+      throw new Error(`Cannot execute transition ${transition} in current state ${currentState}.`);
+    }
 
+    const transitionToRun = possibleTransitions[transition];
+    this.runStatus.state = transitionToRun.newState;
+    transitionToRun.action();
+  }
   protected parseSpec() {
     for (const taskCode in this.spec.tasks) {
       if (this.spec.tasks.hasOwnProperty(taskCode)) {
@@ -209,31 +320,4 @@ export class Flow {
     debug('◼ Flow finished with results:', results);
     this.runStatus.resolveFlowCallback(results);
   }
-}
-
-export enum FlowState {
-  Stopped,
-  Running,
-  Stopping,
-  Paused,
-}
-
-export interface FlowRunStatus {
-  state: FlowState;
-
-  runningTasks: string[];
-
-  tasksReady: Task[];
-
-  tasksByReq: {
-    [req: string]: TaskMap;
-  };
-
-  resolvers: TaskResolverMap;
-
-  expectedResults: string[];
-
-  results: GenericValueMap;
-
-  resolveFlowCallback: (results: GenericValueMap) => void;
 }
