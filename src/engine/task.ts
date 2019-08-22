@@ -65,6 +65,14 @@ export class Task {
     this.runStatus.solvedReqs[reqName] = value;
   }
 
+  public supplyReqs(reqsMap: GenericValueMap) {
+    for (const reqName in reqsMap) {
+      if (reqsMap.hasOwnProperty(reqName)) {
+        this.supplyReq(reqName, reqsMap[reqName]);
+      }
+    }
+  }
+
   public run(taskResolverConstructor: TaskResolverClass): Promise<GenericValueMap> {
     const resolver = new taskResolverConstructor();
 

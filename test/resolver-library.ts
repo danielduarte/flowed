@@ -1,11 +1,11 @@
-import { expect } from 'chai';
 import { FlowManager } from '../src/engine/flow-manager';
 import * as ResolverLibrary from '../src/resolver-library';
+import { GenericValueMap } from '../src/engine/flow';
 
 
-describe('ResolverLibrary', () => {
+describe('the ResolverLibrary', () => {
 
-  it('noop resolver', () => {
+  it('runs noop resolver', () => {
 
     return FlowManager.run({
         tasks: {
@@ -16,20 +16,20 @@ describe('ResolverLibrary', () => {
               name: 'noop',
               params: {},
               results: {},
-            }
-          }
+            },
+          },
         },
       },
       {},
       [],
       {
         noop: ResolverLibrary.NoopResolver
-      }
+      },
     );
 
   });
 
-  it('wait resolver', () => {
+  it('runs wait resolver', () => {
 
     return FlowManager.run({
         tasks: {
@@ -40,8 +40,8 @@ describe('ResolverLibrary', () => {
               name: 'wait',
               params: { ms: 'time' },
               results: {},
-            }
-          }
+            },
+          },
         },
       },
       {
@@ -50,20 +50,20 @@ describe('ResolverLibrary', () => {
       [],
       {
         wait: ResolverLibrary.WaitResolver
-      }
+      },
     );
 
   });
 
-  it('sub-flow resolver', () => {
+  it('runs sub-flow resolver', () => {
 
     const subFlowSpec = {
       tasks: {
         dummyTask: {
           requires: [],
           provides: [],
-          resolver: { name: 'noop', params: {}, results: {} }
-        }
+          resolver: { name: 'noop', params: {}, results: {} },
+        },
       },
     };
 
@@ -87,8 +87,8 @@ describe('ResolverLibrary', () => {
               results: {
                 flowResult: 'subflow-result',
               },
-            }
-          }
+            },
+          },
         },
       },
       {
@@ -100,9 +100,66 @@ describe('ResolverLibrary', () => {
       ['subflow-result'],
       {
         subflow: ResolverLibrary.SubFlowResolver
-      }
+      },
     );
 
   });
 
+  it('runs repeater resolver', () => {
+
+    const taskSpec = {
+        requires: ['a-value'],
+        provides: [],
+        resolver: {
+          name: 'repeat-5-times',
+          params: {
+            someValue: 'a-value',
+          },
+          results: {}
+        }
+    };
+
+    // Do nothing and finish
+    class LogTextSampleResolver {
+      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+        console.log('This is a text:', params.someValue);
+        return {};
+      }
+    }
+
+    return FlowManager.run({
+        tasks: {
+          repeatTask: {
+            requires: ['task-spec', 'task-resolver', 'task-params', 'count', 'parallel'],
+            provides: ['result-array'],
+            resolver: {
+              name: 'taskRepeater',
+              params: {
+                taskSpec: 'task-spec',
+                taskResolver: 'task-resolver',
+                taskParams: 'task-params',
+                count: 'count',
+                parallel: 'parallel',
+              },
+              results: {
+                flowResult: 'subflow-result',
+              },
+            },
+          },
+        },
+      },
+      {
+        'task-spec': taskSpec,
+        'task-resolver': LogTextSampleResolver,
+        'task-params': { 'a-value': 'Hi!' },
+        'count': 5,
+        'parallel': false, // @todo add test for parallel and serial tasks with async resolvers
+      },
+      ['result-array'],
+      {
+        taskRepeater: ResolverLibrary.RepeaterResolver
+      }
+    );
+
+  });
 });

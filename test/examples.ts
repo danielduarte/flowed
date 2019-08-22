@@ -1,9 +1,8 @@
-import { expect } from 'chai';
 import { GenericValueMap } from '../src/engine/flow';
 import * as Examples from  '../src/examples'
 import { ExampleMap } from '../src/examples/types';
 
-describe('Examples', function () {
+describe('the examples', function () {
   this.timeout('2.5s');
 
   it('run without errors', () => {

@@ -1,5 +1,6 @@
 import { GenericValueMap } from './engine/flow';
 import { FlowManager } from './engine/flow-manager';
+import { Task } from './engine/task';
 
 // Do nothing and finish
 export class NoopResolver {
@@ -30,5 +31,33 @@ export class SubFlowResolver {
     );
 
     return { flowResult };
+  }
+}
+
+// Run a task multiple times and finishes returning an array with all results
+export class RepeaterResolver {
+  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    const task = new Task('task-repeat-model', params.taskSpec);
+
+    const resultPromises = [];
+    let results = [];
+    for (let i = 0; i < params.count; i++) {
+      task.resetRunStatus();
+      task.supplyReqs(params.taskParams);
+
+      const result = task.run(params.taskResolver);
+
+      if (params.parallel) {
+        resultPromises.push(result);
+      } else {
+        results.push(await result);
+      }
+    }
+
+    if (params.parallel) {
+      results = await Promise.all(resultPromises);
+    }
+
+    return { results };
   }
 }

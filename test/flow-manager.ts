@@ -10,7 +10,7 @@ class DummyResolver {
   }
 }
 
-describe('FlowManager', () => {
+describe('the FlowManager', () => {
   it('can run an empty flow', () => {
     const flowSpec: FlowSpec  = {
       tasks: {
