@@ -1,4 +1,4 @@
-import { GenericValueMap, TaskResolverClass } from './flow';
+import { GenericValueMap, TaskResolverClass } from '../types';
 import { TaskSpec } from './flow-specs';
 
 export class Task {

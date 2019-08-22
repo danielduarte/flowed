@@ -1,6 +1,6 @@
 import { FlowManager } from '../src/engine/flow-manager';
 import * as ResolverLibrary from '../src/resolver-library';
-import { GenericValueMap } from '../src/engine/flow';
+import { GenericValueMap } from '../src/types';
 
 
 describe('the ResolverLibrary', () => {

@@ -2,6 +2,7 @@ import { debug as rawDebug } from 'debug';
 import { FlowSpec } from './flow-specs';
 import { Task, TaskMap } from './task';
 const debug = rawDebug('yafe:flow');
+import { GenericValueMap, TaskResolverMap } from '../types';
 
 export class Flow {
   protected spec: FlowSpec;
@@ -14,6 +15,7 @@ export class Flow {
     this.spec = spec;
     this.tasks = {};
     this.runStatus = {
+      state: FlowState.Stopped,
       runningTasks: [],
       tasksReady: [],
       tasksByReq: {},
@@ -32,6 +34,7 @@ export class Flow {
   public resetRunStatus() {
     // @todo Avoid initializing twice.
     this.runStatus = {
+      state: FlowState.Stopped,
       runningTasks: [],
       tasksReady: [],
       tasksByReq: {},
@@ -208,7 +211,16 @@ export class Flow {
   }
 }
 
+export enum FlowState {
+  Stopped,
+  Running,
+  Stopping,
+  Paused,
+}
+
 export interface FlowRunStatus {
+  state: FlowState;
+
   runningTasks: string[];
 
   tasksReady: Task[];
@@ -224,21 +236,4 @@ export interface FlowRunStatus {
   results: GenericValueMap;
 
   resolveFlowCallback: (results: GenericValueMap) => void;
-}
-
-export interface GenericValueMap {
-  [key: string]: any;
-}
-
-export class TaskResolver {
-  public exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
-    // tslint:disable-next-line:no-empty
-    return new Promise<GenericValueMap>(() => {});
-  }
-}
-
-export type TaskResolverClass = typeof TaskResolver;
-
-export class TaskResolverMap {
-  [key: string]: TaskResolverClass;
 }

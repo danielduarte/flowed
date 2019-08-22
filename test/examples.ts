@@ -1,4 +1,4 @@
-import { GenericValueMap } from '../src/engine/flow';
+import { GenericValueMap } from '../src/types';
 import * as Examples from  './examples'
 import { ExampleMap } from './examples/types';
 

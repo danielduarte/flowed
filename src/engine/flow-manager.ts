@@ -1,5 +1,6 @@
 import * as fs from 'fs';
-import { Flow, GenericValueMap, TaskResolverMap } from './flow';
+import { GenericValueMap, TaskResolverMap } from '../types';
+import { Flow } from './flow';
 import { FlowSpec } from './flow-specs';
 
 export class FlowManager {

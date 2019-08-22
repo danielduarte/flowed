@@ -1,4 +1,4 @@
-import { GenericValueMap } from '../../src/engine/flow';
+import { GenericValueMap } from '../../src/types';
 
 export type ExampleFunction = () => Promise<GenericValueMap>;
 

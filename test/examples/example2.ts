@@ -1,4 +1,4 @@
-import { GenericValueMap } from '../../src/engine/flow';
+import { GenericValueMap } from '../../src/types';
 import { FlowManager } from '../../src/engine/flow-manager';
 import { Task } from '../../src/engine/task';
 import { ExampleFunction } from './types';
