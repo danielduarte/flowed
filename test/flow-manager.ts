@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { GenericValueMap, TaskResolverMap } from '../src/types';
 import { FlowManager } from '../src/engine/flow-manager';
 import { FlowSpec } from '../src/engine/flow-specs';
 import { Task } from '../src/engine/task';
+import { GenericValueMap, TaskResolverMap } from '../src/types';
 
 class DummyResolver {
   public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
@@ -12,16 +12,15 @@ class DummyResolver {
 
 describe('the FlowManager', () => {
   it('can run an empty flow', () => {
-    const flowSpec: FlowSpec  = {
-      tasks: {
-      },
+    const flowSpec: FlowSpec = {
+      tasks: {},
     };
 
     return FlowManager.run(flowSpec);
   });
 
   it('can run a simple flow', () => {
-    const flowSpec: FlowSpec  = {
+    const flowSpec: FlowSpec = {
       tasks: {
         sampleTask: {
           requires: [],
@@ -39,11 +38,10 @@ describe('the FlowManager', () => {
       sampleResolver: DummyResolver,
     };
 
-    return FlowManager.run(flowSpec, {}, [], resolvers)
+    return FlowManager.run(flowSpec, {}, [], resolvers);
   });
 
   it('can calculate Pythagoras', () => {
-
     class Sqr {
       public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
         return {

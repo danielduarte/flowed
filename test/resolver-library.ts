@@ -1,13 +1,13 @@
+import { debug as rawDebug } from 'debug';
 import { FlowManager } from '../src/engine/flow-manager';
 import * as ResolverLibrary from '../src/resolver-library';
 import { GenericValueMap } from '../src/types';
-
+const debug = rawDebug('yafe:test');
 
 describe('the ResolverLibrary', () => {
-
   it('runs noop resolver', () => {
-
-    return FlowManager.run({
+    return FlowManager.run(
+      {
         tasks: {
           doNothing: {
             requires: [],
@@ -23,15 +23,14 @@ describe('the ResolverLibrary', () => {
       {},
       [],
       {
-        noop: ResolverLibrary.NoopResolver
+        noop: ResolverLibrary.NoopResolver,
       },
     );
-
   });
 
   it('runs wait resolver', () => {
-
-    return FlowManager.run({
+    return FlowManager.run(
+      {
         tasks: {
           waitASec: {
             requires: ['time'],
@@ -49,14 +48,12 @@ describe('the ResolverLibrary', () => {
       },
       [],
       {
-        wait: ResolverLibrary.WaitResolver
+        wait: ResolverLibrary.WaitResolver,
       },
     );
-
   });
 
   it('runs sub-flow resolver', () => {
-
     const subFlowSpec = {
       tasks: {
         dummyTask: {
@@ -68,10 +65,11 @@ describe('the ResolverLibrary', () => {
     };
 
     const subFlowResulvers = {
-      noop: ResolverLibrary.NoopResolver
+      noop: ResolverLibrary.NoopResolver,
     };
 
-    return FlowManager.run({
+    return FlowManager.run(
+      {
         tasks: {
           runSubflow: {
             requires: ['subflow-spec', 'subflow-params', 'subflow-expected-results', 'subflow-resolvers'],
@@ -99,35 +97,34 @@ describe('the ResolverLibrary', () => {
       },
       ['subflow-result'],
       {
-        subflow: ResolverLibrary.SubFlowResolver
+        subflow: ResolverLibrary.SubFlowResolver,
       },
     );
-
   });
 
   it('runs repeater resolver', () => {
-
     const taskSpec = {
-        requires: ['a-value'],
-        provides: [],
-        resolver: {
-          name: 'repeat-5-times',
-          params: {
-            someValue: 'a-value',
-          },
-          results: {}
-        }
+      requires: ['a-value'],
+      provides: [],
+      resolver: {
+        name: 'repeat-5-times',
+        params: {
+          someValue: 'a-value',
+        },
+        results: {},
+      },
     };
 
     // Do nothing and finish
     class LogTextSampleResolver {
       public async exec(params: GenericValueMap): Promise<GenericValueMap> {
-        console.log('This is a text:', params.someValue);
+        debug('This is a text:', params.someValue);
         return {};
       }
     }
 
-    return FlowManager.run({
+    return FlowManager.run(
+      {
         tasks: {
           repeatTask: {
             requires: ['task-spec', 'task-resolver', 'task-params', 'count', 'parallel'],
@@ -152,14 +149,13 @@ describe('the ResolverLibrary', () => {
         'task-spec': taskSpec,
         'task-resolver': LogTextSampleResolver,
         'task-params': { 'a-value': 'Hi!' },
-        'count': 5,
-        'parallel': false, // @todo add test for parallel and serial tasks with async resolvers
+        count: 5,
+        parallel: false, // @todo add test for parallel and serial tasks with async resolvers
       },
       ['result-array'],
       {
-        taskRepeater: ResolverLibrary.RepeaterResolver
-      }
+        taskRepeater: ResolverLibrary.RepeaterResolver,
+      },
     );
-
   });
 });

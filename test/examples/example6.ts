@@ -1,6 +1,6 @@
-import { GenericValueMap } from '../../src/types';
 import { FlowManager } from '../../src/engine/flow-manager';
 import { Task } from '../../src/engine/task';
+import { GenericValueMap } from '../../src/types';
 import { ExampleFunction } from './types';
 
 class TimerResolver {

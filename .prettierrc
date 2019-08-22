@@ -13,5 +13,6 @@
   "pluginSearchDirs": [],
   "insertPragma": false,
   "endOfLine": "auto",
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "quoteProps": "as-needed"
 }
