@@ -1,6 +1,6 @@
-import { GenericValueMap } from '../engine/flow';
-import { FlowManager } from '../engine/flow-manager';
-import { Task } from '../engine/task';
+import { GenericValueMap } from '../../src/engine/flow';
+import { FlowManager } from '../../src/engine/flow-manager';
+import { Task } from '../../src/engine/task';
 import { ExampleFunction } from './types';
 
 class DummyResolver {

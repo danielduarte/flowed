@@ -2,7 +2,6 @@
   "name": "yafe",
   "version": "1.0.0",
   "description": "Yet Another Flow Engine",
-  "main": "dist/index.js",
   "keywords": [
     "flow",
     "engine",
@@ -27,8 +26,9 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json -t verbose",
-    "test": "mocha --require ts-node/register test/**/*.ts",
-    "start": "npm run test"
+    "test": "mocha --require ts-node/register test/*.ts",
+    "posttest": "npm run lint",
+    "start": "npm test"
   },
   "files": [
     "dist/**/*"

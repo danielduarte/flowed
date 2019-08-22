@@ -4,9 +4,7 @@
     "tslint-config-prettier"
   ],
   "linterOptions": {
-    "exclude": [
-      "src/old/*"
-    ]
+    "exclude": []
   },
   "rules": {
     "interface-name": false,

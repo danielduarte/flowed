@@ -1,6 +1,6 @@
 import { GenericValueMap } from '../src/engine/flow';
-import * as Examples from  '../src/examples'
-import { ExampleMap } from '../src/examples/types';
+import * as Examples from  './examples'
+import { ExampleMap } from './examples/types';
 
 describe('the examples', function () {
   this.timeout('2.5s');
