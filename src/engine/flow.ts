@@ -32,17 +32,28 @@ export class Flow {
 
   protected runStatus: FlowRunStatus;
 
-  protected transitions: { [state: string]: { [transition: string]: { newState: FlowState; action: () => void } } } = {
+  protected finishResolve!: (result: GenericValueMap) => void;
+  protected finishReject!: (result: GenericValueMap) => void;
+  protected pauseResolve!: (result: GenericValueMap) => void;
+  protected pauseReject!: (result: GenericValueMap) => void;
+  protected stopResolve!: (result: GenericValueMap) => void;
+  protected stopReject!: (result: GenericValueMap) => void;
+
+  protected transitions: {
+    [state: string]: { [transition: string]: { newState: FlowState; action: () => Promise<GenericValueMap> | void } };
+  } = {
     Ready: {
       Start: {
         newState: FlowState.Running,
-        action: () => {
+        action: (): Promise<GenericValueMap> => {
           this.startReadyTasks();
 
           // Notify flow finished when flow has no tasks
           if (Object.keys(this.spec.tasks).length === 0) {
             this.flowFinished();
           }
+
+          return Promise.resolve(this.runStatus.results);
         },
       },
     },
@@ -50,24 +61,31 @@ export class Flow {
       Finished: {
         // Automatic transition
         newState: FlowState.Finished,
-        action: () => {
+        action: (): Promise<GenericValueMap> => {
           this.runStatus.resolveFlowCallback(this.runStatus.results);
+          return Promise.resolve(this.runStatus.results);
         },
       },
-      Paused: {
+      Pause: {
         newState: FlowState.Pausing,
-        action: () => {},
+        action: (): Promise<GenericValueMap> => {
+          // @todo Send pause signal to tasks, when it is implemented
+          return this.createPausePromise();
+        },
       },
       Stop: {
         newState: FlowState.Stopping,
-        action: () => {},
+        action: (): Promise<GenericValueMap> => {
+          return Promise.resolve(this.runStatus.results);
+        },
       },
     },
     Finished: {
       Reset: {
         newState: FlowState.Ready,
-        action: () => {
+        action: (): Promise<GenericValueMap> => {
           this.initRunStatus();
+          return Promise.resolve(this.runStatus.results);
         },
       },
     },
@@ -75,30 +93,45 @@ export class Flow {
       Paused: {
         // Automatic transition
         newState: FlowState.Paused,
-        action: () => {},
+        action: (): void => {
+          this.pauseResolve(this.runStatus.results);
+        },
       },
     },
     Stopping: {
       Stopped: {
         // Automatic transition
         newState: FlowState.Stopped,
-        action: () => {},
+        action: (): Promise<GenericValueMap> => {
+          return Promise.resolve(this.runStatus.results);
+        },
       },
     },
     Paused: {
       Stop: {
         newState: FlowState.Stopping,
-        action: () => {},
+        action: (): Promise<GenericValueMap> => {
+          return Promise.resolve(this.runStatus.results);
+        },
       },
       Resume: {
         newState: FlowState.Running,
-        action: () => {},
+        action: (): void => {
+          // @todo Send resume signal to tasks, when it is implemented
+          this.startReadyTasks();
+
+          if (!this.isRunning()) {
+            this.flowFinished();
+          }
+        },
       },
     },
     Stopped: {
       Reset: {
         newState: FlowState.Ready,
-        action: () => {},
+        action: (): Promise<GenericValueMap> => {
+          return Promise.resolve(this.runStatus.results);
+        },
       },
     },
   };
@@ -111,12 +144,33 @@ export class Flow {
     this.parseSpec();
   }
 
+  public createPausePromise(): Promise<GenericValueMap> {
+    return new Promise<GenericValueMap>((resolve, reject) => {
+      this.pauseResolve = resolve;
+      this.pauseReject = reject;
+    });
+  }
+
+  public createStopPromise(): Promise<GenericValueMap> {
+    return new Promise<GenericValueMap>((resolve, reject) => {
+      this.stopResolve = resolve;
+      this.stopReject = reject;
+    });
+  }
+
+  public createFinishPromise(): Promise<GenericValueMap> {
+    return new Promise<GenericValueMap>((resolve, reject) => {
+      this.finishResolve = resolve;
+      this.finishReject = reject;
+    });
+  }
+
   public start() {
     this.execTransition(FlowTransition.Start);
   }
 
-  public pause() {
-    this.execTransition(FlowTransition.Pause);
+  public pause(): Promise<GenericValueMap> {
+    return this.execTransition(FlowTransition.Pause) as Promise<GenericValueMap>;
   }
 
   public resume() {
@@ -216,7 +270,7 @@ export class Flow {
     this.printStatus();
   }
 
-  protected execTransition(transition: FlowTransition) {
+  protected execTransition(transition: FlowTransition): Promise<GenericValueMap> | void {
     const currentState = this.runStatus.state;
     const possibleTransitions = this.transitions[currentState];
     if (!possibleTransitions.hasOwnProperty(transition)) {
@@ -225,7 +279,7 @@ export class Flow {
 
     const transitionToRun = possibleTransitions[transition];
     this.runStatus.state = transitionToRun.newState;
-    transitionToRun.action();
+    return transitionToRun.action();
   }
 
   protected parseSpec() {
@@ -293,10 +347,18 @@ export class Flow {
 
     this.printStatus();
 
-    this.startReadyTasks();
+    if (this.runStatus.state === FlowState.Running) {
+      this.startReadyTasks();
 
-    if (!this.isRunning()) {
-      this.flowFinished();
+      if (!this.isRunning()) {
+        this.flowFinished();
+      }
+    }
+
+    if (this.runStatus.state === FlowState.Pausing) {
+      if (!this.isRunning()) {
+        this.execTransition(FlowTransition.Paused);
+      }
     }
   }
 
