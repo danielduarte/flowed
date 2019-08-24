@@ -1,19 +1,16 @@
+import { debug as rawDebug } from 'debug';
 import { GenericValueMap } from '../src/types';
-import * as Examples from './examples';
+import * as Examples from './examples/index';
 import { ExampleMap } from './examples/types';
+const debug = rawDebug('yafe:test');
 
-describe('the examples', function() {
+describe('the example', function() {
   this.timeout('2.5s');
 
-  it('run without errors', () => {
-    type MapPromise = Promise<GenericValueMap>;
-    const promises: MapPromise[] = [];
-
-    Object.keys(Examples).forEach(exampleName => {
-      const exampleMap: ExampleMap = Examples;
-      promises.push(exampleMap[exampleName]());
+  Object.keys(Examples).forEach(exampleName => {
+    it(`${exampleName} runs without errors`, () => {
+      debug(`Running example: ${exampleName}`);
+      return (Examples as ExampleMap)[exampleName]();
     });
-
-    return Promise.all(promises);
   });
 });

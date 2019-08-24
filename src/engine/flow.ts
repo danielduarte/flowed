@@ -5,24 +5,24 @@ const debug = rawDebug('yafe:flow');
 import { FlowRunStatus, GenericValueMap, TaskResolverMap } from '../types';
 
 export enum FlowState {
-  Ready,
-  Running,
-  Finished,
-  Pausing,
-  Paused,
-  Stopping,
-  Stopped,
+  Ready = 'Ready',
+  Running = 'Running',
+  Finished = 'Finished',
+  Pausing = 'Pausing',
+  Paused = 'Paused',
+  Stopping = 'Stopping',
+  Stopped = 'Stopped',
 }
 
 export enum FlowTransition {
-  Start,
-  Finished,
-  Reset,
-  Pause,
-  Paused,
-  Resume,
-  Stop,
-  Stopped,
+  Start = 'Start',
+  Finished = 'Finished',
+  Reset = 'Reset',
+  Pause = 'Pause',
+  Paused = 'Paused',
+  Resume = 'Resume',
+  Stop = 'Stop',
+  Stopped = 'Stopped',
 }
 
 export class Flow {
@@ -36,14 +36,23 @@ export class Flow {
     Ready: {
       Start: {
         newState: FlowState.Running,
-        action: () => {},
+        action: () => {
+          this.startReadyTasks();
+
+          // Notify flow finished when flow has no tasks
+          if (Object.keys(this.spec.tasks).length === 0) {
+            this.flowFinished();
+          }
+        },
       },
     },
     Running: {
-      Finish: {
+      Finished: {
         // Automatic transition
         newState: FlowState.Finished,
-        action: () => {},
+        action: () => {
+          this.runStatus.resolveFlowCallback(this.runStatus.results);
+        },
       },
       Paused: {
         newState: FlowState.Pausing,
@@ -57,7 +66,9 @@ export class Flow {
     Finished: {
       Reset: {
         newState: FlowState.Ready,
-        action: () => {},
+        action: () => {
+          this.initRunStatus();
+        },
       },
     },
     Pausing: {
@@ -95,19 +106,7 @@ export class Flow {
   public constructor(spec: FlowSpec) {
     this.spec = spec;
     this.tasks = {};
-    this.runStatus = {
-      state: FlowState.Ready,
-      runningTasks: [],
-      tasksReady: [],
-      tasksByReq: {},
-      resolvers: {},
-      expectedResults: [],
-      results: {},
-      // tslint:disable-next-line:no-empty
-      resolveFlowCallback: (results: GenericValueMap) => {
-        throw new Error('Flow resolution callback must be overwritten.');
-      },
-    };
+    this.runStatus = new FlowRunStatus();
 
     this.parseSpec();
   }
@@ -132,44 +131,6 @@ export class Flow {
     this.execTransition(FlowTransition.Reset);
   }
 
-  public resetRunStatus() {
-    // @todo Avoid initializing twice.
-    this.runStatus = {
-      state: FlowState.Ready,
-      runningTasks: [],
-      tasksReady: [],
-      tasksByReq: {},
-      resolvers: {},
-      expectedResults: [],
-      results: {},
-      // tslint:disable-next-line:no-empty
-      resolveFlowCallback: (results: GenericValueMap) => {
-        throw new Error('Flow resolution callback must be overwritten.');
-      },
-    };
-
-    for (const taskCode in this.tasks) {
-      if (this.tasks.hasOwnProperty(taskCode)) {
-        const task = this.tasks[taskCode];
-        task.resetRunStatus();
-
-        if (task.isReadyToRun()) {
-          this.runStatus.tasksReady.push(task);
-        }
-
-        const taskReqs = task.getSpec().requires;
-        for (const req of taskReqs) {
-          if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
-            this.runStatus.tasksByReq[req] = {};
-          }
-          this.runStatus.tasksByReq[req][task.getCode()] = task;
-        }
-      }
-    }
-
-    this.printStatus();
-  }
-
   public run(
     params: GenericValueMap = {},
     expectedResults: string[] = [],
@@ -185,12 +146,7 @@ export class Flow {
     });
 
     this.supplyParameters(params);
-    this.startReadyTasks();
-
-    // Notify flow finished when flow has no tasks
-    if (Object.keys(this.spec.tasks).length === 0) {
-      this.flowFinished(this.runStatus.results);
-    }
+    this.start();
 
     return resultPromise;
   }
@@ -199,7 +155,12 @@ export class Flow {
     return this.runStatus.runningTasks.length > 0;
   }
 
-  public supplyResult(resultName: string, result: any) {
+  public printStatus() {
+    // Uncomment to debug
+    // console.log('▣ Run status:', this.runStatus);
+  }
+
+  protected supplyResult(resultName: string, result: any) {
     const suppliesSomeTask = this.runStatus.tasksByReq.hasOwnProperty(resultName);
 
     // Checks if the task result is required by other tasks.
@@ -229,10 +190,32 @@ export class Flow {
     }
   }
 
-  public printStatus() {
-    // Uncomment to debug
-    // console.log('▣ Run status:', this.runStatus);
+  protected initRunStatus() {
+    // @todo Avoid initializing twice.
+    this.runStatus = new FlowRunStatus();
+
+    for (const taskCode in this.tasks) {
+      if (this.tasks.hasOwnProperty(taskCode)) {
+        const task = this.tasks[taskCode];
+        task.resetRunStatus();
+
+        if (task.isReadyToRun()) {
+          this.runStatus.tasksReady.push(task);
+        }
+
+        const taskReqs = task.getSpec().requires;
+        for (const req of taskReqs) {
+          if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
+            this.runStatus.tasksByReq[req] = {};
+          }
+          this.runStatus.tasksByReq[req][task.getCode()] = task;
+        }
+      }
+    }
+
+    this.printStatus();
   }
+
   protected execTransition(transition: FlowTransition) {
     const currentState = this.runStatus.state;
     const possibleTransitions = this.transitions[currentState];
@@ -244,6 +227,7 @@ export class Flow {
     this.runStatus.state = transitionToRun.newState;
     transitionToRun.action();
   }
+
   protected parseSpec() {
     for (const taskCode in this.spec.tasks) {
       if (this.spec.tasks.hasOwnProperty(taskCode)) {
@@ -254,7 +238,7 @@ export class Flow {
       }
     }
 
-    this.resetRunStatus();
+    this.initRunStatus();
   }
 
   protected supplyParameters(params: GenericValueMap) {
@@ -312,12 +296,12 @@ export class Flow {
     this.startReadyTasks();
 
     if (!this.isRunning()) {
-      this.flowFinished(this.runStatus.results);
+      this.flowFinished();
     }
   }
 
-  protected flowFinished(results: GenericValueMap) {
-    debug('◼ Flow finished with results:', results);
-    this.runStatus.resolveFlowCallback(results);
+  protected flowFinished() {
+    debug('◼ Flow finished with results:', this.runStatus.results);
+    this.execTransition(FlowTransition.Finished);
   }
 }

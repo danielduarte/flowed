@@ -8,8 +8,13 @@
     "types": ["node", "mocha"],
     "diagnostics": true,
     "pretty": true,
-    "removeComments": true
+    "removeComments": true,
+    "resolveJsonModule": true
   },
-  "include": ["src", "test"],
+  "include": [
+    "src",
+    "test",
+    "test/**/*.json"
+  ],
   "exclude": ["node_modules"]
 }

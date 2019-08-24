@@ -22,6 +22,14 @@ export class FlowManager {
   ): Promise<GenericValueMap> {
     return new Promise<GenericValueMap>(resolveFlow => {
       fs.readFile(flowSpecFilepath, 'utf8', (err, flowSpec) => {
+        // @todo Add test for non existing file
+
+        // @todo Add test for invalid JSON file
+
+        if (err) {
+          throw err;
+        }
+
         FlowManager.run(JSON.parse(flowSpec), params, expectedResults, resolvers).then(resolveFlow);
       });
     });

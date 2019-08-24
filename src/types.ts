@@ -18,22 +18,24 @@ export class TaskResolverMap {
   [key: string]: TaskResolverClass;
 }
 
-export interface FlowRunStatus {
-  state: FlowState;
+export class FlowRunStatus {
+  public state: FlowState = FlowState.Ready;
 
-  runningTasks: string[];
+  public runningTasks: string[] = [];
 
-  tasksReady: Task[];
+  public tasksReady: Task[] = [];
 
-  tasksByReq: {
+  public tasksByReq: {
     [req: string]: TaskMap;
+  } = {};
+
+  public resolvers: TaskResolverMap = {};
+
+  public expectedResults: string[] = [];
+
+  public results: GenericValueMap = {};
+
+  public resolveFlowCallback: (results: GenericValueMap) => void = (results: GenericValueMap) => {
+    throw new Error('Flow resolution callback must be overwritten.');
   };
-
-  resolvers: TaskResolverMap;
-
-  expectedResults: string[];
-
-  results: GenericValueMap;
-
-  resolveFlowCallback: (results: GenericValueMap) => void;
 }
