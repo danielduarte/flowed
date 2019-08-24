@@ -7,7 +7,6 @@ export interface GenericValueMap {
 
 export class TaskResolver {
   public exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
-    // tslint:disable-next-line:no-empty
     return new Promise<GenericValueMap>(() => {});
   }
 }
@@ -34,8 +33,4 @@ export class FlowRunStatus {
   public expectedResults: string[] = [];
 
   public results: GenericValueMap = {};
-
-  public resolveFlowCallback: (results: GenericValueMap) => void = (results: GenericValueMap) => {
-    throw new Error('Flow resolution callback must be overwritten.');
-  };
 }

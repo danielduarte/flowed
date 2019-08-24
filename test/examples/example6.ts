@@ -8,7 +8,7 @@ class TimerResolver {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve({ a: 1 });
-      }, 500);
+      }, 200);
     });
   }
 }

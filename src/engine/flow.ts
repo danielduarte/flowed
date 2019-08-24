@@ -26,11 +26,11 @@ export enum FlowTransition {
 }
 
 export class Flow {
-  protected spec: FlowSpec;
+  protected spec!: FlowSpec;
 
-  protected tasks: TaskMap;
+  protected tasks!: TaskMap;
 
-  protected runStatus: FlowRunStatus;
+  protected runStatus!: FlowRunStatus;
 
   protected finishResolve!: (result: GenericValueMap) => void;
   protected finishReject!: (result: GenericValueMap) => void;
@@ -40,20 +40,29 @@ export class Flow {
   protected stopReject!: (result: GenericValueMap) => void;
 
   protected transitions: {
-    [state: string]: { [transition: string]: { newState: FlowState; action: () => Promise<GenericValueMap> | void } };
+    [state: string]: {
+      [transition: string]: { newState: FlowState; action: (args: any[]) => Promise<GenericValueMap> | void };
+    };
   } = {
     Ready: {
       Start: {
         newState: FlowState.Running,
-        action: (): Promise<GenericValueMap> => {
+        action: ([params, expectedResults, resolvers]): Promise<GenericValueMap> => {
+          this.runStatus.expectedResults = [...expectedResults];
+          this.runStatus.resolvers = resolvers;
+
+          this.supplyParameters(params);
+
           this.startReadyTasks();
+
+          const finishPromise = this.createFinishPromise();
 
           // Notify flow finished when flow has no tasks
           if (Object.keys(this.spec.tasks).length === 0) {
-            this.flowFinished();
+            this.finishResolve(this.runStatus.results);
           }
 
-          return Promise.resolve(this.runStatus.results);
+          return finishPromise;
         },
       },
     },
@@ -61,9 +70,8 @@ export class Flow {
       Finished: {
         // Automatic transition
         newState: FlowState.Finished,
-        action: (): Promise<GenericValueMap> => {
-          this.runStatus.resolveFlowCallback(this.runStatus.results);
-          return Promise.resolve(this.runStatus.results);
+        action: (): void => {
+          this.finishResolve(this.runStatus.results);
         },
       },
       Pause: {
@@ -76,7 +84,8 @@ export class Flow {
       Stop: {
         newState: FlowState.Stopping,
         action: (): Promise<GenericValueMap> => {
-          return Promise.resolve(this.runStatus.results);
+          // @todo Send stop signal to tasks, when it is implemented
+          return this.createStopPromise();
         },
       },
     },
@@ -102,8 +111,8 @@ export class Flow {
       Stopped: {
         // Automatic transition
         newState: FlowState.Stopped,
-        action: (): Promise<GenericValueMap> => {
-          return Promise.resolve(this.runStatus.results);
+        action: (): void => {
+          this.stopResolve(this.runStatus.results);
         },
       },
     },
@@ -129,19 +138,16 @@ export class Flow {
     Stopped: {
       Reset: {
         newState: FlowState.Ready,
-        action: (): Promise<GenericValueMap> => {
-          return Promise.resolve(this.runStatus.results);
+        action: (): void => {
+          this.initRunStatus();
         },
       },
     },
   };
 
   public constructor(spec: FlowSpec) {
-    this.spec = spec;
-    this.tasks = {};
-    this.runStatus = new FlowRunStatus();
-
-    this.parseSpec();
+    this.parseSpec(spec);
+    this.initRunStatus();
   }
 
   public createPausePromise(): Promise<GenericValueMap> {
@@ -165,8 +171,12 @@ export class Flow {
     });
   }
 
-  public start() {
-    this.execTransition(FlowTransition.Start);
+  public start(
+    params: GenericValueMap = {},
+    expectedResults: string[] = [],
+    resolvers: TaskResolverMap = {},
+  ): Promise<GenericValueMap> {
+    return this.execTransition(FlowTransition.Start, [params, expectedResults, resolvers]) as Promise<GenericValueMap>;
   }
 
   public pause(): Promise<GenericValueMap> {
@@ -177,8 +187,8 @@ export class Flow {
     this.execTransition(FlowTransition.Resume);
   }
 
-  public stop() {
-    this.execTransition(FlowTransition.Stop);
+  public stop(): Promise<GenericValueMap> {
+    return this.execTransition(FlowTransition.Stop) as Promise<GenericValueMap>;
   }
 
   public reset() {
@@ -190,19 +200,7 @@ export class Flow {
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
   ): Promise<GenericValueMap> {
-    // @todo Check if it is not running already
-
-    this.runStatus.expectedResults = [...expectedResults];
-    this.runStatus.resolvers = resolvers;
-
-    const resultPromise = new Promise<GenericValueMap>(resolve => {
-      this.runStatus.resolveFlowCallback = resolve;
-    });
-
-    this.supplyParameters(params);
-    this.start();
-
-    return resultPromise;
+    return this.start(params, expectedResults, resolvers);
   }
 
   public isRunning() {
@@ -270,7 +268,7 @@ export class Flow {
     this.printStatus();
   }
 
-  protected execTransition(transition: FlowTransition): Promise<GenericValueMap> | void {
+  protected execTransition(transition: FlowTransition, args: any[] = []): Promise<GenericValueMap> | void {
     const currentState = this.runStatus.state;
     const possibleTransitions = this.transitions[currentState];
     if (!possibleTransitions.hasOwnProperty(transition)) {
@@ -279,20 +277,19 @@ export class Flow {
 
     const transitionToRun = possibleTransitions[transition];
     this.runStatus.state = transitionToRun.newState;
-    return transitionToRun.action();
+    return transitionToRun.action(args);
   }
 
-  protected parseSpec() {
+  protected parseSpec(spec: FlowSpec) {
+    this.spec = spec;
+    this.tasks = {};
+
     for (const taskCode in this.spec.tasks) {
       if (this.spec.tasks.hasOwnProperty(taskCode)) {
         const taskSpec = this.spec.tasks[taskCode];
-        const task = new Task(taskCode, taskSpec);
-
-        this.tasks[taskCode] = task;
+        this.tasks[taskCode] = new Task(taskCode, taskSpec);
       }
     }
-
-    this.initRunStatus();
   }
 
   protected supplyParameters(params: GenericValueMap) {
@@ -355,9 +352,11 @@ export class Flow {
       }
     }
 
-    if (this.runStatus.state === FlowState.Pausing) {
-      if (!this.isRunning()) {
+    if (!this.isRunning()) {
+      if (this.runStatus.state === FlowState.Pausing) {
         this.execTransition(FlowTransition.Paused);
+      } else if (this.runStatus.state === FlowState.Stopping) {
+        this.execTransition(FlowTransition.Stopped);
       }
     }
   }
