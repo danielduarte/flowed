@@ -3,7 +3,7 @@ import { debug as rawDebug } from 'debug';
 import { Flow } from '../src/engine/flow';
 import { Task } from '../src/engine/task';
 import { GenericValueMap, TaskResolverMap } from '../src/types';
-const debug = rawDebug('yafe:test');
+const debug = rawDebug('flowed:test');
 
 describe('the flow', () => {
   it('can be stopped', async () => {

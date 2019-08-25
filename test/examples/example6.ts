@@ -21,7 +21,7 @@ class DirectResolver {
 
 export const example6: ExampleFunction = () => {
   return FlowManager.runFromFile(
-    'test/examples/example6.yafe.json',
+    'test/examples/example6.flowed.json',
     {
       param1: 'PARAM1',
       param2: 'PARAM2',

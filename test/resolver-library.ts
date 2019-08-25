@@ -2,7 +2,7 @@ import { debug as rawDebug } from 'debug';
 import { FlowManager } from '../src/engine/flow-manager';
 import * as ResolverLibrary from '../src/resolver-library';
 import { GenericValueMap } from '../src/types';
-const debug = rawDebug('yafe:test');
+const debug = rawDebug('flowed:test');
 
 describe('the ResolverLibrary', () => {
   it('runs noop resolver', () => {

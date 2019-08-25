@@ -1,6 +1,6 @@
-# yafe
+# flowed
 
-Yet Another Flow Engine
+A fast and reliable flow manager for JS and TS.
 
 ## Examples
 

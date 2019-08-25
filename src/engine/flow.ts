@@ -2,7 +2,7 @@ import { debug as rawDebug } from 'debug';
 import { FlowSpec } from './specs';
 import { Task } from './task';
 import { TaskMap } from './task-types';
-const debug = rawDebug('yafe:flow');
+const debug = rawDebug('flowed:flow');
 import { GenericValueMap, TaskResolverMap } from '../types';
 import { FlowRunStatus, FlowState, FlowTransition } from './flow-types';
 
