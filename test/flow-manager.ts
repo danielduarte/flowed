@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { FlowManager } from '../src/engine/flow-manager';
-import { FlowSpec } from '../src/engine/flow-specs';
+import { FlowSpec } from '../src/engine/specs';
 import { Task } from '../src/engine/task';
 import { GenericValueMap, TaskResolverMap } from '../src/types';
 

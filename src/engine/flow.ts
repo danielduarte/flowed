@@ -1,29 +1,10 @@
 import { debug as rawDebug } from 'debug';
-import { FlowSpec } from './flow-specs';
-import { Task, TaskMap } from './task';
+import { FlowSpec } from './specs';
+import { Task } from './task';
+import { TaskMap } from './task-types';
 const debug = rawDebug('yafe:flow');
-import { FlowRunStatus, GenericValueMap, TaskResolverMap } from '../types';
-
-export enum FlowState {
-  Ready = 'Ready',
-  Running = 'Running',
-  Finished = 'Finished',
-  Pausing = 'Pausing',
-  Paused = 'Paused',
-  Stopping = 'Stopping',
-  Stopped = 'Stopped',
-}
-
-export enum FlowTransition {
-  Start = 'Start',
-  Finished = 'Finished',
-  Reset = 'Reset',
-  Pause = 'Pause',
-  Paused = 'Paused',
-  Resume = 'Resume',
-  Stop = 'Stop',
-  Stopped = 'Stopped',
-}
+import { GenericValueMap, TaskResolverMap } from '../types';
+import { FlowRunStatus, FlowState, FlowTransition } from './flow-types';
 
 export class Flow {
   protected spec!: FlowSpec;

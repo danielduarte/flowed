@@ -1,5 +1,6 @@
 import { GenericValueMap, TaskResolverClass } from '../types';
-import { TaskSpec } from './flow-specs';
+import { TaskSpec } from './specs';
+import { TaskMap, TaskResult, TaskRunStatus } from './task-types';
 
 export class Task {
   protected code: string;
@@ -126,26 +127,4 @@ export class Task {
 
     return results;
   }
-}
-
-// @todo Check if this is needed
-export class TaskResult {}
-
-export interface TaskMap {
-  [code: string]: Task;
-}
-
-export interface TaskRunStatus {
-  pendingReqs: string[];
-
-  solvedReqs: {
-    [name: string]: any;
-  };
-
-  // @todo Check if this is needed
-  pendingResults: string[];
-
-  solvedResults: {
-    [name: string]: any;
-  };
 }

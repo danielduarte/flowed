@@ -6,15 +6,10 @@
     "outDir": "./dist",
     "strict": true,
     "types": ["node", "mocha"],
-    "diagnostics": true,
     "pretty": true,
     "removeComments": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "src",
-    "test",
-    "test/**/*.json"
-  ],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

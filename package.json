@@ -11,6 +11,7 @@
   "author": "Daniel Duarte <danieldd.ar@gmail.com>",
   "license": "MIT",
   "repository": "https://github.com/daniel-duarte/yafe",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "npm test",
@@ -20,7 +21,7 @@
     "format": "tslint -p tsconfig.json -t verbose --fix && prettier --write \"src/**/*.ts\" \"src/**/*.js\" && prettier --write \"test/**/*.ts\" \"test/**/*.js\""
   },
   "files": [
-    "dist/**/*"
+    "dist"
   ],
   "dependencies": {
     "@types/debug": "^4.1.5",
