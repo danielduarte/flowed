@@ -5,7 +5,7 @@
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
-    "types": ["node", "mocha"],
+    "types": ["node", "mocha", "debug"],
     "pretty": true,
     "removeComments": true,
     "resolveJsonModule": true

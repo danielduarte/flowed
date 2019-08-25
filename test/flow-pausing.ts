@@ -1,8 +1,7 @@
 import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
-import { Flow } from '../src/engine/flow';
-import { Task } from '../src/engine/task';
-import { GenericValueMap, TaskResolverMap } from '../src/types';
+import { GenericValueMap } from '../src';
+import { Flow, Task } from '../src/engine';
 const debug = rawDebug('flowed:test');
 
 describe('the flow', () => {
@@ -68,6 +67,7 @@ describe('the flow', () => {
         return new Promise<GenericValueMap>(resolve => {
           setTimeout(() => {
             if (task.getCode() === 'task2') {
+              // noinspection JSIgnoredPromiseFromCall
               pauseFlow();
             }
 

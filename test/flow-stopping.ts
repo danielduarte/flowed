@@ -1,8 +1,7 @@
 import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
-import { Flow } from '../src/engine/flow';
-import { Task } from '../src/engine/task';
-import { GenericValueMap, TaskResolverMap } from '../src/types';
+import { GenericValueMap } from '../src';
+import { Flow, Task } from '../src/engine';
 const debug = rawDebug('flowed:test');
 
 describe('the flow', () => {
@@ -60,6 +59,7 @@ describe('the flow', () => {
           setTimeout(() => {
             if (task.getCode() === 'task2' && !stoppedOnce) {
               stoppedOnce = true;
+              // noinspection JSIgnoredPromiseFromCall
               stopFlow();
             }
 
@@ -103,6 +103,7 @@ describe('the flow', () => {
       expect(finalResult.finalStr).to.equal(text1 + text2 + text3 + text4);
     };
 
+    // noinspection JSIgnoredPromiseFromCall
     flow.run(runParams, expectedResults, resolvers);
   });
 });

@@ -1,7 +1,7 @@
 import { debug as rawDebug } from 'debug';
-import { FlowManager } from '../src/engine/flow-manager';
+import { GenericValueMap } from '../src';
+import { FlowManager } from '../src/engine';
 import * as ResolverLibrary from '../src/resolver-library';
-import { GenericValueMap } from '../src/types';
 const debug = rawDebug('flowed:test');
 
 describe('the ResolverLibrary', () => {
@@ -64,7 +64,7 @@ describe('the ResolverLibrary', () => {
       },
     };
 
-    const subFlowResulvers = {
+    const subFlowResolvers = {
       noop: ResolverLibrary.NoopResolver,
     };
 
@@ -93,7 +93,7 @@ describe('the ResolverLibrary', () => {
         'subflow-spec': subFlowSpec,
         'subflow-params': {},
         'subflow-expected-results': [],
-        'subflow-resolvers': subFlowResulvers,
+        'subflow-resolvers': subFlowResolvers,
       },
       ['subflow-result'],
       {

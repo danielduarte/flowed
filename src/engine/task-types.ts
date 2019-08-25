@@ -1,8 +1,6 @@
 // @todo Check if this is needed
 import { Task } from './task';
 
-export class TaskResult {}
-
 export interface TaskMap {
   [code: string]: Task;
 }

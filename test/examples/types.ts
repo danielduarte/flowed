@@ -1,4 +1,4 @@
-import { GenericValueMap } from '../../src/types';
+import { GenericValueMap } from '../../src';
 
 export type ExampleFunction = () => Promise<GenericValueMap>;
 

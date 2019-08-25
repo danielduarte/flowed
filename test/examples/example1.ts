@@ -1,6 +1,6 @@
-import { FlowManager } from '../../src/engine/flow-manager';
-import { Task } from '../../src/engine/task';
-import { GenericValueMap } from '../../src/types';
+import { GenericValueMap } from '../../src';
+import { FlowManager } from '../../src/engine';
+import { Task } from '../../src/engine';
 import { ExampleFunction } from './types';
 
 class TimerResolver {
@@ -19,6 +19,7 @@ class DirectResolver {
   }
 }
 
+// noinspection JSUnusedGlobalSymbols
 export const example1: ExampleFunction = () => {
   return FlowManager.run(
     {

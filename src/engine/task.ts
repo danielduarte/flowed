@@ -1,6 +1,6 @@
 import { GenericValueMap, TaskResolverClass } from '../types';
 import { TaskSpec } from './specs';
-import { TaskMap, TaskResult, TaskRunStatus } from './task-types';
+import { TaskRunStatus } from './task-types';
 
 export class Task {
   protected code: string;
@@ -106,6 +106,7 @@ export class Task {
     for (const resolverParamName in this.spec.resolver.params) {
       if (this.spec.resolver.params.hasOwnProperty(resolverParamName)) {
         const taskParamName = this.spec.resolver.params[resolverParamName];
+        // noinspection UnnecessaryLocalVariableJS
         const paramValue = solvedReqs[taskParamName];
         params[resolverParamName] = paramValue;
       }
@@ -120,6 +121,7 @@ export class Task {
     for (const resolverResultName in this.spec.resolver.results) {
       if (this.spec.resolver.results.hasOwnProperty(resolverResultName)) {
         const taskResultName = this.spec.resolver.results[resolverResultName];
+        // noinspection UnnecessaryLocalVariableJS
         const resolverResult = resolverResults[resolverResultName];
         results[taskResultName] = resolverResult;
       }
