@@ -1,12 +1,18 @@
 {
   "name": "flowed",
-  "version": "1.0.0",
-  "description": "Yet Another Flow Engine",
+  "version": "1.0.1",
+  "description": "A fast and reliable flow manager for JS and TS",
   "keywords": [
     "flow",
     "engine",
     "task",
-    "dependency"
+    "dependency",
+    "flowframework",
+    "task-manager",
+    "task-runner",
+    "flowengine",
+    "flow-engine",
+    "flow-execution"
   ],
   "author": "Daniel Duarte <danieldd.ar@gmail.com>",
   "license": "MIT",
