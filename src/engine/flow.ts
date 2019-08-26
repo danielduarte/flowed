@@ -4,108 +4,41 @@ import { Task } from './task';
 import { TaskMap } from './task-types';
 const debug = rawDebug('flowed:flow');
 import { GenericValueMap, TaskResolverMap } from '../types';
-import { FlowReady } from './flow-state/flow-ready';
-import { FlowState } from './flow-state/flow-state';
-import { FlowRunStatus, FlowStateEnum, FlowTransitionEnum } from './flow-types';
+import { FlowReady, FlowState } from './flow-state';
+import { FlowRunStatus, FlowStateEnum } from './flow-types';
 
 export class Flow {
-  public spec!: FlowSpec;
+  protected spec!: FlowSpec;
 
-  public state!: FlowState;
+  protected state!: FlowState;
 
-  public runStatus!: FlowRunStatus;
+  protected runStatus!: FlowRunStatus;
 
-  public finishResolve!: (result: GenericValueMap) => void;
-  public pauseResolve!: (result: GenericValueMap) => void;
-  public stopResolve!: (result: GenericValueMap) => void;
+  protected finishResolve!: (result: GenericValueMap) => void;
+  protected pauseResolve!: (result: GenericValueMap) => void;
+  protected stopResolve!: (result: GenericValueMap) => void;
 
   protected tasks!: TaskMap;
   protected finishReject!: (result: GenericValueMap) => void;
   protected pauseReject!: (result: GenericValueMap) => void;
   protected stopReject!: (result: GenericValueMap) => void;
 
-  protected transitions: {
-    [state: string]: {
-      [transition: string]: { newState: FlowStateEnum; action: (args: any[]) => Promise<GenericValueMap> | void };
-    };
-  } = {
-    Ready: {
-      Start: {
-        newState: FlowStateEnum.Running,
-        action: ([params, expectedResults, resolvers]): Promise<GenericValueMap> => {
-          return this.state.start(this, params, expectedResults, resolvers);
-        },
-      },
-    },
-    Running: {
-      Finished: {
-        // Automatic transition
-        newState: FlowStateEnum.Finished,
-        action: (): void => {
-          this.state.finished(this);
-        },
-      },
-      Pause: {
-        newState: FlowStateEnum.Pausing,
-        action: (): Promise<GenericValueMap> => {
-          return this.state.pause(this);
-        },
-      },
-      Stop: {
-        newState: FlowStateEnum.Stopping,
-        action: (): Promise<GenericValueMap> => {
-          return this.state.stop(this);
-        },
-      },
-    },
-    Finished: {
-      Reset: {
-        newState: FlowStateEnum.Ready,
-        action: () => {
-          this.state.reset(this);
-        },
-      },
-    },
-    Pausing: {
-      Paused: {
-        // Automatic transition
-        newState: FlowStateEnum.Paused,
-        action: (): void => {
-          this.state.paused(this);
-        },
-      },
-    },
-    Stopping: {
-      Stopped: {
-        // Automatic transition
-        newState: FlowStateEnum.Stopped,
-        action: (): void => {
-          this.state.stopped(this);
-        },
-      },
-    },
-    Paused: {
-      Stop: {
-        newState: FlowStateEnum.Stopping,
-        action: (): Promise<GenericValueMap> => {
-          return this.state.stop(this);
-        },
-      },
-      Resume: {
-        newState: FlowStateEnum.Running,
-        action: (): void => {
-          this.state.resume(this);
-        },
-      },
-    },
-    Stopped: {
-      Reset: {
-        newState: FlowStateEnum.Ready,
-        action: (): void => {
-          this.state.reset(this);
-        },
-      },
-    },
+  protected protectedScope = {
+    execFinishResolve: this.execFinishResolve,
+    execPauseResolve: this.execPauseResolve,
+    execStopResolve: this.execStopResolve,
+
+    setExpectedResults: this.setExpectedResults,
+    setResolvers: this.setResolvers,
+    setState: this.setState,
+
+    createPausePromise: this.createPausePromise,
+    createStopPromise: this.createStopPromise,
+    createFinishPromise: this.createFinishPromise,
+    initRunStatus: this.initRunStatus,
+    startReadyTasks: this.startReadyTasks,
+    supplyParameters: this.supplyParameters,
+    finished: this.finished,
   };
 
   public constructor(spec: FlowSpec) {
@@ -113,71 +46,88 @@ export class Flow {
     this.initRunStatus();
   }
 
-  public createPausePromise(): Promise<GenericValueMap> {
-    return new Promise<GenericValueMap>((resolve, reject) => {
-      this.pauseResolve = resolve;
-      this.pauseReject = reject;
-    });
-  }
-
-  public createStopPromise(): Promise<GenericValueMap> {
-    return new Promise<GenericValueMap>((resolve, reject) => {
-      this.stopResolve = resolve;
-      this.stopReject = reject;
-    });
-  }
-
-  public createFinishPromise(): Promise<GenericValueMap> {
-    return new Promise<GenericValueMap>((resolve, reject) => {
-      this.finishResolve = resolve;
-      this.finishReject = reject;
-    });
-  }
-
   public start(
     params: GenericValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
   ): Promise<GenericValueMap> {
-    return this.execTransition(FlowTransitionEnum.Start, [params, expectedResults, resolvers]) as Promise<
-      GenericValueMap
-    >;
+    return this.state.start(this, this.protectedScope, params, expectedResults, resolvers);
   }
 
   public pause(): Promise<GenericValueMap> {
-    return this.execTransition(FlowTransitionEnum.Pause) as Promise<GenericValueMap>;
+    return this.state.pause(this, this.protectedScope);
   }
 
   public resume() {
-    this.execTransition(FlowTransitionEnum.Resume);
+    this.state.resume(this, this.protectedScope);
   }
 
   public stop(): Promise<GenericValueMap> {
-    return this.execTransition(FlowTransitionEnum.Stop) as Promise<GenericValueMap>;
+    return this.state.stop(this, this.protectedScope);
   }
 
   public reset() {
-    this.execTransition(FlowTransitionEnum.Reset);
-  }
-
-  public run(
-    params: GenericValueMap = {},
-    expectedResults: string[] = [],
-    resolvers: TaskResolverMap = {},
-  ): Promise<GenericValueMap> {
-    return this.start(params, expectedResults, resolvers);
+    this.state.reset(this, this.protectedScope);
   }
 
   public isRunning() {
     return this.runStatus.runningTasks.length > 0;
   }
 
-  public printStatus() {
-    // Uncomment to debug
-    // console.log('▣ Run status:', this.runStatus);
+  public getSpec() {
+    return this.spec;
   }
 
-  public supplyParameters(params: GenericValueMap) {
+  public getResults() {
+    return this.runStatus.results;
+  }
+
+  protected setState(newState: FlowState) {
+    this.state = newState;
+  }
+
+  protected createPausePromise(): Promise<GenericValueMap> {
+    return new Promise<GenericValueMap>((resolve, reject) => {
+      this.pauseResolve = resolve;
+      this.pauseReject = reject;
+    });
+  }
+
+  protected createStopPromise(): Promise<GenericValueMap> {
+    return new Promise<GenericValueMap>((resolve, reject) => {
+      this.stopResolve = resolve;
+      this.stopReject = reject;
+    });
+  }
+
+  protected createFinishPromise(): Promise<GenericValueMap> {
+    return new Promise<GenericValueMap>((resolve, reject) => {
+      this.finishResolve = resolve;
+      this.finishReject = reject;
+    });
+  }
+
+  protected execFinishResolve() {
+    this.finishResolve(this.runStatus.results);
+  }
+
+  protected execPauseResolve() {
+    this.pauseResolve(this.runStatus.results);
+  }
+
+  protected execStopResolve() {
+    this.stopResolve(this.runStatus.results);
+  }
+
+  protected setExpectedResults(expectedResults: string[] = []) {
+    this.runStatus.expectedResults = [...expectedResults];
+  }
+
+  protected setResolvers(resolvers: TaskResolverMap = {}) {
+    this.runStatus.resolvers = resolvers;
+  }
+
+  protected supplyParameters(params: GenericValueMap) {
     for (const paramCode in params) {
       if (params.hasOwnProperty(paramCode)) {
         const paramValue = params[paramCode];
@@ -186,7 +136,7 @@ export class Flow {
     }
   }
 
-  public startReadyTasks() {
+  protected startReadyTasks() {
     const readyTasks = this.runStatus.tasksReady;
     this.runStatus.tasksReady = [];
 
@@ -213,7 +163,7 @@ export class Flow {
     }
   }
 
-  public initRunStatus() {
+  protected initRunStatus() {
     // @todo Avoid initializing twice.
 
     this.state = FlowReady.getInstance();
@@ -238,13 +188,6 @@ export class Flow {
         }
       }
     }
-
-    this.printStatus();
-  }
-
-  public flowFinished() {
-    debug('◼ Flow finished with results:', this.runStatus.results);
-    this.execTransition(FlowTransitionEnum.Finished);
   }
 
   protected supplyResult(resultName: string, result: any) {
@@ -277,18 +220,6 @@ export class Flow {
     }
   }
 
-  protected execTransition(transition: FlowTransitionEnum, args: any[] = []): Promise<GenericValueMap> | void {
-    const currentState = this.runStatus.state;
-    const possibleTransitions = this.transitions[currentState];
-    if (!possibleTransitions.hasOwnProperty(transition)) {
-      throw new Error(`Cannot execute transition ${transition} in current state ${currentState}.`);
-    }
-
-    const transitionToRun = possibleTransitions[transition];
-    this.runStatus.state = transitionToRun.newState;
-    return transitionToRun.action(args);
-  }
-
   protected parseSpec(spec: FlowSpec) {
     this.spec = spec;
     this.tasks = {};
@@ -315,22 +246,26 @@ export class Flow {
       this.supplyResult(resultName, result);
     }
 
-    this.printStatus();
-
-    if (this.runStatus.state === FlowStateEnum.Running) {
+    if (this.state.getStateCode() === FlowStateEnum.Running) {
       this.startReadyTasks();
 
       if (!this.isRunning()) {
-        this.flowFinished();
+        this.state.finished(this, this.protectedScope);
       }
     }
 
     if (!this.isRunning()) {
-      if (this.runStatus.state === FlowStateEnum.Pausing) {
-        this.execTransition(FlowTransitionEnum.Paused);
-      } else if (this.runStatus.state === FlowStateEnum.Stopping) {
-        this.execTransition(FlowTransitionEnum.Stopped);
+      const currentState = this.state.getStateCode();
+
+      if (currentState === FlowStateEnum.Pausing) {
+        this.state.paused(this, this.protectedScope);
+      } else if (currentState === FlowStateEnum.Stopping) {
+        this.state.stopped(this, this.protectedScope);
       }
     }
+  }
+
+  protected finished() {
+    this.state.finished(this, this.protectedScope);
   }
 }

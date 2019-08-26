@@ -79,7 +79,7 @@ describe('the flow', () => {
       }
     }
 
-    const finishPromise = flow.run(
+    const finishPromise = flow.start(
       {
         initialStr: '',
         text1,

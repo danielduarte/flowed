@@ -24,8 +24,6 @@ export enum FlowTransitionEnum {
 }
 
 export class FlowRunStatus {
-  public state: FlowStateEnum = FlowStateEnum.Ready;
-
   public runningTasks: string[] = [];
 
   public tasksReady: Task[] = [];

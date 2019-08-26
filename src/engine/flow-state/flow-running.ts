@@ -1,3 +1,4 @@
+import { debug as rawDebug } from 'debug';
 import { FlowFinished } from '.';
 import { FlowPausing } from '.';
 import { FlowState } from '.';
@@ -5,6 +6,7 @@ import { FlowStopping } from '.';
 import { Flow } from '../';
 import { GenericValueMap } from '../../types';
 import { FlowStateEnum } from '../flow-types';
+const debug = rawDebug('flowed:flow');
 
 export class FlowRunning extends FlowState {
   public static getInstance(): FlowState {
@@ -13,29 +15,32 @@ export class FlowRunning extends FlowState {
 
   protected static instance: FlowState;
 
-  protected static stateCode = FlowStateEnum.Running;
-
   private constructor() {
     super();
   }
 
-  public pause(flow: Flow): Promise<GenericValueMap> {
-    flow.state = FlowPausing.getInstance();
+  public getStateCode(): FlowStateEnum {
+    return FlowStateEnum.Running;
+  }
+
+  public pause(flow: Flow, flowProtectedScope: any): Promise<GenericValueMap> {
+    flowProtectedScope.setState.call(flow, FlowPausing.getInstance());
 
     // @todo Send pause signal to tasks, when it is implemented
-    return flow.createPausePromise();
+    return flowProtectedScope.createPausePromise.call(flow);
   }
 
-  public stop(flow: Flow): Promise<GenericValueMap> {
-    flow.state = FlowStopping.getInstance();
+  public stop(flow: Flow, flowProtectedScope: any): Promise<GenericValueMap> {
+    flowProtectedScope.setState.call(flow, FlowStopping.getInstance());
 
     // @todo Send stop signal to tasks, when it is implemented
-    return flow.createStopPromise();
+    return flowProtectedScope.createStopPromise.call(flow);
   }
 
-  public finished(flow: Flow) {
-    flow.state = FlowFinished.getInstance();
+  public finished(flow: Flow, flowProtectedScope: any) {
+    debug('◼ Flow finished with results:', flow.getResults());
 
-    flow.finishResolve(flow.runStatus.results);
+    flowProtectedScope.setState.call(flow, FlowFinished.getInstance());
+    flowProtectedScope.execFinishResolve.call(flow);
   }
 }

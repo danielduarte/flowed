@@ -12,26 +12,28 @@ export class FlowPaused extends FlowState {
 
   protected static instance: FlowState;
 
-  protected static stateCode = FlowStateEnum.Paused;
-
   private constructor() {
     super();
   }
 
-  public resume(flow: Flow) {
-    flow.state = FlowRunning.getInstance();
+  public getStateCode(): FlowStateEnum {
+    return FlowStateEnum.Paused;
+  }
+
+  public resume(flow: Flow, flowProtectedScope: any) {
+    flowProtectedScope.setState.call(flow, FlowRunning.getInstance());
 
     // @todo Send resume signal to tasks, when it is implemented
-    flow.startReadyTasks();
+    flowProtectedScope.startReadyTasks.call(flow);
 
     if (!flow.isRunning()) {
-      flow.flowFinished();
+      flowProtectedScope.finished.call(flow);
     }
   }
 
-  public stop(flow: Flow): Promise<GenericValueMap> {
-    flow.state = FlowStopping.getInstance();
+  public stop(flow: Flow, flowProtectedScope: any): Promise<GenericValueMap> {
+    flowProtectedScope.setState.call(flow, FlowStopping.getInstance());
 
-    return Promise.resolve(flow.runStatus.results);
+    return Promise.resolve(flow.getResults());
   }
 }

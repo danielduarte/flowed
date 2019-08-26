@@ -10,15 +10,16 @@ export class FlowStopped extends FlowState {
 
   protected static instance: FlowState;
 
-  protected static stateCode = FlowStateEnum.Stopped;
-
   private constructor() {
     super();
   }
 
-  public reset(flow: Flow) {
-    flow.state = FlowReady.getInstance();
+  public getStateCode(): FlowStateEnum {
+    return FlowStateEnum.Stopped;
+  }
 
-    flow.initRunStatus();
+  public reset(flow: Flow, flowProtectedScope: any) {
+    flowProtectedScope.setState.call(flow, FlowReady.getInstance());
+    flowProtectedScope.initRunStatus.call(flow);
   }
 }

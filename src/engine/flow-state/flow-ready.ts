@@ -3,6 +3,7 @@ import { FlowState } from '.';
 import { Flow } from '../';
 import { GenericValueMap, TaskResolverMap } from '../../types';
 import { FlowStateEnum } from '../flow-types';
+import { FlowPausing } from './index';
 
 export class FlowReady extends FlowState {
   public static getInstance(): FlowState {
@@ -11,32 +12,33 @@ export class FlowReady extends FlowState {
 
   protected static instance: FlowState;
 
-  protected static stateCode = FlowStateEnum.Ready;
-
   private constructor() {
     super();
   }
 
+  public getStateCode(): FlowStateEnum {
+    return FlowStateEnum.Ready;
+  }
+
   public start(
     flow: Flow,
+    flowProtectedScope: any,
     params: GenericValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
   ): Promise<GenericValueMap> {
-    flow.state = FlowRunning.getInstance();
+    flowProtectedScope.setState.call(flow, FlowRunning.getInstance());
 
-    flow.runStatus.expectedResults = [...expectedResults];
-    flow.runStatus.resolvers = resolvers;
+    flowProtectedScope.setExpectedResults.call(flow, [...expectedResults]);
+    flowProtectedScope.setResolvers.call(flow, resolvers);
+    flowProtectedScope.supplyParameters.call(flow, params);
+    flowProtectedScope.startReadyTasks.call(flow);
 
-    flow.supplyParameters(params);
-
-    flow.startReadyTasks();
-
-    const finishPromise = flow.createFinishPromise();
+    const finishPromise = flowProtectedScope.createFinishPromise.call(flow);
 
     // Notify flow finished when flow has no tasks
-    if (Object.keys(flow.spec.tasks).length === 0) {
-      flow.finishResolve(flow.runStatus.results);
+    if (Object.keys(flow.getSpec().tasks).length === 0) {
+      flowProtectedScope.execFinishResolve.call(flow);
     }
 
     return finishPromise;

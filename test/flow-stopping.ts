@@ -104,6 +104,6 @@ describe('the flow', () => {
     };
 
     // noinspection JSIgnoredPromiseFromCall
-    flow.run(runParams, expectedResults, resolvers);
+    flow.start(runParams, expectedResults, resolvers);
   });
 });

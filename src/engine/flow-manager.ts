@@ -11,7 +11,7 @@ export class FlowManager {
     resolvers: TaskResolverMap = {},
   ): Promise<GenericValueMap> {
     const flow = new Flow(flowSpec);
-    return flow.run(params, expectedResults, resolvers);
+    return flow.start(params, expectedResults, resolvers);
   }
 
   public static runFromFile(

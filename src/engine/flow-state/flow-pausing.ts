@@ -1,7 +1,8 @@
-import { FlowPaused } from '.';
-import { FlowState } from '.';
-import { Flow } from '../';
+import { Flow } from '../flow';
 import { FlowStateEnum } from '../flow-types';
+import { FlowPaused } from './flow-paused';
+import { FlowState } from './flow-state';
+import { FlowFinished } from './index';
 
 export class FlowPausing extends FlowState {
   public static getInstance(): FlowState {
@@ -10,15 +11,16 @@ export class FlowPausing extends FlowState {
 
   protected static instance: FlowState;
 
-  protected static stateCode = FlowStateEnum.Pausing;
-
   private constructor() {
     super();
   }
 
-  public paused(flow: Flow) {
-    flow.state = FlowPaused.getInstance();
+  public getStateCode(): FlowStateEnum {
+    return FlowStateEnum.Pausing;
+  }
 
-    flow.pauseResolve(flow.runStatus.results);
+  public paused(flow: Flow, flowProtectedScope: any) {
+    flowProtectedScope.setState.call(flow, FlowPaused.getInstance());
+    flowProtectedScope.execPauseResolve.call(flow);
   }
 }
