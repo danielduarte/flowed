@@ -4,123 +4,105 @@ import { Task } from './task';
 import { TaskMap } from './task-types';
 const debug = rawDebug('flowed:flow');
 import { GenericValueMap, TaskResolverMap } from '../types';
-import { FlowRunStatus, FlowState, FlowTransition } from './flow-types';
+import { FlowReady } from './flow-state/flow-ready';
+import { FlowState } from './flow-state/flow-state';
+import { FlowRunStatus, FlowStateEnum, FlowTransitionEnum } from './flow-types';
 
 export class Flow {
-  protected spec!: FlowSpec;
+  public spec!: FlowSpec;
+
+  public state!: FlowState;
+
+  public runStatus!: FlowRunStatus;
+
+  public finishResolve!: (result: GenericValueMap) => void;
+  public pauseResolve!: (result: GenericValueMap) => void;
+  public stopResolve!: (result: GenericValueMap) => void;
 
   protected tasks!: TaskMap;
-
-  protected runStatus!: FlowRunStatus;
-
-  protected finishResolve!: (result: GenericValueMap) => void;
   protected finishReject!: (result: GenericValueMap) => void;
-  protected pauseResolve!: (result: GenericValueMap) => void;
   protected pauseReject!: (result: GenericValueMap) => void;
-  protected stopResolve!: (result: GenericValueMap) => void;
   protected stopReject!: (result: GenericValueMap) => void;
 
   protected transitions: {
     [state: string]: {
-      [transition: string]: { newState: FlowState; action: (args: any[]) => Promise<GenericValueMap> | void };
+      [transition: string]: { newState: FlowStateEnum; action: (args: any[]) => Promise<GenericValueMap> | void };
     };
   } = {
     Ready: {
       Start: {
-        newState: FlowState.Running,
+        newState: FlowStateEnum.Running,
         action: ([params, expectedResults, resolvers]): Promise<GenericValueMap> => {
-          this.runStatus.expectedResults = [...expectedResults];
-          this.runStatus.resolvers = resolvers;
-
-          this.supplyParameters(params);
-
-          this.startReadyTasks();
-
-          const finishPromise = this.createFinishPromise();
-
-          // Notify flow finished when flow has no tasks
-          if (Object.keys(this.spec.tasks).length === 0) {
-            this.finishResolve(this.runStatus.results);
-          }
-
-          return finishPromise;
+          return this.state.start(this, params, expectedResults, resolvers);
         },
       },
     },
     Running: {
       Finished: {
         // Automatic transition
-        newState: FlowState.Finished,
+        newState: FlowStateEnum.Finished,
         action: (): void => {
-          this.finishResolve(this.runStatus.results);
+          this.state.finished(this);
         },
       },
       Pause: {
-        newState: FlowState.Pausing,
+        newState: FlowStateEnum.Pausing,
         action: (): Promise<GenericValueMap> => {
-          // @todo Send pause signal to tasks, when it is implemented
-          return this.createPausePromise();
+          return this.state.pause(this);
         },
       },
       Stop: {
-        newState: FlowState.Stopping,
+        newState: FlowStateEnum.Stopping,
         action: (): Promise<GenericValueMap> => {
-          // @todo Send stop signal to tasks, when it is implemented
-          return this.createStopPromise();
+          return this.state.stop(this);
         },
       },
     },
     Finished: {
       Reset: {
-        newState: FlowState.Ready,
-        action: (): Promise<GenericValueMap> => {
-          this.initRunStatus();
-          return Promise.resolve(this.runStatus.results);
+        newState: FlowStateEnum.Ready,
+        action: () => {
+          this.state.reset(this);
         },
       },
     },
     Pausing: {
       Paused: {
         // Automatic transition
-        newState: FlowState.Paused,
+        newState: FlowStateEnum.Paused,
         action: (): void => {
-          this.pauseResolve(this.runStatus.results);
+          this.state.paused(this);
         },
       },
     },
     Stopping: {
       Stopped: {
         // Automatic transition
-        newState: FlowState.Stopped,
+        newState: FlowStateEnum.Stopped,
         action: (): void => {
-          this.stopResolve(this.runStatus.results);
+          this.state.stopped(this);
         },
       },
     },
     Paused: {
       Stop: {
-        newState: FlowState.Stopping,
+        newState: FlowStateEnum.Stopping,
         action: (): Promise<GenericValueMap> => {
-          return Promise.resolve(this.runStatus.results);
+          return this.state.stop(this);
         },
       },
       Resume: {
-        newState: FlowState.Running,
+        newState: FlowStateEnum.Running,
         action: (): void => {
-          // @todo Send resume signal to tasks, when it is implemented
-          this.startReadyTasks();
-
-          if (!this.isRunning()) {
-            this.flowFinished();
-          }
+          this.state.resume(this);
         },
       },
     },
     Stopped: {
       Reset: {
-        newState: FlowState.Ready,
+        newState: FlowStateEnum.Ready,
         action: (): void => {
-          this.initRunStatus();
+          this.state.reset(this);
         },
       },
     },
@@ -157,23 +139,25 @@ export class Flow {
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
   ): Promise<GenericValueMap> {
-    return this.execTransition(FlowTransition.Start, [params, expectedResults, resolvers]) as Promise<GenericValueMap>;
+    return this.execTransition(FlowTransitionEnum.Start, [params, expectedResults, resolvers]) as Promise<
+      GenericValueMap
+    >;
   }
 
   public pause(): Promise<GenericValueMap> {
-    return this.execTransition(FlowTransition.Pause) as Promise<GenericValueMap>;
+    return this.execTransition(FlowTransitionEnum.Pause) as Promise<GenericValueMap>;
   }
 
   public resume() {
-    this.execTransition(FlowTransition.Resume);
+    this.execTransition(FlowTransitionEnum.Resume);
   }
 
   public stop(): Promise<GenericValueMap> {
-    return this.execTransition(FlowTransition.Stop) as Promise<GenericValueMap>;
+    return this.execTransition(FlowTransitionEnum.Stop) as Promise<GenericValueMap>;
   }
 
   public reset() {
-    this.execTransition(FlowTransition.Reset);
+    this.execTransition(FlowTransitionEnum.Reset);
   }
 
   public run(
@@ -191,6 +175,76 @@ export class Flow {
   public printStatus() {
     // Uncomment to debug
     // console.log('▣ Run status:', this.runStatus);
+  }
+
+  public supplyParameters(params: GenericValueMap) {
+    for (const paramCode in params) {
+      if (params.hasOwnProperty(paramCode)) {
+        const paramValue = params[paramCode];
+        this.supplyResult(paramCode, paramValue);
+      }
+    }
+  }
+
+  public startReadyTasks() {
+    const readyTasks = this.runStatus.tasksReady;
+    this.runStatus.tasksReady = [];
+
+    for (const task of readyTasks) {
+      // @todo Check if this should be done after  checking if resolver exists
+      this.runStatus.runningTasks.push(task.getCode());
+
+      const hasResolver = this.runStatus.resolvers.hasOwnProperty(task.getResolverName());
+      if (!hasResolver) {
+        throw new Error(
+          `Task resolver '${task.getResolverName()}' for task '${task.getCode()}' has no definition. Defined resolvers are: [${Object.keys(
+            this.runStatus.resolvers,
+          ).join(', ')}].`,
+        );
+      }
+
+      const taskResolver = this.runStatus.resolvers[task.getResolverName()];
+
+      task.run(taskResolver).then(() => {
+        this.taskFinished(task);
+      });
+
+      debug(`► Task ${task.getCode()} started, params:`, task.getParams());
+    }
+  }
+
+  public initRunStatus() {
+    // @todo Avoid initializing twice.
+
+    this.state = FlowReady.getInstance();
+
+    this.runStatus = new FlowRunStatus();
+
+    for (const taskCode in this.tasks) {
+      if (this.tasks.hasOwnProperty(taskCode)) {
+        const task = this.tasks[taskCode];
+        task.resetRunStatus();
+
+        if (task.isReadyToRun()) {
+          this.runStatus.tasksReady.push(task);
+        }
+
+        const taskReqs = task.getSpec().requires;
+        for (const req of taskReqs) {
+          if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
+            this.runStatus.tasksByReq[req] = {};
+          }
+          this.runStatus.tasksByReq[req][task.getCode()] = task;
+        }
+      }
+    }
+
+    this.printStatus();
+  }
+
+  public flowFinished() {
+    debug('◼ Flow finished with results:', this.runStatus.results);
+    this.execTransition(FlowTransitionEnum.Finished);
   }
 
   protected supplyResult(resultName: string, result: any) {
@@ -223,33 +277,7 @@ export class Flow {
     }
   }
 
-  protected initRunStatus() {
-    // @todo Avoid initializing twice.
-    this.runStatus = new FlowRunStatus();
-
-    for (const taskCode in this.tasks) {
-      if (this.tasks.hasOwnProperty(taskCode)) {
-        const task = this.tasks[taskCode];
-        task.resetRunStatus();
-
-        if (task.isReadyToRun()) {
-          this.runStatus.tasksReady.push(task);
-        }
-
-        const taskReqs = task.getSpec().requires;
-        for (const req of taskReqs) {
-          if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
-            this.runStatus.tasksByReq[req] = {};
-          }
-          this.runStatus.tasksByReq[req][task.getCode()] = task;
-        }
-      }
-    }
-
-    this.printStatus();
-  }
-
-  protected execTransition(transition: FlowTransition, args: any[] = []): Promise<GenericValueMap> | void {
+  protected execTransition(transition: FlowTransitionEnum, args: any[] = []): Promise<GenericValueMap> | void {
     const currentState = this.runStatus.state;
     const possibleTransitions = this.transitions[currentState];
     if (!possibleTransitions.hasOwnProperty(transition)) {
@@ -273,42 +301,6 @@ export class Flow {
     }
   }
 
-  protected supplyParameters(params: GenericValueMap) {
-    for (const paramCode in params) {
-      if (params.hasOwnProperty(paramCode)) {
-        const paramValue = params[paramCode];
-        this.supplyResult(paramCode, paramValue);
-      }
-    }
-  }
-
-  protected startReadyTasks() {
-    const readyTasks = this.runStatus.tasksReady;
-    this.runStatus.tasksReady = [];
-
-    for (const task of readyTasks) {
-      // @todo Check if this should be done after  checking if resolver exists
-      this.runStatus.runningTasks.push(task.getCode());
-
-      const hasResolver = this.runStatus.resolvers.hasOwnProperty(task.getResolverName());
-      if (!hasResolver) {
-        throw new Error(
-          `Task resolver '${task.getResolverName()}' for task '${task.getCode()}' has no definition. Defined resolvers are: [${Object.keys(
-            this.runStatus.resolvers,
-          ).join(', ')}].`,
-        );
-      }
-
-      const taskResolver = this.runStatus.resolvers[task.getResolverName()];
-
-      task.run(taskResolver).then(() => {
-        this.taskFinished(task);
-      });
-
-      debug(`► Task ${task.getCode()} started, params:`, task.getParams());
-    }
-  }
-
   protected taskFinished(task: Task) {
     const taskProvisions = task.getSpec().provides;
     const taskResults = task.getResults();
@@ -325,7 +317,7 @@ export class Flow {
 
     this.printStatus();
 
-    if (this.runStatus.state === FlowState.Running) {
+    if (this.runStatus.state === FlowStateEnum.Running) {
       this.startReadyTasks();
 
       if (!this.isRunning()) {
@@ -334,16 +326,11 @@ export class Flow {
     }
 
     if (!this.isRunning()) {
-      if (this.runStatus.state === FlowState.Pausing) {
-        this.execTransition(FlowTransition.Paused);
-      } else if (this.runStatus.state === FlowState.Stopping) {
-        this.execTransition(FlowTransition.Stopped);
+      if (this.runStatus.state === FlowStateEnum.Pausing) {
+        this.execTransition(FlowTransitionEnum.Paused);
+      } else if (this.runStatus.state === FlowStateEnum.Stopping) {
+        this.execTransition(FlowTransitionEnum.Stopped);
       }
     }
-  }
-
-  protected flowFinished() {
-    debug('◼ Flow finished with results:', this.runStatus.results);
-    this.execTransition(FlowTransition.Finished);
   }
 }

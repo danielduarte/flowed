@@ -2,7 +2,7 @@ import { GenericValueMap, TaskResolverMap } from '../types';
 import { Task } from './task';
 import { TaskMap } from './task-types';
 
-export enum FlowState {
+export enum FlowStateEnum {
   Ready = 'Ready',
   Running = 'Running',
   Finished = 'Finished',
@@ -12,7 +12,7 @@ export enum FlowState {
   Stopped = 'Stopped',
 }
 
-export enum FlowTransition {
+export enum FlowTransitionEnum {
   Start = 'Start',
   Finished = 'Finished',
   Reset = 'Reset',
@@ -24,7 +24,7 @@ export enum FlowTransition {
 }
 
 export class FlowRunStatus {
-  public state: FlowState = FlowState.Ready;
+  public state: FlowStateEnum = FlowStateEnum.Ready;
 
   public runningTasks: string[] = [];
 
