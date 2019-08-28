@@ -103,13 +103,20 @@ export class Task {
   protected mapParamsForResolver(solvedReqs: GenericValueMap) {
     const params: GenericValueMap = {};
 
-    for (const resolverParamName in this.spec.resolver.params) {
-      if (this.spec.resolver.params.hasOwnProperty(resolverParamName)) {
-        const taskParamName = this.spec.resolver.params[resolverParamName];
-        // noinspection UnnecessaryLocalVariableJS
-        const paramValue = solvedReqs[taskParamName];
-        params[resolverParamName] = paramValue;
+    let paramValue;
+    for (const [resolverParamName, paramSolvingInfo] of Object.entries(this.spec.resolver.params)) {
+
+      // If it is string, it is a task param name
+      if (typeof paramSolvingInfo === 'string') {
+        const taskParamName = paramSolvingInfo;
+        paramValue = solvedReqs[taskParamName];
       }
+      // If it is an object, expect the format { value: <some value> }, and the parameter is the direct value <some value>
+      else if (typeof paramSolvingInfo === 'object' && paramSolvingInfo !== null && paramSolvingInfo.hasOwnProperty('value')) {
+        paramValue = paramSolvingInfo.value;
+      }
+
+      params[resolverParamName] = paramValue;
     }
 
     return params;

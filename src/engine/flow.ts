@@ -1,11 +1,11 @@
 import { debug as rawDebug } from 'debug';
+import { GenericValueMap, TaskResolverMap } from '../types';
+import { FlowReady, FlowState } from './flow-state';
+import { FlowRunStatus, FlowStateEnum } from './flow-types';
 import { FlowSpec } from './specs';
 import { Task } from './task';
 import { TaskMap } from './task-types';
 const debug = rawDebug('flowed:flow');
-import { GenericValueMap, TaskResolverMap } from '../types';
-import { FlowReady, FlowState } from './flow-state';
-import { FlowRunStatus, FlowStateEnum } from './flow-types';
 
 export class Flow {
   protected spec!: FlowSpec;

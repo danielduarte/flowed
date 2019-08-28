@@ -3,10 +3,10 @@ import * as Examples from './examples/index';
 import { ExampleMap } from './examples/types';
 const debug = rawDebug('flowed:test');
 
-const times = 60000;
-const maxTime = '1s';
+const times = 105000;
+const maxTime = '2s';
 
-describe('a simple flow', function() {
+describe('a simple flow with 7 tasks', function() {
   this.timeout(maxTime);
 
   it(`runs ${times} times in less than ${maxTime} ms`, async () => {
