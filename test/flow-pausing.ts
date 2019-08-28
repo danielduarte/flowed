@@ -62,7 +62,7 @@ describe('the flow', () => {
     };
 
     class AppendString {
-      public async exec(params: GenericValueMap, context: GenericValueMap,  task: Task): Promise<GenericValueMap> {
+      public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
         debug(`Starting to execute task ${task.getCode()}`);
         return new Promise<GenericValueMap>(resolve => {
           setTimeout(() => {

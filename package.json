@@ -24,7 +24,8 @@
     "test": "mocha --require ts-node/register test/*.ts",
     "posttest": "npm run lint",
     "lint": "tslint -p tsconfig.json -t verbose",
-    "format": "tslint -p tsconfig.json -t verbose --fix && prettier --write \"src/**/*.ts\" \"src/**/*.js\" && prettier --write \"test/**/*.ts\" \"test/**/*.js\""
+    "format": "tslint -p tsconfig.json -t verbose --fix && prettier --write \"src/**/*.ts\" \"src/**/*.js\" && prettier --write \"test/**/*.ts\" \"test/**/*.js\"",
+    "release:prepare": "rm -rf ./dist ./node_modules package-lock.json && npm install && npm run format && npm run build && npm test && git status"
   },
   "files": [
     "dist"
@@ -44,6 +45,6 @@
     "ts-node": "^8.3.0",
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.6.2"
   }
 }

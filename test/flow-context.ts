@@ -38,19 +38,31 @@ describe('context for flows', () => {
 
     let texts;
 
-    texts = await FlowManager.run(flowSpec, {}, ['out1', 'out2'], { SampleWithContext }, { prefix: '<<', sufix: '>>'});
+    texts = await FlowManager.run(flowSpec, {}, ['out1', 'out2'], { SampleWithContext }, { prefix: '<<', sufix: '>>' });
     expect(texts).to.be.eql({
       out1: '<<this is the first task>>',
       out2: '<<this is the second task>>',
     });
 
-    texts = await FlowManager.run(flowSpec, {}, ['out1', 'out2'], { SampleWithContext }, { prefix: '(', sufix: ')', moreStuff: 'ignored value' });
+    texts = await FlowManager.run(
+      flowSpec,
+      {},
+      ['out1', 'out2'],
+      { SampleWithContext },
+      { prefix: '(', sufix: ')', moreStuff: 'ignored value' },
+    );
     expect(texts).to.be.eql({
       out1: '(this is the first task)',
       out2: '(this is the second task)',
     });
 
-    texts = await FlowManager.run(flowSpec, {}, ['out1', 'out2'], { SampleWithContext }, { prefix: 'AT THE BEGINNING ', /* missing sufix on purpose */ });
+    texts = await FlowManager.run(
+      flowSpec,
+      {},
+      ['out1', 'out2'],
+      { SampleWithContext },
+      { prefix: 'AT THE BEGINNING ' /* missing sufix on purpose */ },
+    );
     expect(texts).to.be.eql({
       out1: 'AT THE BEGINNING this is the first taskundefined',
       out2: 'AT THE BEGINNING this is the second taskundefined',
