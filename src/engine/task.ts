@@ -77,22 +77,27 @@ export class Task {
   public run(taskResolverConstructor: TaskResolverClass): Promise<GenericValueMap> {
     const resolver = new taskResolverConstructor();
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const params = this.mapParamsForResolver(this.runStatus.solvedReqs);
 
-      resolver.exec(params, this).then(resolverValue => {
-        const results = this.mapResultsFromResolver(resolverValue);
+      resolver.exec(params, this).then(
+        resolverValue => {
+          const results = this.mapResultsFromResolver(resolverValue);
 
-        // @todo Filter results
-        // for (let i = 0; i < this.spec.provides.length; i++) {
-        //     const resultName = this.spec.provides[i];
-        //     const result = results[resultName];
-        //     this.runStatus.solvedResults[resultName] = result;
-        // }
-        this.runStatus.solvedResults = results;
+          // @todo Filter results
+          // for (let i = 0; i < this.spec.provides.length; i++) {
+          //     const resultName = this.spec.provides[i];
+          //     const result = results[resultName];
+          //     this.runStatus.solvedResults[resultName] = result;
+          // }
+          this.runStatus.solvedResults = results;
 
-        resolve(this.runStatus.solvedResults);
-      });
+          resolve(this.runStatus.solvedResults);
+        },
+        resolverError => {
+          reject(resolverError);
+        },
+      );
     });
   }
 
@@ -105,14 +110,17 @@ export class Task {
 
     let paramValue;
     for (const [resolverParamName, paramSolvingInfo] of Object.entries(this.spec.resolver.params)) {
-
       // If it is string, it is a task param name
       if (typeof paramSolvingInfo === 'string') {
         const taskParamName = paramSolvingInfo;
         paramValue = solvedReqs[taskParamName];
       }
       // If it is an object, expect the format { value: <some value> }, and the parameter is the direct value <some value>
-      else if (typeof paramSolvingInfo === 'object' && paramSolvingInfo !== null && paramSolvingInfo.hasOwnProperty('value')) {
+      else if (
+        typeof paramSolvingInfo === 'object' &&
+        paramSolvingInfo !== null &&
+        paramSolvingInfo.hasOwnProperty('value')
+      ) {
         paramValue = paramSolvingInfo.value;
       }
 

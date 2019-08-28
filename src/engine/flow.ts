@@ -14,27 +14,34 @@ export class Flow {
 
   protected runStatus!: FlowRunStatus;
 
-  protected finishResolve!: (result: GenericValueMap) => void;
   protected pauseResolve!: (result: GenericValueMap) => void;
+  protected pauseReject!: (error: Error) => void;
+
   protected stopResolve!: (result: GenericValueMap) => void;
+  protected stopReject!: (error: Error) => void;
+
+  protected finishResolve!: (result: GenericValueMap) => void;
+  protected finishReject!: (error: Error) => void;
 
   protected tasks!: TaskMap;
-  protected finishReject!: (result: GenericValueMap) => void;
-  protected pauseReject!: (result: GenericValueMap) => void;
-  protected stopReject!: (result: GenericValueMap) => void;
 
   protected protectedScope = {
+    createFinishPromise: this.createFinishPromise,
     execFinishResolve: this.execFinishResolve,
+    execFinishReject: this.execFinishReject,
+
+    createPausePromise: this.createPausePromise,
     execPauseResolve: this.execPauseResolve,
+    execPauseReject: this.execPauseReject,
+
+    createStopPromise: this.createStopPromise,
     execStopResolve: this.execStopResolve,
+    execStopReject: this.execStopReject,
 
     setExpectedResults: this.setExpectedResults,
     setResolvers: this.setResolvers,
     setState: this.setState,
 
-    createPausePromise: this.createPausePromise,
-    createStopPromise: this.createStopPromise,
-    createFinishPromise: this.createFinishPromise,
     initRunStatus: this.initRunStatus,
     startReadyTasks: this.startReadyTasks,
     supplyParameters: this.supplyParameters,
@@ -111,12 +118,24 @@ export class Flow {
     this.finishResolve(this.runStatus.results);
   }
 
+  protected execFinishReject(error: Error) {
+    this.finishReject(error);
+  }
+
   protected execPauseResolve() {
     this.pauseResolve(this.runStatus.results);
   }
 
+  protected execPauseReject(error: Error) {
+    this.pauseReject(error);
+  }
+
   protected execStopResolve() {
     this.stopResolve(this.runStatus.results);
+  }
+
+  protected execStopReject(error: Error) {
+    this.stopReject(error);
   }
 
   protected setExpectedResults(expectedResults: string[] = []) {
@@ -155,9 +174,14 @@ export class Flow {
 
       const taskResolver = this.runStatus.resolvers[task.getResolverName()];
 
-      task.run(taskResolver).then(() => {
-        this.taskFinished(task);
-      });
+      task.run(taskResolver).then(
+        () => {
+          this.taskFinished(task);
+        },
+        error => {
+          this.taskFinished(task, error, true);
+        },
+      );
 
       debug(`► Task ${task.getCode()} started, params:`, task.getParams());
     }
@@ -232,11 +256,15 @@ export class Flow {
     }
   }
 
-  protected taskFinished(task: Task) {
+  protected taskFinished(task: Task, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
     const taskProvisions = task.getSpec().provides;
     const taskResults = task.getResults();
 
-    debug(`✔ Finished task ${task.getCode()}, results:`, taskResults);
+    if (error) {
+      debug(`✘ Error in task ${task.getCode()}, results:`, taskResults);
+    } else {
+      debug(`✔ Finished task ${task.getCode()}, results:`, taskResults);
+    }
 
     // Remove the task from running tasks collection
     this.runStatus.runningTasks.splice(this.runStatus.runningTasks.indexOf(task.getCode()), 1);
@@ -246,11 +274,19 @@ export class Flow {
       this.supplyResult(resultName, result);
     }
 
+    const stopExecution = error && stopFlowExecutionOnError;
+
     if (this.state.getStateCode() === FlowStateEnum.Running) {
-      this.startReadyTasks();
+      if (!stopExecution) {
+        this.startReadyTasks();
+      }
 
       if (!this.isRunning()) {
-        this.state.finished(this, this.protectedScope);
+        if (!error) {
+          this.state.finished(this, this.protectedScope);
+        } else {
+          this.state.finished(this, this.protectedScope, error);
+        }
       }
     }
 

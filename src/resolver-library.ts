@@ -44,6 +44,9 @@ export class RepeaterResolver {
       task.resetRunStatus();
       task.supplyReqs(params.taskParams);
 
+      // @todo add test with repeater and task that thrown error
+
+      // @todo should handle rejected promise?
       const result = task.run(params.taskResolver);
 
       if (params.parallel) {
@@ -60,3 +63,5 @@ export class RepeaterResolver {
     return { results };
   }
 }
+
+// @todo add ThrowErrorResolver

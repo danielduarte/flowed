@@ -37,10 +37,15 @@ export class FlowRunning extends FlowState {
     return flowProtectedScope.createStopPromise.call(flow);
   }
 
-  public finished(flow: Flow, flowProtectedScope: any) {
-    debug('◼ Flow finished with results:', flow.getResults());
-
+  public finished(flow: Flow, flowProtectedScope: any, error: Error | boolean = false) {
     flowProtectedScope.setState.call(flow, FlowFinished.getInstance());
-    flowProtectedScope.execFinishResolve.call(flow);
+
+    if (error) {
+      debug('✘ Flow finished with error. Results:', flow.getResults());
+      flowProtectedScope.execFinishReject.call(flow, error);
+    } else {
+      debug('◼ Flow finished with results:', flow.getResults());
+      flowProtectedScope.execFinishResolve.call(flow);
+    }
   }
 }

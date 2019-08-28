@@ -14,7 +14,7 @@ export abstract class FlowState {
     return Promise.resolve({});
   }
 
-  public finished(flow: Flow, flowProtectedScope: any) {
+  public finished(flow: Flow, flowProtectedScope: any, error: Error | boolean = false) {
     this.throwTransitionError(FlowTransitionEnum.Finished);
   }
 
