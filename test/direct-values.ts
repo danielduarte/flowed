@@ -5,7 +5,7 @@ import { Task } from '../src/engine';
 describe('resolvers with direct value', () => {
   it('run without error', async () => {
     class Sum {
-      public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
         return { z: params.x + params.y };
       }
     }
@@ -39,7 +39,7 @@ describe('resolvers with direct value', () => {
 
   it('run without sharing values between tasks', async () => {
     class SumOrConcat {
-      public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
         return { z: params.x + params.y };
       }
     }

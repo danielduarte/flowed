@@ -37,4 +37,6 @@ export class FlowRunStatus {
   public expectedResults: string[] = [];
 
   public results: GenericValueMap = {};
+
+  public context: GenericValueMap = {};
 }

@@ -74,13 +74,13 @@ export class Task {
     }
   }
 
-  public run(taskResolverConstructor: TaskResolverClass): Promise<GenericValueMap> {
+  public run(taskResolverConstructor: TaskResolverClass, context: GenericValueMap): Promise<GenericValueMap> {
     const resolver = new taskResolverConstructor();
 
     return new Promise((resolve, reject) => {
       const params = this.mapParamsForResolver(this.runStatus.solvedReqs);
 
-      resolver.exec(params, this).then(
+      resolver.exec(params, context, this).then(
         resolverValue => {
           const results = this.mapResultsFromResolver(resolverValue);
 
@@ -94,7 +94,7 @@ export class Task {
 
           resolve(this.runStatus.solvedResults);
         },
-        resolverError => {
+        (resolverError: Error) => {
           reject(resolverError);
         },
       );

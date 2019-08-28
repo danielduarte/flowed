@@ -4,7 +4,7 @@ import { Task } from '../../src/engine';
 import { ExampleFunction } from './types';
 
 class TimerResolver {
-  public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+  public async exec(): Promise<GenericValueMap> {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve({ a: 1 });
@@ -14,7 +14,7 @@ class TimerResolver {
 }
 
 class DirectResolver {
-  public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+  public async exec(): Promise<GenericValueMap> {
     return { b: 2 };
   }
 }

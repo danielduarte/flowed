@@ -4,7 +4,7 @@ import { Task } from '../../src/engine';
 import { ExampleFunction } from './types';
 
 class DummyResolver {
-  public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+  public async exec(): Promise<GenericValueMap> {
     return {};
   }
 }

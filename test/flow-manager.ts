@@ -5,7 +5,7 @@ import { FlowSpec } from '../src/engine';
 import { Task } from '../src/engine';
 
 class DummyResolver {
-  public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+  public async exec(): Promise<GenericValueMap> {
     return {};
   }
 }
@@ -43,7 +43,7 @@ describe('the FlowManager', () => {
 
   it('can calculate Pythagoras', () => {
     class Sqr {
-      public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
         return {
           result: params.x * params.x,
         };
@@ -51,7 +51,7 @@ describe('the FlowManager', () => {
     }
 
     class Sqrt {
-      public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
         return {
           result: Math.sqrt(params.x),
         };
@@ -59,7 +59,7 @@ describe('the FlowManager', () => {
     }
 
     class Sum {
-      public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
         return {
           result: params.x + params.y,
         };

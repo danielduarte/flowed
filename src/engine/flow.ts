@@ -41,6 +41,7 @@ export class Flow {
     setExpectedResults: this.setExpectedResults,
     setResolvers: this.setResolvers,
     setState: this.setState,
+    setContext: this.setContext,
 
     initRunStatus: this.initRunStatus,
     startReadyTasks: this.startReadyTasks,
@@ -57,8 +58,9 @@ export class Flow {
     params: GenericValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
+    context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
-    return this.state.start(this, this.protectedScope, params, expectedResults, resolvers);
+    return this.state.start(this, this.protectedScope, params, expectedResults, resolvers, context);
   }
 
   public pause(): Promise<GenericValueMap> {
@@ -146,6 +148,10 @@ export class Flow {
     this.runStatus.resolvers = resolvers;
   }
 
+  protected setContext(context: GenericValueMap) {
+    this.runStatus.context = context;
+  }
+
   protected supplyParameters(params: GenericValueMap) {
     for (const paramCode in params) {
       if (params.hasOwnProperty(paramCode)) {
@@ -174,11 +180,11 @@ export class Flow {
 
       const taskResolver = this.runStatus.resolvers[task.getResolverName()];
 
-      task.run(taskResolver).then(
+      task.run(taskResolver, this.runStatus.context).then(
         () => {
           this.taskFinished(task);
         },
-        error => {
+        (error: Error) => {
           this.taskFinished(task, error, true);
         },
       );

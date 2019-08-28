@@ -9,9 +9,10 @@ export class FlowManager {
     params: GenericValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
+    context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
     const flow = new Flow(flowSpec);
-    return flow.start(params, expectedResults, resolvers);
+    return flow.start(params, expectedResults, resolvers, context);
   }
 
   public static runFromFile(
@@ -19,6 +20,7 @@ export class FlowManager {
     params: GenericValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
+    context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
     return new Promise<GenericValueMap>(resolveFlow => {
       fs.readFile(flowSpecFilepath, 'utf8', (err, flowSpec) => {
@@ -30,7 +32,7 @@ export class FlowManager {
           throw err;
         }
 
-        FlowManager.run(JSON.parse(flowSpec), params, expectedResults, resolvers).then(resolveFlow);
+        FlowManager.run(JSON.parse(flowSpec), params, expectedResults, resolvers, context).then(resolveFlow);
       });
     });
   }

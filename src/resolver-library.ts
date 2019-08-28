@@ -22,11 +22,14 @@ export class WaitResolver {
 // Run a flow and finish
 export class SubFlowResolver {
   public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    // @todo add test with subflow task with flowContext
+
     const flowResult = await FlowManager.run(
       params.flowSpec,
       params.flowParams,
       params.flowExpectedResults,
       params.flowResolvers,
+      params.flowContext,
     );
 
     return { flowResult };
@@ -45,9 +48,10 @@ export class RepeaterResolver {
       task.supplyReqs(params.taskParams);
 
       // @todo add test with repeater and task that thrown error
+      // @todo add test with repeater task with taskContext
 
       // @todo should handle rejected promise?
-      const result = task.run(params.taskResolver);
+      const result = task.run(params.taskResolver, params.taskContext);
 
       if (params.parallel) {
         resultPromises.push(result);

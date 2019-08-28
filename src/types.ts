@@ -6,7 +6,7 @@ export interface GenericValueMap {
 
 export class TaskResolver {
   // noinspection JSUnusedLocalSymbols
-  public exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+  public exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
     return new Promise<GenericValueMap>(() => {});
   }
 }

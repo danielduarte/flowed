@@ -9,6 +9,7 @@ export abstract class FlowState {
     params: GenericValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
+    context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
     this.throwTransitionError(FlowTransitionEnum.Start);
     return Promise.resolve({});

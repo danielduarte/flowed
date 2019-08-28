@@ -4,7 +4,7 @@ import { Task } from '../../src/engine';
 import { ExampleFunction } from './types';
 
 class CallMicroservice {
-  public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
     let response;
     if (params.url === 'http://product') {
       response = {
@@ -26,7 +26,7 @@ class CallMicroservice {
 }
 
 class SimpleMerge {
-  public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
     return {
       result: Object.assign({}, params.obj1, params.obj2),
     };

@@ -26,12 +26,16 @@ export class FlowReady extends FlowState {
     params: GenericValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
+    context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
     flowProtectedScope.setState.call(flow, FlowRunning.getInstance());
 
     flowProtectedScope.setExpectedResults.call(flow, [...expectedResults]);
     flowProtectedScope.setResolvers.call(flow, resolvers);
+    flowProtectedScope.setContext.call(flow, context);
     flowProtectedScope.supplyParameters.call(flow, params);
+
+    // Run tasks
     flowProtectedScope.startReadyTasks.call(flow);
 
     const finishPromise = flowProtectedScope.createFinishPromise.call(flow);

@@ -7,7 +7,7 @@ const debug = rawDebug('flowed:test');
 describe('error thrown in tasks', () => {
   it('are handled properly', async () => {
     class AlwaysError {
-      public async exec(params: GenericValueMap, task: Task): Promise<GenericValueMap> {
+      public async exec(): Promise<GenericValueMap> {
         // @todo add similar test with rejected promise
         throw new Error('This is an error in a task');
       }
