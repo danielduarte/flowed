@@ -7,17 +7,11 @@ export class Task {
 
   protected spec: TaskSpec;
 
-  protected runStatus: TaskRunStatus;
+  protected runStatus!: TaskRunStatus;
 
   public constructor(code: string, spec: TaskSpec) {
     this.code = code;
     this.spec = spec;
-    this.runStatus = {
-      pendingReqs: [],
-      solvedReqs: {},
-      pendingResults: [],
-      solvedResults: {},
-    };
 
     this.parseSpec();
   }
@@ -35,11 +29,9 @@ export class Task {
   }
 
   public resetRunStatus() {
-    // @todo Avoid initializing twice.
     this.runStatus = {
       pendingReqs: [...this.spec.requires],
       solvedReqs: {},
-      pendingResults: [...this.spec.provides],
       solvedResults: {},
     };
   }

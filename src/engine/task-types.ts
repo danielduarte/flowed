@@ -1,4 +1,3 @@
-// @todo Check if this is needed
 import { Task } from './task';
 
 export interface TaskMap {
@@ -11,9 +10,6 @@ export interface TaskRunStatus {
   solvedReqs: {
     [name: string]: any;
   };
-
-  // @todo Check if this is needed
-  pendingResults: string[];
 
   solvedResults: {
     [name: string]: any;

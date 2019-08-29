@@ -145,8 +145,8 @@ export class Flow {
   }
 
   protected setExpectedResults(expectedResults: string[] = []) {
+
     // Check expected results that cannot be fulfilled
-    // @todo make this configurable (throw or not throw an error)
     const missingExpected = expectedResults.filter(r => !this.taskProvisions.includes(r));
     if (missingExpected.length > 0) {
       const msg = `Warning: The results [${missingExpected.join(', ')}] are not provided by any task`;
@@ -209,8 +209,6 @@ export class Flow {
   }
 
   protected initRunStatus() {
-    // @todo Avoid initializing twice.
-
     this.state = FlowReady.getInstance();
 
     this.runStatus = new FlowRunStatus();
