@@ -80,7 +80,7 @@ export const example1: ExampleFunction = () => {
         },
         G: {
           requires: ['d3', 'e3'],
-          provides: ['g1'],
+          provides: ['g1', 'g2'],
           resolver: {
             name: 'timer',
             params: {},

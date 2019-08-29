@@ -2,7 +2,7 @@ import { debug as rawDebug } from 'debug';
 import { GenericValueMap, TaskResolverMap } from '../types';
 import { FlowReady, FlowState } from './flow-state';
 import { FlowRunStatus, FlowStateEnum } from './flow-types';
-import { FlowSpec } from './specs';
+import { FlowConfigs, FlowSpec } from './specs';
 import { Task } from './task';
 import { TaskMap } from './task-types';
 const debug = rawDebug('flowed:flow');
@@ -24,6 +24,10 @@ export class Flow {
   protected finishReject!: (error: Error) => void;
 
   protected tasks!: TaskMap;
+
+  protected taskProvisions!: string[];
+
+  protected configs!: FlowConfigs;
 
   protected protectedScope = {
     createFinishPromise: this.createFinishPromise,
@@ -141,6 +145,17 @@ export class Flow {
   }
 
   protected setExpectedResults(expectedResults: string[] = []) {
+    // Check expected results that cannot be fulfilled
+    // @todo make this configurable (throw or not throw an error)
+    const missingExpected = expectedResults.filter(r => !this.taskProvisions.includes(r));
+    if (missingExpected.length > 0) {
+      const msg = `Warning: The results [${missingExpected.join(', ')}] are not provided by any task`;
+      debug(msg);
+      if (this.configs.throwErrorOnUnsolvableResult) {
+        throw new Error(msg);
+      }
+    }
+
     this.runStatus.expectedResults = [...expectedResults];
   }
 
@@ -253,13 +268,22 @@ export class Flow {
   protected parseSpec(spec: FlowSpec) {
     this.spec = spec;
     this.tasks = {};
+    this.configs = spec.configs || {};
+
+    const provisions: string[] = [];
 
     for (const taskCode in this.spec.tasks) {
       if (this.spec.tasks.hasOwnProperty(taskCode)) {
         const taskSpec = this.spec.tasks[taskCode];
+
+        provisions.push.apply(provisions, taskSpec.provides);
+
         this.tasks[taskCode] = new Task(taskCode, taskSpec);
       }
     }
+
+    // To be used later to check if expectedResults can be fulfilled.
+    this.taskProvisions = Array.from(new Set(provisions));
   }
 
   protected taskFinished(task: Task, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {

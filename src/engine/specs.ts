@@ -1,6 +1,8 @@
 export interface FlowSpec {
   // @todo check if this could be optional
   tasks: TaskSpecMap;
+
+  configs?: FlowConfigs;
 }
 
 export class TaskSpecMap {
@@ -34,4 +36,8 @@ export interface TaskParamsMap {
 
 export interface TaskResultsMap {
   [code: string]: any;
+}
+
+export interface FlowConfigs {
+  throwErrorOnUnsolvableResult?: boolean;
 }
