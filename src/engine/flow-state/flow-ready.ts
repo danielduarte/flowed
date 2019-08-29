@@ -3,7 +3,6 @@ import { FlowState } from '.';
 import { Flow } from '../';
 import { GenericValueMap, TaskResolverMap } from '../../types';
 import { FlowStateEnum } from '../flow-types';
-import { FlowPausing } from './index';
 
 export class FlowReady extends FlowState {
   public static getInstance(): FlowState {

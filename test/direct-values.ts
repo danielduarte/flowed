@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { FlowManager, GenericValueMap } from '../src';
-import { Task } from '../src/engine';
 
 describe('resolvers with direct value', () => {
   it('run without error', async () => {

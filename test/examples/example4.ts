@@ -1,6 +1,5 @@
 import { GenericValueMap } from '../../src';
 import { FlowManager } from '../../src/engine';
-import { Task } from '../../src/engine';
 import { ExampleFunction } from './types';
 
 class CallMicroservice {

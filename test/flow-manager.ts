@@ -2,7 +2,6 @@ import { expect } from 'chai';
 import { GenericValueMap, TaskResolverMap } from '../src';
 import { FlowManager } from '../src/engine';
 import { FlowSpec } from '../src/engine';
-import { Task } from '../src/engine';
 
 class DummyResolver {
   public async exec(): Promise<GenericValueMap> {

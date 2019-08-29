@@ -1,6 +1,5 @@
 import { debug as rawDebug } from 'debug';
 import * as Examples from './examples/index';
-import { ExampleMap } from './examples/types';
 const debug = rawDebug('flowed:test');
 
 const times = 105000;

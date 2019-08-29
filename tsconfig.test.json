@@ -11,6 +11,6 @@
     "resolveJsonModule": true,
     "noUnusedLocals": true
   },
-  "include": ["src"],
+  "include": ["test"],
   "exclude": ["node_modules"]
 }

@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
 import { FlowManager, GenericValueMap } from '../src';
-import { Task } from '../src/engine';
 const debug = rawDebug('flowed:test');
 
 describe('error thrown in tasks', () => {

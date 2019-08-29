@@ -2,7 +2,6 @@ import { Flow } from '../flow';
 import { FlowStateEnum } from '../flow-types';
 import { FlowPaused } from './flow-paused';
 import { FlowState } from './flow-state';
-import { FlowFinished } from './index';
 
 export class FlowPausing extends FlowState {
   public static getInstance(): FlowState {
