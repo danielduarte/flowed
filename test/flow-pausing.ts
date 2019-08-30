@@ -4,6 +4,8 @@ import { GenericValueMap } from '../src';
 import { Flow, Task } from '../src/engine';
 const debug = rawDebug('flowed:test');
 
+// @todo run tests with coverage
+
 describe('the flow', () => {
   it('can be paused and resumed', async () => {
     const text1 = '(text1)';

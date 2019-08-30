@@ -22,17 +22,15 @@ export class FlowManager {
     resolvers: TaskResolverMap = {},
     context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
-    return new Promise<GenericValueMap>(resolveFlow => {
+    return new Promise<GenericValueMap>((resolveFlow, reject) => {
       fs.readFile(flowSpecFilepath, 'utf8', (err, flowSpec) => {
-        // @todo Add test for non existing file
-
         // @todo Add test for invalid JSON file
 
         if (err) {
-          throw err;
+          reject(err);
+        } else {
+          FlowManager.run(JSON.parse(flowSpec), params, expectedResults, resolvers, context).then(resolveFlow);
         }
-
-        FlowManager.run(JSON.parse(flowSpec), params, expectedResults, resolvers, context).then(resolveFlow);
       });
     });
   }
