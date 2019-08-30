@@ -9,7 +9,8 @@
     "pretty": true,
     "removeComments": true,
     "resolveJsonModule": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "sourceMap": true
   },
   "include": ["test"],
   "exclude": ["node_modules"]

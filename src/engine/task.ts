@@ -126,7 +126,10 @@ export class Task {
     const results: GenericValueMap = {};
 
     for (const resolverResultName in this.spec.resolver.results) {
-      if (this.spec.resolver.results.hasOwnProperty(resolverResultName)) {
+      if (
+        this.spec.resolver.results.hasOwnProperty(resolverResultName) &&
+        resolverResults.hasOwnProperty(resolverResultName)
+      ) {
         const taskResultName = this.spec.resolver.results[resolverResultName];
         // noinspection UnnecessaryLocalVariableJS
         const resolverResult = resolverResults[resolverResultName];

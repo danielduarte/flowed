@@ -68,4 +68,10 @@ export class RepeaterResolver {
   }
 }
 
+export class ConditionalResolver {
+  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    return params.condition ? { onTrue: params.trueResult } : { onFalse: params.falseResult };
+  }
+}
+
 // @todo add ThrowErrorResolver

@@ -145,7 +145,6 @@ export class Flow {
   }
 
   protected setExpectedResults(expectedResults: string[] = []) {
-
     // Check expected results that cannot be fulfilled
     const missingExpected = expectedResults.filter(r => !this.taskProvisions.includes(r));
     if (missingExpected.length > 0) {
@@ -298,8 +297,10 @@ export class Flow {
     this.runStatus.runningTasks.splice(this.runStatus.runningTasks.indexOf(task.getCode()), 1);
 
     for (const resultName of taskProvisions) {
-      const result = taskResults[resultName];
-      this.supplyResult(resultName, result);
+      if (taskResults.hasOwnProperty(resultName)) {
+        const result = taskResults[resultName];
+        this.supplyResult(resultName, result);
+      }
     }
 
     const stopExecution = error && stopFlowExecutionOnError;
