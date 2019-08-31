@@ -55,4 +55,26 @@ describe('can run a flow', () => {
       expect(error.message).to.be.eql(`ENOENT: no such file or directory, open '${filepath}'`);
     }
   });
+
+  it('from an JSON file with invalid format and throw an error', async () => {
+    const filepath = 'test/examples/example6.flowed.json.invalid';
+
+    try {
+      await FlowManager.runFromFile(
+        filepath,
+        {
+          param1: 'PARAM1',
+          param2: 'PARAM2',
+          param3: 'PARAM3',
+        },
+        ['g1', 'g2'],
+        {
+          timer: TimerResolver,
+          direct: DirectResolver,
+        },
+      );
+    } catch (error) {
+      expect(error.message).to.be.eql('Unexpected token \n in JSON at position 474');
+    }
+  });
 });

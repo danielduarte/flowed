@@ -23,13 +23,18 @@ export class FlowManager {
     context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
     return new Promise<GenericValueMap>((resolveFlow, reject) => {
-      fs.readFile(flowSpecFilepath, 'utf8', (err, flowSpec) => {
-        // @todo Add test for invalid JSON file
+      fs.readFile(flowSpecFilepath, 'utf8', (err, fileContents) => {
 
         if (err) {
           reject(err);
         } else {
-          FlowManager.run(JSON.parse(flowSpec), params, expectedResults, resolvers, context).then(resolveFlow);
+
+          try {
+            const flowSpec = JSON.parse(fileContents);
+            FlowManager.run(flowSpec, params, expectedResults, resolvers, context).then(resolveFlow);
+          } catch (error) {
+            reject(error);
+          }
         }
       });
     });
