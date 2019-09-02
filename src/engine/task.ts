@@ -75,15 +75,7 @@ export class Task {
       resolver.exec(params, context, this).then(
         resolverValue => {
           const results = this.mapResultsFromResolver(resolverValue);
-
-          // @todo Filter results
-          // for (let i = 0; i < this.spec.provides.length; i++) {
-          //     const resultName = this.spec.provides[i];
-          //     const result = results[resultName];
-          //     this.runStatus.solvedResults[resultName] = result;
-          // }
           this.runStatus.solvedResults = results;
-
           resolve(this.runStatus.solvedResults);
         },
         (resolverError: Error) => {

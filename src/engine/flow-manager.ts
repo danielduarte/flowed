@@ -15,6 +15,23 @@ export class FlowManager {
     return flow.start(params, expectedResults, resolvers, context);
   }
 
+  public static runFromString(
+    flowSpecJson: string,
+    params: GenericValueMap = {},
+    expectedResults: string[] = [],
+    resolvers: TaskResolverMap = {},
+    context: GenericValueMap = {},
+  ): Promise<GenericValueMap> {
+    return new Promise<GenericValueMap>((resolveFlow, reject) => {
+      try {
+        const flowSpec = JSON.parse(flowSpecJson);
+        FlowManager.run(flowSpec, params, expectedResults, resolvers, context).then(resolveFlow, reject);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   public static runFromFile(
     flowSpecFilepath: string,
     params: GenericValueMap = {},
@@ -24,22 +41,14 @@ export class FlowManager {
   ): Promise<GenericValueMap> {
     return new Promise<GenericValueMap>((resolveFlow, reject) => {
       fs.readFile(flowSpecFilepath, 'utf8', (err, fileContents) => {
-
         if (err) {
           reject(err);
         } else {
-
-          try {
-            const flowSpec = JSON.parse(fileContents);
-            FlowManager.run(flowSpec, params, expectedResults, resolvers, context).then(resolveFlow);
-          } catch (error) {
-            reject(error);
-          }
+          FlowManager.runFromString(fileContents, params, expectedResults, resolvers, context).then(resolveFlow, reject);
         }
       });
     });
   }
 
   // @todo implement runFromUrl
-  // @todo implement runFromJsonStr
 }
