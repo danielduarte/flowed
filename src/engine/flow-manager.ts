@@ -44,7 +44,10 @@ export class FlowManager {
         if (err) {
           reject(err);
         } else {
-          FlowManager.runFromString(fileContents, params, expectedResults, resolvers, context).then(resolveFlow, reject);
+          FlowManager.runFromString(fileContents, params, expectedResults, resolvers, context).then(
+            resolveFlow,
+            reject,
+          );
         }
       });
     });

@@ -1,9 +1,7 @@
 import { expect } from 'chai';
-import { debug as rawDebug } from 'debug';
 import { GenericValueMap } from '../src';
 import { FlowManager } from '../src/engine';
 import * as ResolverLibrary from '../src/resolver-library';
-const debug = rawDebug('flowed:test');
 
 describe('the ResolverLibrary', () => {
   it('runs noop resolver', () => {
@@ -99,63 +97,6 @@ describe('the ResolverLibrary', () => {
       ['subflow-result'],
       {
         subflow: ResolverLibrary.SubFlowResolver,
-      },
-    );
-  });
-
-  it('runs repeater resolver', () => {
-    const taskSpec = {
-      requires: ['a-value'],
-      provides: [],
-      resolver: {
-        name: 'repeat-5-times',
-        params: {
-          someValue: 'a-value',
-        },
-        results: {},
-      },
-    };
-
-    // Do nothing and finish
-    class LogTextSampleResolver {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
-        debug('This is a text:', params.someValue);
-        return {};
-      }
-    }
-
-    return FlowManager.run(
-      {
-        tasks: {
-          repeatTask: {
-            requires: ['task-spec', 'task-resolver', 'task-params', 'count', 'parallel'],
-            provides: ['result-array'],
-            resolver: {
-              name: 'taskRepeater',
-              params: {
-                taskSpec: 'task-spec',
-                taskResolver: 'task-resolver',
-                taskParams: 'task-params',
-                count: 'count',
-                parallel: 'parallel',
-              },
-              results: {
-                flowResult: 'subflow-result',
-              },
-            },
-          },
-        },
-      },
-      {
-        'task-spec': taskSpec,
-        'task-resolver': LogTextSampleResolver,
-        'task-params': { 'a-value': 'Hi!' },
-        count: 5,
-        parallel: false, // @todo add test for parallel and serial tasks with async resolvers
-      },
-      ['result-array'],
-      {
-        taskRepeater: ResolverLibrary.RepeaterResolver,
       },
     );
   });
