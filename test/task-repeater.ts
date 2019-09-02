@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
 import { GenericValueMap } from '../src';
 import { FlowManager } from '../src/engine';
@@ -56,6 +57,20 @@ describe('the ResolverLibrary / task repeater', () => {
           debug('This is a delayed text:', params.someValue, rnd);
           resolve({});
         }, Math.ceil(Math.random() * 100));
+      });
+    }
+  }
+
+  class LogTextSampleResolverError {
+    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      throw new Error('Intentional error in resolver');
+    }
+  }
+
+  class DelayedLogTextSampleResolverError {
+    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      return new Promise((resolve, reject) => {
+        throw new Error('Intentional error in resolver');
       });
     }
   }
@@ -126,5 +141,55 @@ describe('the ResolverLibrary / task repeater', () => {
         taskRepeater: ResolverLibrary.RepeaterResolver,
       },
     );
+  });
+
+  it('runs repeater resolver with no parallel sync tasks throwing error', async () => {
+    let msg = 'No error';
+
+    try {
+      await FlowManager.run(
+        flowSpec,
+        {
+          'task-spec': taskSpec,
+          'task-resolver': LogTextSampleResolverError,
+          'task-params': { 'a-value': 'Hi sync!' },
+          count: 5,
+          parallel: false,
+        },
+        ['result-array'],
+        {
+          taskRepeater: ResolverLibrary.RepeaterResolver,
+        },
+      );
+    } catch (error) {
+      msg = error.message;
+    }
+
+    expect(msg).to.be.eql('Intentional error in resolver');
+  });
+
+  it('runs repeater resolver with no parallel async tasks throwing error', async () => {
+    let msg = 'No error';
+
+    try {
+      await FlowManager.run(
+        flowSpec,
+        {
+          'task-spec': taskSpec,
+          'task-resolver': DelayedLogTextSampleResolverError,
+          'task-params': { 'a-value': 'Hi sync!' },
+          count: 5,
+          parallel: true,
+        },
+        ['result-array'],
+        {
+          taskRepeater: ResolverLibrary.RepeaterResolver,
+        },
+      );
+    } catch (error) {
+      msg = error.message;
+    }
+
+    expect(msg).to.be.eql('Intentional error in resolver');
   });
 });

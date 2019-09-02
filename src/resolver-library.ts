@@ -36,7 +36,8 @@ export class SubFlowResolver {
   }
 }
 
-// Run a task multiple times and finishes returning an array with all results
+// Run a task multiple times and finishes returning an array with all results.
+// If one execution fails, the repeater resolver ends with an exception (this is valid for both parallel and not parallel modes).
 export class RepeaterResolver {
   public async exec(params: GenericValueMap): Promise<GenericValueMap> {
     const task = new Task('task-repeat-model', params.taskSpec);
@@ -47,21 +48,19 @@ export class RepeaterResolver {
       task.resetRunStatus();
       task.supplyReqs(params.taskParams);
 
-      // @todo add test with repeater and task that thrown error
       // @todo add test with repeater task with taskContext
 
-      // @todo should handle rejected promise?
       const result = task.run(params.taskResolver, params.taskContext);
 
       if (params.parallel) {
         resultPromises.push(result);
       } else {
-        results.push(await result);
+        results.push(await result); // If rejected, exception is not thrown here, it is delegated
       }
     }
 
     if (params.parallel) {
-      results = await Promise.all(resultPromises);
+      results = await Promise.all(resultPromises); // If rejected, exception is not thrown here, it is delegated
     }
 
     return { results };
