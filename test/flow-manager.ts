@@ -125,5 +125,3 @@ describe('the FlowManager', () => {
     });
   });
 });
-
-// @todo test: cannot run flow with undefined resolver

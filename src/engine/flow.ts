@@ -180,20 +180,19 @@ export class Flow {
     this.runStatus.tasksReady = [];
 
     for (const task of readyTasks) {
-      // @todo Check if this should be done after  checking if resolver exists
-      this.runStatus.runningTasks.push(task.getCode());
-
-      const hasResolver = this.runStatus.resolvers.hasOwnProperty(task.getResolverName());
+      const resolverName = task.getResolverName();
+      const hasResolver = this.runStatus.resolvers.hasOwnProperty(resolverName);
       if (!hasResolver) {
         throw new Error(
-          `Task resolver '${task.getResolverName()}' for task '${task.getCode()}' has no definition. Defined resolvers are: [${Object.keys(
+          `Task resolver '${resolverName}' for task '${task.getCode()}' has no definition. Defined resolvers are: [${Object.keys(
             this.runStatus.resolvers,
           ).join(', ')}].`,
         );
       }
 
-      const taskResolver = this.runStatus.resolvers[task.getResolverName()];
+      this.runStatus.runningTasks.push(task.getCode());
 
+      const taskResolver = this.runStatus.resolvers[resolverName];
       task.run(taskResolver, this.runStatus.context).then(
         () => {
           this.taskFinished(task);

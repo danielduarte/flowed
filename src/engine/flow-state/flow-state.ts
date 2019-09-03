@@ -48,7 +48,6 @@ export abstract class FlowState {
   public abstract getStateCode(): FlowStateEnum;
 
   protected throwTransitionError(transition: string) {
-    // @todo add test for this error
     throw new Error(`Cannot execute transition ${transition} in current state ${this.getStateCode()}.`);
   }
 }

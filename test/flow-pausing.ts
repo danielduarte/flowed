@@ -76,7 +76,7 @@ describe('the flow', () => {
             resolve({
               result: params.text1 + params.text2,
             });
-          }, 300);
+          }, 100);
         });
       }
     }
