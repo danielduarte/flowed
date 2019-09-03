@@ -8,9 +8,22 @@ export class NoopResolver {
   }
 }
 
+export class ThrowError {
+  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    throw new Error(typeof params.message !== 'undefined' ? params.message : 'ThrowError resolver has thrown an error');
+  }
+}
+
+export class ConditionalResolver {
+  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    return params.condition ? { onTrue: params.trueResult } : { onFalse: params.falseResult };
+  }
+}
+
 // Wait for 'ms' milliseconds and finish
 export class WaitResolver {
   public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    // @todo add value as param to resolve after time is out
     return new Promise<GenericValueMap>(resolve => {
       setTimeout(() => {
         resolve({});
@@ -66,11 +79,3 @@ export class RepeaterResolver {
     return { results };
   }
 }
-
-export class ConditionalResolver {
-  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
-    return params.condition ? { onTrue: params.trueResult } : { onFalse: params.falseResult };
-  }
-}
-
-// @todo add ThrowErrorResolver

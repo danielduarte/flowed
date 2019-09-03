@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { GenericValueMap } from '../src';
+import { GenericValueMap, WaitResolver } from '../src';
 import { FlowManager } from '../src/engine';
 import * as ResolverLibrary from '../src/resolver-library';
 
@@ -313,6 +313,120 @@ describe('the ResolverLibrary', () => {
       msg: 'This is the FALSE branch: undefined',
     });
   });
-});
 
-// @todo add test to check error thrown on non resolver set in flow spec (check src/engine/flow.ts method startReadyTasks around line 190)
+  it('runs error resolver', async () => {
+    let msg = 'No error';
+
+    try {
+      await FlowManager.run(
+        {
+          tasks: {
+            throwAnError: {
+              requires: [],
+              provides: [],
+              resolver: {
+                name: 'err',
+                params: {},
+                results: {},
+              },
+            },
+          },
+        },
+        {},
+        [],
+        {
+          err: ResolverLibrary.ThrowError,
+        },
+      );
+    } catch (error) {
+      msg = error.message;
+    }
+
+    expect(msg).to.be.eql('ThrowError resolver has thrown an error');
+  });
+
+  it('runs error resolver with a custom error', async () => {
+    let msg = 'No error';
+
+    try {
+      await FlowManager.run(
+        {
+          tasks: {
+            throwAnError: {
+              requires: [],
+              provides: [],
+              resolver: {
+                name: 'err',
+                params: {
+                  message: { value: "Hey, I'm a custom error message!" },
+                },
+                results: {},
+              },
+            },
+          },
+        },
+        {},
+        [],
+        {
+          err: ResolverLibrary.ThrowError,
+        },
+      );
+    } catch (error) {
+      msg = error.message;
+    }
+
+    expect(msg).to.be.eql("Hey, I'm a custom error message!");
+  });
+
+  it('runs error resolver with empty custom error', async () => {
+    let msg = 'No error';
+
+    try {
+      await FlowManager.run(
+        {
+          tasks: {
+            throwAnError: {
+              requires: [],
+              provides: [],
+              resolver: {
+                name: 'err',
+                params: {
+                  message: { value: '' },
+                },
+                results: {},
+              },
+            },
+          },
+        },
+        {},
+        [],
+        {
+          err: ResolverLibrary.ThrowError,
+        },
+      );
+    } catch (error) {
+      msg = error.message;
+    }
+
+    expect(msg).to.be.eql('');
+  });
+
+  it('throws an error when missing resolver', async () => {
+    let msg = 'No error';
+
+    try {
+      FlowManager.run(
+        {
+          tasks: { aTask: { provides: [], requires: [], resolver: { name: 'r', params: {}, results: {} } } },
+        },
+        {},
+        [],
+        { x: WaitResolver },
+      );
+    } catch (error) {
+      msg = error.message;
+    }
+
+    expect(msg).to.be.eql(`Task resolver 'r' for task 'aTask' has no definition. Defined resolvers are: [x].`);
+  });
+});
