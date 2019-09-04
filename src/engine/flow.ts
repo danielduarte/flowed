@@ -285,20 +285,27 @@ export class Flow {
   protected taskFinished(task: Task, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
     const taskProvisions = task.getSpec().provides || [];
     const taskResults = task.getResults();
+    const taskCode = task.getCode();
 
     if (error) {
-      debug(`✘ Error in task ${task.getCode()}, results:`, taskResults);
+      debug(`✘ Error in task ${taskCode}, results:`, taskResults);
     } else {
-      debug(`✔ Finished task ${task.getCode()}, results:`, taskResults);
+      debug(`✔ Finished task ${taskCode}, results:`, taskResults);
     }
 
     // Remove the task from running tasks collection
-    this.runStatus.runningTasks.splice(this.runStatus.runningTasks.indexOf(task.getCode()), 1);
+    this.runStatus.runningTasks.splice(this.runStatus.runningTasks.indexOf(taskCode), 1);
+
+    const taskSpec = task.getSpec();
 
     for (const resultName of taskProvisions) {
       if (taskResults.hasOwnProperty(resultName)) {
-        const result = taskResults[resultName];
-        this.supplyResult(resultName, result);
+        this.supplyResult(resultName, taskResults[resultName]);
+      } else if (taskSpec.hasOwnProperty('defaultResult')) {
+        // @todo add defaultResult to repeater task
+        this.supplyResult(resultName, taskSpec.defaultResult);
+      } else {
+        debug(`Warning: Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`);
       }
     }
 

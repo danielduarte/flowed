@@ -15,6 +15,8 @@ export interface TaskSpec {
 
   provides?: string[];
 
+  defaultResult?: any;
+
   // @todo check if this could be optional
   resolver: TaskResolverSpec;
 }

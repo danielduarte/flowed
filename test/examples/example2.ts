@@ -16,6 +16,7 @@ export const example2: ExampleFunction = () => {
         A: {
           requires: [],
           provides: ['a'],
+          defaultResult: true,
           resolver: {
             name: 'dummy',
             params: {},
@@ -25,6 +26,7 @@ export const example2: ExampleFunction = () => {
         B: {
           requires: [],
           provides: ['b'],
+          defaultResult: true,
           resolver: {
             name: 'dummy',
             params: {},
@@ -34,6 +36,7 @@ export const example2: ExampleFunction = () => {
         C: {
           requires: ['a', 'b'],
           provides: ['c'],
+          defaultResult: true,
           resolver: {
             name: 'dummy',
             params: {},
@@ -43,6 +46,7 @@ export const example2: ExampleFunction = () => {
         D: {
           requires: [],
           provides: ['d'],
+          defaultResult: true,
           resolver: {
             name: 'dummy',
             params: {},
@@ -61,6 +65,7 @@ export const example2: ExampleFunction = () => {
         F: {
           requires: [],
           provides: ['f'],
+          defaultResult: true,
           resolver: {
             name: 'dummy',
             params: {},
