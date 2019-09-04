@@ -305,7 +305,9 @@ export class Flow {
         // @todo add defaultResult to repeater task
         this.supplyResult(resultName, taskSpec.defaultResult);
       } else {
-        debug(`Warning: Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`);
+        debug(
+          `Warning: Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`,
+        );
       }
     }
 

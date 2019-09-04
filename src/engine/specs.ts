@@ -1,5 +1,4 @@
 export interface FlowSpec {
-
   tasks?: TaskSpecMap;
 
   configs?: FlowConfigs;
@@ -10,7 +9,6 @@ export class TaskSpecMap {
 }
 
 export interface TaskSpec {
-
   requires?: string[];
 
   provides?: string[];

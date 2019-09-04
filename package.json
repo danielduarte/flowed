@@ -23,10 +23,10 @@
     "build:watch": "npm run build -- --watch",
     "start": "npm test",
     "test": "mocha --require ts-node/register test/*.ts",
-    "posttest": "npm run lint && npm-consider install --test",
+    "posttest": "npm run lint",
     "lint": "tslint -p tsconfig.json -t verbose && tslint -p tsconfig.test.json -t verbose",
     "format": "tslint -p tsconfig.json -t verbose --fix && tslint -p tsconfig.test.json -t verbose --fix && prettier --write \"src/**/*.ts\" \"src/**/*.js\" && prettier --write \"test/**/*.ts\" \"test/**/*.js\"",
-    "release:prepare": "rm -rf ./dist ./node_modules package-lock.json && npm install && npm run format && npm run build && npm test && git status"
+    "release:prepare": "rm -rf ./dist ./node_modules package-lock.json && npm install && npm-consider install --test && npm run format && npm run build && npm test && git status"
   },
   "config": {
     "maxPackagesNumber": 250,
