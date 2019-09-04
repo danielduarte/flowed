@@ -220,7 +220,7 @@ export class Flow {
           this.runStatus.tasksReady.push(task);
         }
 
-        const taskReqs = task.getSpec().requires;
+        const taskReqs = task.getSpec().requires || [];
         for (const req of taskReqs) {
           if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
             this.runStatus.tasksByReq[req] = {};
@@ -272,7 +272,7 @@ export class Flow {
       if (this.spec.tasks.hasOwnProperty(taskCode)) {
         const taskSpec = this.spec.tasks[taskCode];
 
-        provisions.push.apply(provisions, taskSpec.provides);
+        provisions.push.apply(provisions, taskSpec.provides || []);
 
         this.tasks[taskCode] = new Task(taskCode, taskSpec);
       }
@@ -283,7 +283,7 @@ export class Flow {
   }
 
   protected taskFinished(task: Task, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
-    const taskProvisions = task.getSpec().provides;
+    const taskProvisions = task.getSpec().provides || [];
     const taskResults = task.getResults();
 
     if (error) {

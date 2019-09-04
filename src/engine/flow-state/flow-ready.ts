@@ -40,7 +40,7 @@ export class FlowReady extends FlowState {
     const finishPromise = flowProtectedScope.createFinishPromise.call(flow);
 
     // Notify flow finished when flow has no tasks
-    if (Object.keys(flow.getSpec().tasks).length === 0) {
+    if (Object.keys(flow.getSpec().tasks || {}).length === 0) {
       flowProtectedScope.finished.call(flow);
     }
 

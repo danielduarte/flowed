@@ -1,6 +1,6 @@
 export interface FlowSpec {
-  // @todo check if this could be optional
-  tasks: TaskSpecMap;
+
+  tasks?: TaskSpecMap;
 
   configs?: FlowConfigs;
 }
@@ -10,11 +10,10 @@ export class TaskSpecMap {
 }
 
 export interface TaskSpec {
-  // @todo check if this could be optional
-  requires: string[];
 
-  // @todo check if this could be optional
-  provides: string[];
+  requires?: string[];
+
+  provides?: string[];
 
   // @todo check if this could be optional
   resolver: TaskResolverSpec;
@@ -23,11 +22,9 @@ export interface TaskSpec {
 export interface TaskResolverSpec {
   name: string;
 
-  // @todo check if this could be optional
-  params: TaskParamsMap;
+  params?: TaskParamsMap;
 
-  // @todo check if this could be optional
-  results: TaskResultsMap;
+  results?: TaskResultsMap;
 }
 
 export interface TaskParamsMap {

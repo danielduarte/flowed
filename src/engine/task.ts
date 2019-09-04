@@ -30,7 +30,7 @@ export class Task {
 
   public resetRunStatus() {
     this.runStatus = {
-      pendingReqs: [...this.spec.requires],
+      pendingReqs: [...(this.spec.requires || [])],
       solvedReqs: {},
       solvedResults: {},
     };
@@ -93,7 +93,7 @@ export class Task {
     const params: GenericValueMap = {};
 
     let paramValue;
-    for (const [resolverParamName, paramSolvingInfo] of Object.entries(this.spec.resolver.params)) {
+    for (const [resolverParamName, paramSolvingInfo] of Object.entries(this.spec.resolver.params || {})) {
       // If it is string, it is a task param name
       if (typeof paramSolvingInfo === 'string') {
         const taskParamName = paramSolvingInfo;
