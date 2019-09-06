@@ -5,6 +5,9 @@
 /node_modules/
 /dist/
 
-# Build and test generated files
-/.nyc_output
+# Generated files
 /tsconfig.tsbuildinfo
+/.nyc_output
+
+# Private files
+.coveralls.yml

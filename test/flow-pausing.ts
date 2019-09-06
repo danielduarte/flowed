@@ -4,7 +4,9 @@ import { GenericValueMap } from '../src';
 import { Flow, Task } from '../src/engine';
 const debug = rawDebug('flowed:test');
 
-// @todo run tests with coverage
+// @todo run tests with branch coverage
+// @todo Set coverage threshold for failure
+// @todo Set coverage decrease threshold for failure
 
 describe('the flow', () => {
   it('can be paused and resumed', async () => {

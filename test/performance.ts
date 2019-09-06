@@ -2,7 +2,7 @@ import { debug as rawDebug } from 'debug';
 import * as Examples from './examples/index';
 const debug = rawDebug('flowed:test');
 
-const times = 110000;
+const times = 100000;
 const maxTime = '2s';
 
 describe('a simple flow with 7 tasks', function() {

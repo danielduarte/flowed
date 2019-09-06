@@ -22,14 +22,16 @@
     "build": "tsc",
     "build:watch": "npm run build -- --watch",
     "start": "npm test",
-    "test": "mocha --require ts-node/register test/*.ts",
+    "test": "nyc mocha --require ts-node/register test/*.ts",
+    "coverage": "nyc report",
+    "coverage:send": "nyc report --reporter=text-lcov | coveralls",
     "posttest": "npm run lint",
     "lint": "tslint -p tsconfig.json -t verbose && tslint -p tsconfig.test.json -t verbose",
     "format": "tslint -p tsconfig.json -t verbose --fix && tslint -p tsconfig.test.json -t verbose --fix && prettier --write \"src/**/*.ts\" \"src/**/*.js\" && prettier --write \"test/**/*.ts\" \"test/**/*.js\"",
     "release:prepare": "rm -rf ./dist ./node_modules package-lock.json && npm install && npm-consider install --test && npm run format && npm run build && npm test && git status"
   },
   "config": {
-    "maxPackagesNumber": 250,
+    "maxPackagesNumber": 300,
     "maxSizeBites": 52428800,
     "allowedLicenseTypes": [
       "permissive",
@@ -45,10 +47,12 @@
     "debug": "^4.1.1"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^0.1.3",
     "@types/chai": "^4.2.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.7.2",
     "chai": "^4.2.0",
+    "coveralls": "^3.0.6",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
     "prettier": "^1.18.2",
@@ -56,5 +60,12 @@
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.6.2"
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "all": true,
+    "reporter": [
+      "text"
+    ]
   }
 }
