@@ -8,12 +8,10 @@ branches:
 
 after_success:
   - npm run coverage:send
+  - sonar-scanner
 
 addons:
   sonarcloud:
     organization: "daniel-duarte"
     token:
       secure: $SONAR_TOKEN
-
-script:
-  - sonar-scanner
