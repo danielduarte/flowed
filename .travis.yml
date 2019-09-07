@@ -2,6 +2,10 @@ language: node_js
 node_js:
   - "12"
 
+# Remove shallow cloning for Sonar analysis
+git:
+  depth: false
+
 branches:
   only:
   - master
