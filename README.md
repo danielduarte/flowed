@@ -14,8 +14,8 @@ A fast and reliable flow manager and task runner for *Node.js*.
 - [JSON based flow specifications](#json-based-flow-specifications)
 - [Parametrized running](#parametrized-running)
 - [Scoped visibility for tasks](#scoped-visibility-for-tasks)
-- [Run flows from string, object, file or URL](#run-flows-from-string,-object,-file-or-url)
-- [Pause/Resume and Stop/Reset functions](#pause/resume-and-stop/reset-functions)
+- [Run flows from string, object, file or URL](#run-flows-from-string-object-file-or-url)
+- [Pause/Resume and Stop/Reset functions](#pauseresume-and-stopreset-functions)
 - [Library with reusable frequently used tasks](#library-with-reusable-frequently-used-tasks)
 
 
