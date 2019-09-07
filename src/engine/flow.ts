@@ -8,6 +8,18 @@ import { TaskMap } from './task-types';
 const debug = rawDebug('flowed:flow');
 
 export class Flow {
+  /**
+   * Next flow instance id, used for debugging
+   * @type {number}
+   */
+  public static nextId = 1;
+
+  /**
+   * Flow instance id, used for debugging
+   * @type {number}
+   */
+  public id: number;
+
   protected spec!: FlowSpec;
 
   protected state!: FlowState;
@@ -54,6 +66,8 @@ export class Flow {
   };
 
   public constructor(spec: FlowSpec) {
+    this.id = Flow.nextId++;
+
     this.parseSpec(spec);
     this.initRunStatus();
   }
@@ -82,6 +96,8 @@ export class Flow {
   public reset() {
     this.state.reset(this, this.protectedScope);
   }
+
+  // @todo Add a step() feature, for debugging
 
   public isRunning() {
     return this.runStatus.runningTasks.length > 0;
@@ -202,7 +218,7 @@ export class Flow {
         },
       );
 
-      debug(`► Task ${task.getCode()} started, params:`, task.getParams());
+      debug(`[${this.id}] ` + `  ‣ Task ${task.getCode()} started, params:`, task.getParams());
     }
   }
 
@@ -288,9 +304,9 @@ export class Flow {
     const taskCode = task.getCode();
 
     if (error) {
-      debug(`✘ Error in task ${taskCode}, results:`, taskResults);
+      debug(`[${this.id}]   ✗ Error in task ${taskCode}, results:`, taskResults);
     } else {
-      debug(`✔ Finished task ${taskCode}, results:`, taskResults);
+      debug(`[${this.id}]   ✓ Finished task ${taskCode}, results:`, taskResults);
     }
 
     // Remove the task from running tasks collection
@@ -306,7 +322,9 @@ export class Flow {
         this.supplyResult(resultName, taskSpec.defaultResult);
       } else {
         debug(
-          `Warning: Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`,
+          `[${
+            this.id
+          }] ⚠️ Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`,
         );
       }
     }

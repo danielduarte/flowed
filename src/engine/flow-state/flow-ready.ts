@@ -1,8 +1,10 @@
+import { debug as rawDebug } from 'debug';
 import { FlowRunning } from '.';
 import { FlowState } from '.';
 import { Flow } from '../';
 import { GenericValueMap, TaskResolverMap } from '../../types';
 import { FlowStateEnum } from '../flow-types';
+const debug = rawDebug('flowed:flow');
 
 export class FlowReady extends FlowState {
   public static getInstance(): FlowState {
@@ -27,6 +29,8 @@ export class FlowReady extends FlowState {
     resolvers: TaskResolverMap = {},
     context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
+    debug(`[${flow.id}] ` + '▶ Flow started with params:', params);
+
     flowProtectedScope.setState.call(flow, FlowRunning.getInstance());
 
     flowProtectedScope.setExpectedResults.call(flow, [...expectedResults]);

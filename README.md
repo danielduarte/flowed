@@ -95,6 +95,10 @@ You just have to take care of your custom code.
 
 ## Examples
 
+- [Parallel Tasks](#parallel-tasks)
+- [Dependent Tasks](#dependent-tasks)
+
+
 ### Parallel Tasks
 
 ![Parallel Tasks](./doc/example-parallel.png)

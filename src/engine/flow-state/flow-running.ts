@@ -41,10 +41,10 @@ export class FlowRunning extends FlowState {
     flowProtectedScope.setState.call(flow, FlowFinished.getInstance());
 
     if (error) {
-      debug('✘ Flow finished with error. Results:', flow.getResults());
+      debug(`[${flow.id}] ` + '✘ Flow finished with error. Results:', flow.getResults());
       flowProtectedScope.execFinishReject.call(flow, error);
     } else {
-      debug('◼ Flow finished with results:', flow.getResults());
+      debug(`[${flow.id}] ` + '✔ Flow finished with results:', flow.getResults());
       flowProtectedScope.execFinishResolve.call(flow);
     }
   }
