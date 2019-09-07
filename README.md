@@ -1,6 +1,7 @@
 # flowed
 [![Build Status](https://travis-ci.org/daniel-duarte/flowed.svg?branch=master)](https://travis-ci.org/daniel-duarte/flowed)
 [![Coverage Status](https://coveralls.io/repos/github/daniel-duarte/flowed/badge.svg?branch=master)](https://coveralls.io/github/daniel-duarte/flowed?branch=master)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-duarte_flowed&metric=alert_status)](https://sonarcloud.io/dashboard?id=daniel-duarte_flowed)
 
 [![NPM](https://nodei.co/npm/flowed.png?compact=true)](https://nodei.co/npm/flowed/)
 
@@ -94,11 +95,73 @@ You just have to take care of your custom code.
 
 ## Examples
 
-### Mixed Flow
-![Mixed flow example](./doc/example-mixed.png)
-
 ### Parallel Tasks
-![Parallel flow example](./doc/example-parallel.png)
 
-### Serial Tasks
-![Serial flow example](./doc/example-series.png)
+![Parallel Tasks](./doc/example-parallel.png)
+
+```JavaScript
+const flow = {
+  tasks: {
+    A: {
+      provides: ['resultA'],
+      resolver: {
+        name: 'doNothing',
+      },
+    },
+    B: {
+      provides: ['resultB'],
+      resolver: {
+        name: 'doNothing',
+      },
+    },
+    C: {
+      requires: ['resultA', 'resultB'],
+      resolver: {
+        name: 'doNothing',
+      },
+    },
+  },
+}
+```
+
+```JavaScript
+FlowManager.run(flow, {}, [], {
+  doNothing: ResolverLibrary.NoopResolver,
+});
+```
+
+### Dependent Tasks
+
+![Dependent Tasks](./doc/example-dependent.png)
+
+```JavaScript
+const flow = {
+  tasks: {
+    A: {
+      provides: ['resultA'],
+      resolver: {
+        name: 'doNothing',
+      },
+    },
+    B: {
+      requires: ['resultA'],
+      provides: ['resultB'],
+      resolver: {
+        name: 'doNothing',
+      },
+    },
+    C: {
+      requires: ['resultB'],
+      resolver: {
+        name: 'doNothing',
+      },
+    },
+  },
+}
+```
+
+```JavaScript
+FlowManager.run(flow, {}, [], {
+  doNothing: ResolverLibrary.NoopResolver,
+});
+```
