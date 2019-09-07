@@ -3,7 +3,7 @@ import * as Examples from './examples/index';
 const debug = rawDebug('flowed:test');
 
 const times = 100000;
-const maxTime = '2s';
+const maxTime = '5s'; // @todo Put back to 2s when created performance test suite
 
 describe('a simple flow with 7 tasks', function() {
   this.timeout(maxTime);
