@@ -1,7 +1,8 @@
 import { expect } from 'chai';
-import { GenericValueMap, WaitResolver } from '../src';
+import { GenericValueMap, Task, WaitResolver } from '../src';
 import { FlowManager } from '../src/engine';
 import * as ResolverLibrary from '../src/resolver-library';
+import { TaskResolver } from '../src/types';
 
 describe('the ResolverLibrary', () => {
   it('runs noop resolver', () => {
@@ -428,5 +429,10 @@ describe('the ResolverLibrary', () => {
     }
 
     expect(msg).to.be.eql(`Task resolver 'r' for task 'aTask' has no definition. Defined resolvers are: [x].`);
+  });
+
+  it('can create base resolver task', async () => {
+    const resolver = new TaskResolver();
+    await resolver.exec({}, {}, new Task('t1', {resolver: {name: 'r1'}}));
   });
 });

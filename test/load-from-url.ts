@@ -34,12 +34,10 @@ describe('can run a flow', () => {
     );
   });
 
-  it('from a JSON got from a URL and throw error', async () => {
-    const filepath = 'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/invented.flowed.json';
-
+  it('from a JSON got from an incorrect URL and throw error', async () => {
     try {
       await FlowManager.runFromUrl(
-        filepath,
+        'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/invented.flowed.json',
         {
           param1: 'PARAM1',
           param2: 'PARAM2',
@@ -51,18 +49,17 @@ describe('can run a flow', () => {
           direct: DirectResolver,
         },
       );
+
+      throw new Error('An error should have been thrown');
     } catch (error) {
       expect(error.message).to.be.eql(`Request failed with status code: 404`);
     }
   });
 
-  it('from a JSON got from a URL with invalid format and throw an error', async () => {
-    const filepath =
-      'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/example6.flowed.json.invalid';
-
+  it('from a JSON got from a URL with unsupported protocol and throw error', async () => {
     try {
       await FlowManager.runFromUrl(
-        filepath,
+        'ftp://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/invented.flowed.json',
         {
           param1: 'PARAM1',
           param2: 'PARAM2',
@@ -74,6 +71,30 @@ describe('can run a flow', () => {
           direct: DirectResolver,
         },
       );
+
+      throw new Error('An error should have been thrown');
+    } catch (error) {
+      expect(error.message).to.be.eql(`Protocol not supported: ftp. Supported protocols are: [http, https]`);
+    }
+  });
+
+  it('from a JSON got from a URL with invalid format and throw an error', async () => {
+    try {
+      await FlowManager.runFromUrl(
+        'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/example6.flowed.json.invalid',
+        {
+          param1: 'PARAM1',
+          param2: 'PARAM2',
+          param3: 'PARAM3',
+        },
+        ['g1', 'g2'],
+        {
+          timer: TimerResolver,
+          direct: DirectResolver,
+        },
+      );
+
+      throw new Error('An error should have been thrown');
     } catch (error) {
       expect(error.message).to.be.eql('Unexpected token \n in JSON at position 474');
     }

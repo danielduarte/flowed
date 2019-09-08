@@ -5,16 +5,35 @@ import { Flow } from '../src/engine';
 // @todo Add test to pause flow without tasks
 // @todo Add test to stop flow without tasks
 
+// Created this class to test protected and private methods in Flow
+class PublicFlow extends Flow {
+  public finished() {
+    super.finished();
+  }
+
+  public paused() {
+    super.paused();
+  }
+
+  public stopped() {
+    super.stopped();
+  }
+}
+
 describe('a flow in state', () => {
   it('ready can only be started', async () => {
     // Prepare a flow is Ready state
     const flow = new Flow({ tasks: {} });
+    const pubFlow = new PublicFlow({ tasks: {} });
 
     // Invalid transitions
     expect(() => flow.pause()).to.throw('Cannot execute transition Pause in current state Ready.');
     expect(() => flow.resume()).to.throw('Cannot execute transition Resume in current state Ready.');
     expect(() => flow.stop()).to.throw('Cannot execute transition Stop in current state Ready.');
     expect(() => flow.reset()).to.throw('Cannot execute transition Reset in current state Ready.');
+    expect(() => pubFlow.finished()).to.throw('Cannot execute transition Finished in current state Ready.');
+    expect(() => pubFlow.stopped()).to.throw('Cannot execute transition Stopped in current state Ready.');
+    expect(() => pubFlow.paused()).to.throw('Cannot execute transition Paused in current state Ready.');
 
     // Valid transitions
     await flow.start();
@@ -24,12 +43,17 @@ describe('a flow in state', () => {
     // Prepare a flow is Finished state
     const flow = new Flow({ tasks: {} });
     await flow.start();
+    const pubFlow = new PublicFlow({ tasks: {} });
+    await pubFlow.start();
 
     // Invalid transitions
     expect(() => flow.start()).to.throw('Cannot execute transition Start in current state Finished.');
     expect(() => flow.pause()).to.throw('Cannot execute transition Pause in current state Finished.');
     expect(() => flow.resume()).to.throw('Cannot execute transition Resume in current state Finished.');
     expect(() => flow.stop()).to.throw('Cannot execute transition Stop in current state Finished.');
+    expect(() => pubFlow.finished()).to.throw('Cannot execute transition Finished in current state Finished.');
+    expect(() => pubFlow.stopped()).to.throw('Cannot execute transition Stopped in current state Finished.');
+    expect(() => pubFlow.paused()).to.throw('Cannot execute transition Paused in current state Finished.');
 
     // Valid transitions
     flow.reset();
@@ -44,18 +68,32 @@ describe('a flow in state', () => {
       return newFlow;
     };
 
+    const initRunningPublicFlow = () => {
+      const newFlow = new PublicFlow({
+        tasks: { aTask: { provides: [], requires: [], resolver: { name: 'r', params: {}, results: {} } } },
+      });
+      newFlow.start({}, [], { r: NoopResolver });
+
+      return newFlow;
+    };
+
     // Prepare a flow is Running state
     let flow = initRunningFlow();
+    let pubFlow = initRunningPublicFlow();
 
     // Invalid transitions
     expect(() => flow.start()).to.throw('Cannot execute transition Start in current state Running.');
     expect(() => flow.resume()).to.throw('Cannot execute transition Resume in current state Running.');
     expect(() => flow.reset()).to.throw('Cannot execute transition Reset in current state Running.');
+    expect(() => pubFlow.stopped()).to.throw('Cannot execute transition Stopped in current state Running.');
+    expect(() => pubFlow.paused()).to.throw('Cannot execute transition Paused in current state Running.');
 
     // Valid transitions
     await flow.pause();
     flow = initRunningFlow(); // Prepare a new flow in Running state
     await flow.stop();
+    pubFlow = initRunningPublicFlow(); // Prepare a new flow in Running state
+    pubFlow.finished();
   });
 
   it('pausing has no valid public transitions', async () => {
@@ -66,12 +104,23 @@ describe('a flow in state', () => {
     flow.start({}, [], { r: NoopResolver });
     flow.pause();
 
+    const pubFlow = new PublicFlow({
+      tasks: { aTask: { provides: [], requires: [], resolver: { name: 'r', params: {}, results: {} } } },
+    });
+    pubFlow.start({}, [], { r: NoopResolver });
+    pubFlow.pause();
+
     // Invalid transitions (all public transitions are invalid)
     expect(() => flow.pause()).to.throw('Cannot execute transition Pause in current state Pausing.');
     expect(() => flow.resume()).to.throw('Cannot execute transition Resume in current state Pausing.');
     expect(() => flow.stop()).to.throw('Cannot execute transition Stop in current state Pausing.');
     expect(() => flow.reset()).to.throw('Cannot execute transition Reset in current state Pausing.');
     expect(() => flow.start()).to.throw('Cannot execute transition Start in current state Pausing.');
+    expect(() => pubFlow.finished()).to.throw('Cannot execute transition Finished in current state Pausing.');
+    expect(() => pubFlow.stopped()).to.throw('Cannot execute transition Stopped in current state Pausing.');
+
+    // Valid transitions
+    pubFlow.paused();
   });
 
   it('paused can only be resumed or stopped', async () => {
@@ -86,13 +135,27 @@ describe('a flow in state', () => {
       return newFlow;
     };
 
+    const initPausedPublicFlow = async () => {
+      const newFlow = new PublicFlow({
+        tasks: { aTask: { provides: [], requires: [], resolver: { name: 'r', params: {}, results: {} } } },
+      });
+      newFlow.start({}, [], { r: NoopResolver });
+      await newFlow.pause();
+
+      return newFlow;
+    };
+
     // Prepare a flow is Running state
     let flow = await initPausedFlow();
+    const pubFlow = await initPausedPublicFlow();
 
     // Invalid transitions
     expect(() => flow.pause()).to.throw('Cannot execute transition Pause in current state Paused.');
     expect(() => flow.reset()).to.throw('Cannot execute transition Reset in current state Paused.');
     expect(() => flow.start()).to.throw('Cannot execute transition Start in current state Paused.');
+    expect(() => pubFlow.finished()).to.throw('Cannot execute transition Finished in current state Paused.');
+    expect(() => pubFlow.stopped()).to.throw('Cannot execute transition Stopped in current state Paused.');
+    expect(() => pubFlow.paused()).to.throw('Cannot execute transition Paused in current state Paused.');
 
     // Valid transitions
     flow.resume();
@@ -109,12 +172,23 @@ describe('a flow in state', () => {
     flow.start({}, [], { r: NoopResolver });
     flow.stop();
 
+    const pubFlow = new PublicFlow({
+      tasks: { aTask: { provides: [], requires: [], resolver: { name: 'r', params: {}, results: {} } } },
+    });
+    pubFlow.start({}, [], { r: NoopResolver });
+    pubFlow.stop();
+
     // Invalid transitions (all public transitions are invalid)
     expect(() => flow.pause()).to.throw('Cannot execute transition Pause in current state Stopping.');
     expect(() => flow.resume()).to.throw('Cannot execute transition Resume in current state Stopping.');
     expect(() => flow.stop()).to.throw('Cannot execute transition Stop in current state Stopping.');
     expect(() => flow.reset()).to.throw('Cannot execute transition Reset in current state Stopping.');
     expect(() => flow.start()).to.throw('Cannot execute transition Start in current state Stopping.');
+    expect(() => pubFlow.finished()).to.throw('Cannot execute transition Finished in current state Stopping.');
+    expect(() => pubFlow.paused()).to.throw('Cannot execute transition Paused in current state Stopping.');
+
+    // Valid transitions
+    pubFlow.stopped();
   });
 
   it('stopped can only be reset', async () => {
@@ -125,13 +199,26 @@ describe('a flow in state', () => {
     flow.start({}, [], { r: NoopResolver });
     await flow.stop();
 
+    const pubFlow = new PublicFlow({
+      tasks: { aTask: { provides: [], requires: [], resolver: { name: 'r', params: {}, results: {} } } },
+    });
+    pubFlow.start({}, [], { r: NoopResolver });
+    await pubFlow.stop();
+
     // Invalid transitions
     expect(() => flow.pause()).to.throw('Cannot execute transition Pause in current state Stopped.');
     expect(() => flow.resume()).to.throw('Cannot execute transition Resume in current state Stopped.');
     expect(() => flow.stop()).to.throw('Cannot execute transition Stop in current state Stopped.');
     expect(() => flow.start()).to.throw('Cannot execute transition Start in current state Stopped.');
+    expect(() => pubFlow.finished()).to.throw('Cannot execute transition Finished in current state Stopped.');
+    expect(() => pubFlow.stopped()).to.throw('Cannot execute transition Stopped in current state Stopped.');
+    expect(() => pubFlow.paused()).to.throw('Cannot execute transition Paused in current state Stopped.');
 
     // Valid transitions
     flow.reset();
   });
+
+  // @todo add test for finished status
+  // @todo add test for stopped status
+  // @todo add test for paused status
 });

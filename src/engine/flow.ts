@@ -359,4 +359,12 @@ export class Flow {
   protected finished() {
     this.state.finished(this, this.protectedScope);
   }
+
+  protected paused() {
+    this.state.paused(this, this.protectedScope);
+  }
+
+  protected stopped() {
+    this.state.stopped(this, this.protectedScope);
+  }
 }

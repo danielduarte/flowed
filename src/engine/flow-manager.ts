@@ -75,7 +75,7 @@ export class FlowManager {
       if (Array.isArray(matchResult) && matchResult.length === 2) {
         actualProtocol = matchResult[1];
       }
-      return Promise.resolve(
+      return Promise.reject(
         new Error(
           `Protocol not supported${
             actualProtocol ? `: ${actualProtocol}` : ''

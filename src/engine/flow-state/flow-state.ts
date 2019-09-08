@@ -11,43 +11,40 @@ export abstract class FlowState {
     resolvers: TaskResolverMap = {},
     context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
-    this.throwTransitionError(FlowTransitionEnum.Start);
-    return Promise.resolve({});
+    throw this.createTransitionError(FlowTransitionEnum.Start);
   }
 
   public finished(flow: Flow, flowProtectedScope: any, error: Error | boolean = false) {
-    this.throwTransitionError(FlowTransitionEnum.Finished);
+    throw this.createTransitionError(FlowTransitionEnum.Finished);
   }
 
   public pause(flow: Flow, flowProtectedScope: any): Promise<GenericValueMap> {
-    this.throwTransitionError(FlowTransitionEnum.Pause);
-    return Promise.resolve({});
+    throw this.createTransitionError(FlowTransitionEnum.Pause);
   }
 
   public paused(flow: Flow, flowProtectedScope: any) {
-    this.throwTransitionError(FlowTransitionEnum.Paused);
+    throw this.createTransitionError(FlowTransitionEnum.Paused);
   }
 
   public resume(flow: Flow, flowProtectedScope: any) {
-    this.throwTransitionError(FlowTransitionEnum.Resume);
+    throw this.createTransitionError(FlowTransitionEnum.Resume);
   }
 
   public stop(flow: Flow, flowProtectedScope: any): Promise<GenericValueMap> {
-    this.throwTransitionError(FlowTransitionEnum.Stop);
-    return Promise.resolve({});
+    throw this.createTransitionError(FlowTransitionEnum.Stop);
   }
 
   public stopped(flow: Flow, flowProtectedScope: any) {
-    this.throwTransitionError(FlowTransitionEnum.Stopped);
+    throw this.createTransitionError(FlowTransitionEnum.Stopped);
   }
 
   public reset(flow: Flow, flowProtectedScope: any) {
-    this.throwTransitionError(FlowTransitionEnum.Reset);
+    throw this.createTransitionError(FlowTransitionEnum.Reset);
   }
 
   public abstract getStateCode(): FlowStateEnum;
 
-  protected throwTransitionError(transition: string) {
-    throw new Error(`Cannot execute transition ${transition} in current state ${this.getStateCode()}.`);
+  protected createTransitionError(transition: string) {
+    return new Error(`Cannot execute transition ${transition} in current state ${this.getStateCode()}.`);
   }
 }
