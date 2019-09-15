@@ -8,6 +8,7 @@
 # Generated files
 /tsconfig.tsbuildinfo
 /.nyc_output
+/web/flowed.js
 
 # Private files
 /.coveralls.yml
