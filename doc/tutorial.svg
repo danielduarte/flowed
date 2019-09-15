@@ -1,0 +1,394 @@
+<svg id="mermaid-1568488889708" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width: 958.671875px;" viewBox="0 0 958.671875 148"><style>
+
+
+#mermaid-1568488889708 .label {
+  font-family: 'trebuchet ms', verdana, arial;
+  color: #333; }
+
+#mermaid-1568488889708 .label text {
+  fill: #333; }
+
+#mermaid-1568488889708 .node rect,
+#mermaid-1568488889708 .node circle,
+#mermaid-1568488889708 .node ellipse,
+#mermaid-1568488889708 .node polygon {
+  fill: #ECECFF;
+  stroke: #9370DB;
+  stroke-width: 1px; }
+
+#mermaid-1568488889708 .node.clickable {
+  cursor: pointer; }
+
+#mermaid-1568488889708 .arrowheadPath {
+  fill: #333333; }
+
+#mermaid-1568488889708 .edgePath .path {
+  stroke: #333333;
+  stroke-width: 1.5px; }
+
+#mermaid-1568488889708 .edgeLabel {
+  background-color: #e8e8e8; }
+
+#mermaid-1568488889708 .cluster rect {
+  fill: #ffffde;
+  stroke: #aaaa33;
+  stroke-width: 1px; }
+
+#mermaid-1568488889708 .cluster text {
+  fill: #333; }
+
+#mermaid-1568488889708 div.mermaidTooltip {
+  position: absolute;
+  text-align: center;
+  max-width: 200px;
+  padding: 2px;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 12px;
+  background: #ffffde;
+  border: 1px solid #aaaa33;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 100; }
+
+#mermaid-1568488889708 .actor {
+  stroke: #CCCCFF;
+  fill: #ECECFF; }
+
+#mermaid-1568488889708 text.actor {
+  fill: black;
+  stroke: none; }
+
+#mermaid-1568488889708 .actor-line {
+  stroke: grey; }
+
+#mermaid-1568488889708 .messageLine0 {
+  stroke-width: 1.5;
+  stroke-dasharray: '2 2';
+  stroke: #333; }
+
+#mermaid-1568488889708 .messageLine1 {
+  stroke-width: 1.5;
+  stroke-dasharray: '2 2';
+  stroke: #333; }
+
+#mermaid-1568488889708 #arrowhead {
+  fill: #333; }
+
+#mermaid-1568488889708 .sequenceNumber {
+  fill: white; }
+
+#mermaid-1568488889708 #sequencenumber {
+  fill: #333; }
+
+#mermaid-1568488889708 #crosshead path {
+  fill: #333 !important;
+  stroke: #333 !important; }
+
+#mermaid-1568488889708 .messageText {
+  fill: #333;
+  stroke: none; }
+
+#mermaid-1568488889708 .labelBox {
+  stroke: #CCCCFF;
+  fill: #ECECFF; }
+
+#mermaid-1568488889708 .labelText {
+  fill: black;
+  stroke: none; }
+
+#mermaid-1568488889708 .loopText {
+  fill: black;
+  stroke: none; }
+
+#mermaid-1568488889708 .loopLine {
+  stroke-width: 2;
+  stroke-dasharray: '2 2';
+  stroke: #CCCCFF; }
+
+#mermaid-1568488889708 .note {
+  stroke: #aaaa33;
+  fill: #fff5ad; }
+
+#mermaid-1568488889708 .noteText {
+  fill: black;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 14px; }
+
+#mermaid-1568488889708 .activation0 {
+  fill: #f4f4f4;
+  stroke: #666; }
+
+#mermaid-1568488889708 .activation1 {
+  fill: #f4f4f4;
+  stroke: #666; }
+
+#mermaid-1568488889708 .activation2 {
+  fill: #f4f4f4;
+  stroke: #666; }
+
+
+#mermaid-1568488889708 .section {
+  stroke: none;
+  opacity: 0.2; }
+
+#mermaid-1568488889708 .section0 {
+  fill: rgba(102, 102, 255, 0.49); }
+
+#mermaid-1568488889708 .section2 {
+  fill: #fff400; }
+
+#mermaid-1568488889708 .section1,
+#mermaid-1568488889708 .section3 {
+  fill: white;
+  opacity: 0.2; }
+
+#mermaid-1568488889708 .sectionTitle0 {
+  fill: #333; }
+
+#mermaid-1568488889708 .sectionTitle1 {
+  fill: #333; }
+
+#mermaid-1568488889708 .sectionTitle2 {
+  fill: #333; }
+
+#mermaid-1568488889708 .sectionTitle3 {
+  fill: #333; }
+
+#mermaid-1568488889708 .sectionTitle {
+  text-anchor: start;
+  font-size: 11px;
+  text-height: 14px; }
+
+
+#mermaid-1568488889708 .grid .tick {
+  stroke: lightgrey;
+  opacity: 0.3;
+  shape-rendering: crispEdges; }
+
+#mermaid-1568488889708 .grid path {
+  stroke-width: 0; }
+
+
+#mermaid-1568488889708 .today {
+  fill: none;
+  stroke: red;
+  stroke-width: 2px; }
+
+
+
+#mermaid-1568488889708 .task {
+  stroke-width: 2; }
+
+#mermaid-1568488889708 .taskText {
+  text-anchor: middle;
+  font-size: 11px; }
+
+#mermaid-1568488889708 .taskTextOutsideRight {
+  fill: black;
+  text-anchor: start;
+  font-size: 11px; }
+
+#mermaid-1568488889708 .taskTextOutsideLeft {
+  fill: black;
+  text-anchor: end;
+  font-size: 11px; }
+
+
+#mermaid-1568488889708 .task.clickable {
+  cursor: pointer; }
+
+#mermaid-1568488889708 .taskText.clickable {
+  cursor: pointer;
+  fill: #003163 !important;
+  font-weight: bold; }
+
+#mermaid-1568488889708 .taskTextOutsideLeft.clickable {
+  cursor: pointer;
+  fill: #003163 !important;
+  font-weight: bold; }
+
+#mermaid-1568488889708 .taskTextOutsideRight.clickable {
+  cursor: pointer;
+  fill: #003163 !important;
+  font-weight: bold; }
+
+
+#mermaid-1568488889708 .taskText0,
+#mermaid-1568488889708 .taskText1,
+#mermaid-1568488889708 .taskText2,
+#mermaid-1568488889708 .taskText3 {
+  fill: white; }
+
+#mermaid-1568488889708 .task0,
+#mermaid-1568488889708 .task1,
+#mermaid-1568488889708 .task2,
+#mermaid-1568488889708 .task3 {
+  fill: #8a90dd;
+  stroke: #534fbc; }
+
+#mermaid-1568488889708 .taskTextOutside0,
+#mermaid-1568488889708 .taskTextOutside2 {
+  fill: black; }
+
+#mermaid-1568488889708 .taskTextOutside1,
+#mermaid-1568488889708 .taskTextOutside3 {
+  fill: black; }
+
+
+#mermaid-1568488889708 .active0,
+#mermaid-1568488889708 .active1,
+#mermaid-1568488889708 .active2,
+#mermaid-1568488889708 .active3 {
+  fill: #bfc7ff;
+  stroke: #534fbc; }
+
+#mermaid-1568488889708 .activeText0,
+#mermaid-1568488889708 .activeText1,
+#mermaid-1568488889708 .activeText2,
+#mermaid-1568488889708 .activeText3 {
+  fill: black !important; }
+
+
+#mermaid-1568488889708 .done0,
+#mermaid-1568488889708 .done1,
+#mermaid-1568488889708 .done2,
+#mermaid-1568488889708 .done3 {
+  stroke: grey;
+  fill: lightgrey;
+  stroke-width: 2; }
+
+#mermaid-1568488889708 .doneText0,
+#mermaid-1568488889708 .doneText1,
+#mermaid-1568488889708 .doneText2,
+#mermaid-1568488889708 .doneText3 {
+  fill: black !important; }
+
+
+#mermaid-1568488889708 .crit0,
+#mermaid-1568488889708 .crit1,
+#mermaid-1568488889708 .crit2,
+#mermaid-1568488889708 .crit3 {
+  stroke: #ff8888;
+  fill: red;
+  stroke-width: 2; }
+
+#mermaid-1568488889708 .activeCrit0,
+#mermaid-1568488889708 .activeCrit1,
+#mermaid-1568488889708 .activeCrit2,
+#mermaid-1568488889708 .activeCrit3 {
+  stroke: #ff8888;
+  fill: #bfc7ff;
+  stroke-width: 2; }
+
+#mermaid-1568488889708 .doneCrit0,
+#mermaid-1568488889708 .doneCrit1,
+#mermaid-1568488889708 .doneCrit2,
+#mermaid-1568488889708 .doneCrit3 {
+  stroke: #ff8888;
+  fill: lightgrey;
+  stroke-width: 2;
+  cursor: pointer;
+  shape-rendering: crispEdges; }
+
+#mermaid-1568488889708 .milestone {
+  transform: rotate(45deg) scale(0.8, 0.8); }
+
+#mermaid-1568488889708 .milestoneText {
+  font-style: italic; }
+
+#mermaid-1568488889708 .doneCritText0,
+#mermaid-1568488889708 .doneCritText1,
+#mermaid-1568488889708 .doneCritText2,
+#mermaid-1568488889708 .doneCritText3 {
+  fill: black !important; }
+
+#mermaid-1568488889708 .activeCritText0,
+#mermaid-1568488889708 .activeCritText1,
+#mermaid-1568488889708 .activeCritText2,
+#mermaid-1568488889708 .activeCritText3 {
+  fill: black !important; }
+
+#mermaid-1568488889708 .titleText {
+  text-anchor: middle;
+  font-size: 18px;
+  fill: black; }
+
+#mermaid-1568488889708 g.classGroup text {
+  fill: #9370DB;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 10px; }
+
+#mermaid-1568488889708 g.classGroup rect {
+  fill: #ECECFF;
+  stroke: #9370DB; }
+
+#mermaid-1568488889708 g.classGroup line {
+  stroke: #9370DB;
+  stroke-width: 1; }
+
+#mermaid-1568488889708 .classLabel .box {
+  stroke: none;
+  stroke-width: 0;
+  fill: #ECECFF;
+  opacity: 0.5; }
+
+#mermaid-1568488889708 .classLabel .label {
+  fill: #9370DB;
+  font-size: 10px; }
+
+#mermaid-1568488889708 .relation {
+  stroke: #9370DB;
+  stroke-width: 1;
+  fill: none; }
+
+#mermaid-1568488889708 #compositionStart {
+  fill: #9370DB;
+  stroke: #9370DB;
+  stroke-width: 1; }
+
+#mermaid-1568488889708 #compositionEnd {
+  fill: #9370DB;
+  stroke: #9370DB;
+  stroke-width: 1; }
+
+#mermaid-1568488889708 #aggregationStart {
+  fill: #ECECFF;
+  stroke: #9370DB;
+  stroke-width: 1; }
+
+#mermaid-1568488889708 #aggregationEnd {
+  fill: #ECECFF;
+  stroke: #9370DB;
+  stroke-width: 1; }
+
+#mermaid-1568488889708 #dependencyStart {
+  fill: #9370DB;
+  stroke: #9370DB;
+  stroke-width: 1; }
+
+#mermaid-1568488889708 #dependencyEnd {
+  fill: #9370DB;
+  stroke: #9370DB;
+  stroke-width: 1; }
+
+#mermaid-1568488889708 #extensionStart {
+  fill: #9370DB;
+  stroke: #9370DB;
+  stroke-width: 1; }
+
+#mermaid-1568488889708 #extensionEnd {
+  fill: #9370DB;
+  stroke: #9370DB;
+  stroke-width: 1; }
+
+#mermaid-1568488889708 .commit-id,
+#mermaid-1568488889708 .commit-msg,
+#mermaid-1568488889708 .branch-label {
+  fill: lightgrey;
+  color: lightgrey; }
+</style><style>#mermaid-1568488889708 {
+    color: rgba(0, 0, 0, 0.65);
+    font: ;
+  }</style><g transform="translate(-12, -12)"><g class="output"><g class="clusters"></g><g class="edgePaths"><g class="edgePath" style="opacity: 1;"><path class="path" d="M135.92582417582418,65.5L201.984375,40.5L298.9765625,40.5" marker-end="url(#arrowhead14806)" style="fill:none"></path><defs><marker id="arrowhead14806" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath" style="opacity: 1;"><path class="path" d="M135.92582417582418,106.5L201.984375,131.5L260.453125,131.5" marker-end="url(#arrowhead14807)" style="fill:none"></path><defs><marker id="arrowhead14807" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath" style="opacity: 1;"><path class="path" d="M399.1484375,40.5L524.9375,40.5L612.203125,66.7558764271323" marker-end="url(#arrowhead14808)" style="fill:none"></path><defs><marker id="arrowhead14808" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath" style="opacity: 1;"><path class="path" d="M437.671875,131.5L524.9375,131.5L612.203125,105.2441235728677" marker-end="url(#arrowhead14809)" style="fill:none"></path><defs><marker id="arrowhead14809" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath" style="opacity: 1;"><path class="path" d="M740.125,86L804.8203125,86L869.515625,86" marker-end="url(#arrowhead14810)" style="fill:none"></path><defs><marker id="arrowhead14810" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" style="opacity: 1;" transform="translate(201.984375,40.5)"><g transform="translate(-33.46875,-10.5)" class="label"><foreignObject width="66.9375" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">IP address</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(201.984375,131.5)"><g transform="translate(-21.015625,-10.5)" class="label"><foreignObject width="42.03125" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">user id</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(524.9375,40.5)"><g transform="translate(-24.1328125,-10.5)" class="label"><foreignObject width="48.265625" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">location</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(524.9375,131.5)"><g transform="translate(-62.265625,-10.5)" class="label"><foreignObject width="124.53125" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">authorized locations</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(804.8203125,86)"><g transform="translate(-39.6953125,-10.5)" class="label"><foreignObject width="79.390625" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">is authorized</span></div></foreignObject></g></g></g><g class="nodes"><g class="node" style="opacity: 1;" id="GetSessionInfo" transform="translate(81.7578125,86)"><rect rx="5" ry="5" x="-61.7578125" y="-20.5" width="123.515625" height="41"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-51.7578125,-10.5)"><foreignObject width="103.515625" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Get Session Info</div></foreignObject></g></g></g><g class="node" style="opacity: 1;" id="GetGeoInfo" transform="translate(349.0625,40.5)"><rect rx="5" ry="5" x="-50.0859375" y="-20.5" width="100.171875" height="41"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-40.0859375,-10.5)"><foreignObject width="80.171875" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Get Geo Info</div></foreignObject></g></g></g><g class="node" style="opacity: 1;" id="GetAuthorizedLocations" transform="translate(349.0625,131.5)"><rect rx="5" ry="5" x="-88.609375" y="-20.5" width="177.21875" height="41"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-78.609375,-10.5)"><foreignObject width="157.21875" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Get Authorized Locations</div></foreignObject></g></g></g><g class="node" style="opacity: 1;" id="ValidateDistance" transform="translate(676.1640625,86)"><rect rx="5" ry="5" x="-63.9609375" y="-20.5" width="127.921875" height="41"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-53.9609375,-10.5)"><foreignObject width="107.921875" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Validate Distance</div></foreignObject></g></g></g><g class="node" style="opacity: 1;" id="StoreEvent" transform="translate(916.09375,86)"><rect rx="5" ry="5" x="-46.578125" y="-20.5" width="93.15625" height="41"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-36.578125,-10.5)"><foreignObject width="73.15625" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Store Event</div></foreignObject></g></g></g></g></g></g></svg>
