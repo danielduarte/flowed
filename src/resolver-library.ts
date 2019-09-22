@@ -26,7 +26,7 @@ export class WaitResolver {
     // @todo add value as param to resolve after time is out
     return new Promise<GenericValueMap>(resolve => {
       setTimeout(() => {
-        resolve({});
+        resolve({ result: params.result });
       }, params.ms);
     });
   }

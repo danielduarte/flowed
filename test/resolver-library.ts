@@ -28,29 +28,32 @@ describe('the ResolverLibrary', () => {
     );
   });
 
-  it('runs wait resolver', () => {
-    return FlowManager.run(
+  it('runs wait resolver', async () => {
+    const result = await FlowManager.run(
       {
         tasks: {
           waitASec: {
-            requires: ['time'],
-            provides: [],
+            requires: ['time', 'providedResultAfterTimeout'],
+            provides: ['timeoutResult'],
             resolver: {
               name: 'wait',
-              params: { ms: 'time' },
-              results: {},
+              params: { ms: 'time', result: 'providedResultAfterTimeout' },
+              results: { result: 'timeoutResult' },
             },
           },
         },
       },
       {
         time: 1000,
+        providedResultAfterTimeout: 'I am the correct result',
       },
-      [],
+      ['timeoutResult'],
       {
         wait: ResolverLibrary.WaitResolver,
       },
     );
+
+    expect(result.timeoutResult).to.be.eql('I am the correct result');
   });
 
   it('runs sub-flow resolver', () => {
@@ -433,6 +436,6 @@ describe('the ResolverLibrary', () => {
 
   it('can create base resolver task', async () => {
     const resolver = new TaskResolver();
-    await resolver.exec({}, {}, new Task('t1', {resolver: {name: 'r1'}}));
+    await resolver.exec({}, {}, new Task('t1', { resolver: { name: 'r1' } }));
   });
 });
