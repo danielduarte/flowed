@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { FlowManager, GenericValueMap } from '../src';
+import createTestServer from './test-server';
 
 class TimerResolver {
   public async exec(): Promise<GenericValueMap> {
@@ -18,7 +19,7 @@ class DirectResolver {
 }
 
 describe('can run a flow', () => {
-  it('from a JSON got from a URL', () => {
+  it('from a JSON got from an HTTPS URL', () => {
     return FlowManager.runFromUrl(
       'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/example6.flowed.json',
       {
@@ -32,6 +33,50 @@ describe('can run a flow', () => {
         direct: DirectResolver,
       },
     );
+  });
+
+  it('from a JSON got from an HTTP URL', () => {
+    createTestServer();
+
+    return FlowManager.runFromUrl(
+      'http://localhost:3000',
+      {
+        param1: 'PARAM1',
+        param2: 'PARAM2',
+        param3: 'PARAM3',
+      },
+      ['g1', 'g2'],
+      {
+        timer: TimerResolver,
+        direct: DirectResolver,
+      },
+    );
+  });
+
+  it('from a JSON got from a URL with incorrect Content-Type', async () => {
+    createTestServer('some-unknown/content-format');
+
+    try {
+      await FlowManager.runFromUrl(
+        'http://localhost:3000',
+        {
+          param1: 'PARAM1',
+          param2: 'PARAM2',
+          param3: 'PARAM3',
+        },
+        ['g1', 'g2'],
+        {
+          timer: TimerResolver,
+          direct: DirectResolver,
+        },
+      );
+
+      throw new Error('An error should have been thrown');
+    } catch (error) {
+      expect(error.message).to.be.eql(
+        'Invalid content-type. Expected application/json or text/plain but received some-unknown/content-format',
+      );
+    }
   });
 
   it('from a JSON got from an incorrect URL and throw error', async () => {
@@ -52,7 +97,7 @@ describe('can run a flow', () => {
 
       throw new Error('An error should have been thrown');
     } catch (error) {
-      expect(error.message).to.be.eql(`Request failed with status code: 404`);
+      expect(error.message).to.be.eql('Request failed with status code: 404');
     }
   });
 
