@@ -11,7 +11,6 @@
     "max-classes-per-file": false,
     "object-literal-sort-keys": false,
     "no-namespace": false,
-    "no-empty": false,
-    "no-unused-variable": true
+    "no-empty": false
   }
 }

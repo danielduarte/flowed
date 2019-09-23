@@ -14,10 +14,10 @@
     "flow-engine",
     "flow-execution"
   ],
-  "author": "Daniel Duarte <danieldd.ar@gmail.com>",
+  "author": "Daniel Duarte <danieldd.ar@gmail.com> (https://github.com/daniel-duarte)",
   "license": "MIT",
   "homepage": "http://tiny.cc/flowed",
-  "repository": "https://github.com/daniel-duarte/flowed",
+  "repository": "github:daniel-duarte/flowed",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",

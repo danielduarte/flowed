@@ -1,5 +1,5 @@
 # flowed
-![License](https://img.shields.io/npm/l/flowed?color=%23007ec6)
+[![License](https://img.shields.io/npm/l/flowed?color=%23007ec6)](https://github.com/daniel-duarte/flowed/blob/master/LICENSE)
 [![NPM Package Version](https://img.shields.io/npm/v/flowed)](https://www.npmjs.com/package/flowed)
 [![Build Status](https://travis-ci.org/daniel-duarte/flowed.svg?branch=master)](https://travis-ci.org/daniel-duarte/flowed)
 [![Coverage Status](https://coveralls.io/repos/github/daniel-duarte/flowed/badge.svg?branch=master)](https://coveralls.io/github/daniel-duarte/flowed?branch=master)
