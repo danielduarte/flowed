@@ -1,9 +1,9 @@
 # flowed
+![License](https://img.shields.io/npm/l/flowed?color=%23007ec6)
+[![NPM Package Version](https://img.shields.io/npm/v/flowed)](https://www.npmjs.com/package/flowed)
 [![Build Status](https://travis-ci.org/daniel-duarte/flowed.svg?branch=master)](https://travis-ci.org/daniel-duarte/flowed)
 [![Coverage Status](https://coveralls.io/repos/github/daniel-duarte/flowed/badge.svg?branch=master)](https://coveralls.io/github/daniel-duarte/flowed?branch=master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-duarte_flowed&metric=alert_status)](https://sonarcloud.io/dashboard?id=daniel-duarte_flowed)
-
-[![NPM](https://nodei.co/npm/flowed.png?compact=true)](https://nodei.co/npm/flowed/)
 
 A fast and reliable flow manager and task runner for *Node.js*.
 
