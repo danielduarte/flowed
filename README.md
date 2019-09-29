@@ -7,6 +7,19 @@
 
 A fast and reliable flow manager and task runner for *Node.js*.
 
+## Installation
+
+```
+npm i flowed
+```
+
+
+## Getting Started
+
+- [Tutorial](./doc/tutorial.md)
+- [Code examples](./test/examples)
+
+
 ## Main Features
 
 - [Parallel execution](#parallel-execution)

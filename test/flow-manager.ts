@@ -26,8 +26,8 @@ describe('the FlowManager', () => {
           provides: [],
           resolver: {
             name: 'sampleResolver',
-            params: [],
-            results: [],
+            params: {},
+            results: {},
           },
         },
       },
