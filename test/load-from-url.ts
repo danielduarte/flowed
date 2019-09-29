@@ -101,6 +101,28 @@ describe('can run a flow', () => {
     }
   });
 
+  it('from a JSON got from an unknown domain and throw error', async () => {
+    try {
+      await FlowManager.runFromUrl(
+        'http://any-unknown-domain-here:3000',
+        {
+          param1: 'PARAM1',
+          param2: 'PARAM2',
+          param3: 'PARAM3',
+        },
+        ['g1', 'g2'],
+        {
+          timer: TimerResolver,
+          direct: DirectResolver,
+        },
+      );
+
+      throw new Error('An error should have been thrown');
+    } catch (error) {
+      expect(error.message).to.be.eql('getaddrinfo ENOTFOUND any-unknown-domain-here');
+    }
+  });
+
   it('from a JSON got from a URL with unsupported protocol and throw error', async () => {
     try {
       await FlowManager.runFromUrl(
