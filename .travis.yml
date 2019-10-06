@@ -10,7 +10,12 @@ branches:
   only:
   - master
 
+before_script:
+  - "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
+
 after_success:
+  - fossa init
+  - fossa analyze
   - npm run coverage:send
   - sonar-scanner
 
