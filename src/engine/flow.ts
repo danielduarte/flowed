@@ -1,4 +1,12 @@
 import { debug as rawDebug } from 'debug';
+import {
+  ConditionalResolver,
+  NoopResolver,
+  RepeaterResolver,
+  SubFlowResolver,
+  ThrowErrorResolver,
+  WaitResolver,
+} from '../resolver-library';
 import { GenericValueMap, TaskResolverMap } from '../types';
 import { FlowReady, FlowState } from './flow-state';
 import { FlowRunStatus, FlowStateEnum } from './flow-types';
@@ -13,6 +21,15 @@ export class Flow {
    * @type {number}
    */
   public static nextId = 1;
+
+  protected static builtInResolvers: TaskResolverMap = {
+    'flowed::Noop': NoopResolver,
+    'flowed::ThrowError': ThrowErrorResolver,
+    'flowed::Conditional': ConditionalResolver,
+    'flowed::Wait': WaitResolver,
+    'flowed::SubFlow': SubFlowResolver,
+    'flowed::Repeater': RepeaterResolver,
+  };
 
   /**
    * Flow instance id, used for debugging
@@ -66,7 +83,8 @@ export class Flow {
   };
 
   public constructor(spec: FlowSpec) {
-    this.id = Flow.nextId++;
+    this.id = Flow.nextId;
+    Flow.nextId++; // @todo Check overflow
 
     this.parseSpec(spec);
     this.initRunStatus();
@@ -196,19 +214,9 @@ export class Flow {
     this.runStatus.tasksReady = [];
 
     for (const task of readyTasks) {
-      const resolverName = task.getResolverName();
-      const hasResolver = this.runStatus.resolvers.hasOwnProperty(resolverName);
-      if (!hasResolver) {
-        throw new Error(
-          `Task resolver '${resolverName}' for task '${task.getCode()}' has no definition. Defined resolvers are: [${Object.keys(
-            this.runStatus.resolvers,
-          ).join(', ')}].`,
-        );
-      }
-
       this.runStatus.runningTasks.push(task.getCode());
 
-      const taskResolver = this.runStatus.resolvers[resolverName];
+      const taskResolver = this.getResolverForTask(task);
       task.run(taskResolver, this.runStatus.context).then(
         () => {
           this.taskFinished(task);
@@ -220,6 +228,28 @@ export class Flow {
 
       debug(`[${this.id}] ` + `  ‣ Task ${task.getCode()} started, params:`, task.getParams());
     }
+  }
+
+  protected getResolverForTask(task: Task) {
+    const name = task.getResolverName();
+
+    // Look for custom resolvers
+    const hasCustomResolver = this.runStatus.resolvers.hasOwnProperty(name);
+    if (hasCustomResolver) {
+      return this.runStatus.resolvers[name];
+    }
+
+    // Look for built-in resolvers
+    const hasBuiltInResolver = Flow.builtInResolvers.hasOwnProperty(name);
+    if (hasBuiltInResolver) {
+      return Flow.builtInResolvers[name];
+    }
+
+    throw new Error(
+      `Task resolver '${name}' for task '${task.getCode()}' has no definition. Defined custom resolvers are: [${Object.keys(
+        this.runStatus.resolvers,
+      ).join(', ')}].`,
+    );
   }
 
   protected initRunStatus() {

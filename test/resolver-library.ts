@@ -339,14 +339,14 @@ describe('the ResolverLibrary', () => {
         {},
         [],
         {
-          err: ResolverLibrary.ThrowError,
+          err: ResolverLibrary.ThrowErrorResolver,
         },
       );
     } catch (error) {
       msg = error.message;
     }
 
-    expect(msg).to.be.eql('ThrowError resolver has thrown an error');
+    expect(msg).to.be.eql('ThrowErrorResolver resolver has thrown an error');
   });
 
   it('runs error resolver with a custom error', async () => {
@@ -372,7 +372,7 @@ describe('the ResolverLibrary', () => {
         {},
         [],
         {
-          err: ResolverLibrary.ThrowError,
+          err: ResolverLibrary.ThrowErrorResolver,
         },
       );
     } catch (error) {
@@ -405,7 +405,7 @@ describe('the ResolverLibrary', () => {
         {},
         [],
         {
-          err: ResolverLibrary.ThrowError,
+          err: ResolverLibrary.ThrowErrorResolver,
         },
       );
     } catch (error) {
@@ -431,7 +431,7 @@ describe('the ResolverLibrary', () => {
       msg = error.message;
     }
 
-    expect(msg).to.be.eql(`Task resolver 'r' for task 'aTask' has no definition. Defined resolvers are: [x].`);
+    expect(msg).to.be.eql(`Task resolver 'r' for task 'aTask' has no definition. Defined custom resolvers are: [x].`);
   });
 
   it('can create base resolver task', async () => {

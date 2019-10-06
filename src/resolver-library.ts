@@ -8,9 +8,11 @@ export class NoopResolver {
   }
 }
 
-export class ThrowError {
+export class ThrowErrorResolver {
   public async exec(params: GenericValueMap): Promise<GenericValueMap> {
-    throw new Error(typeof params.message !== 'undefined' ? params.message : 'ThrowError resolver has thrown an error');
+    throw new Error(
+      typeof params.message !== 'undefined' ? params.message : 'ThrowErrorResolver resolver has thrown an error',
+    );
   }
 }
 
