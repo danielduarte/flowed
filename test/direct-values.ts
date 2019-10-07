@@ -14,7 +14,6 @@ describe('resolvers with direct value', () => {
         {
           tasks: {
             sum: {
-              requires: [],
               provides: ['result'],
               resolver: {
                 name: 'sum',
@@ -49,7 +48,6 @@ describe('resolvers with direct value', () => {
       {
         tasks: {
           sum: {
-            requires: [],
             provides: ['result1'],
             resolver: {
               name: 'sumOrConcat',

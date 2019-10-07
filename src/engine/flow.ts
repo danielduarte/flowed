@@ -8,9 +8,9 @@ import { FlowSpec } from './specs';
 export class Flow implements IFlow {
   protected runStatus!: FlowRunStatus;
 
-  public constructor(spec: FlowSpec) {
+  public constructor(spec?: FlowSpec) {
     this.runStatus = new FlowRunStatus();
-    this.runStatus.state.initRunStatus(spec);
+    this.runStatus.state.initRunStatus(spec || {});
   }
 
   public start(
@@ -39,4 +39,8 @@ export class Flow implements IFlow {
   }
 
   // @todo Add a step() feature, for step-by-step execution
+
+  public getSerializableState() {
+    this.runStatus.state.getSerializableState();
+  }
 }

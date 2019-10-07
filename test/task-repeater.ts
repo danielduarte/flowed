@@ -8,13 +8,11 @@ const debug = rawDebug('flowed:test');
 describe('the ResolverLibrary / task repeater', () => {
   const taskSpec = {
     requires: ['a-value'],
-    provides: [],
     resolver: {
       name: 'repeat-5-times',
       params: {
         someValue: 'a-value',
       },
-      results: {},
     },
   };
 

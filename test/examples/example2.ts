@@ -14,23 +14,17 @@ export const example2: ExampleFunction = () => {
     {
       tasks: {
         A: {
-          requires: [],
           provides: ['a'],
           defaultResult: true,
           resolver: {
             name: 'dummy',
-            params: {},
-            results: {},
           },
         },
         B: {
-          requires: [],
           provides: ['b'],
           defaultResult: true,
           resolver: {
             name: 'dummy',
-            params: {},
-            results: {},
           },
         },
         C: {
@@ -39,18 +33,13 @@ export const example2: ExampleFunction = () => {
           defaultResult: true,
           resolver: {
             name: 'dummy',
-            params: {},
-            results: {},
           },
         },
         D: {
-          requires: [],
           provides: ['d'],
           defaultResult: true,
           resolver: {
             name: 'dummy',
-            params: {},
-            results: {},
           },
         },
         E: {
@@ -58,18 +47,13 @@ export const example2: ExampleFunction = () => {
           provides: ['e'],
           resolver: {
             name: 'dummy',
-            params: {},
-            results: {},
           },
         },
         F: {
-          requires: [],
           provides: ['f'],
           defaultResult: true,
           resolver: {
             name: 'dummy',
-            params: {},
-            results: {},
           },
         },
         G: {
@@ -77,8 +61,6 @@ export const example2: ExampleFunction = () => {
           provides: ['g'],
           resolver: {
             name: 'dummy',
-            params: {},
-            results: {},
           },
         },
       },

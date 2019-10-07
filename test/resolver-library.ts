@@ -10,12 +10,8 @@ describe('the ResolverLibrary', () => {
       {
         tasks: {
           doNothing: {
-            requires: [],
-            provides: [],
             resolver: {
               name: 'noop',
-              params: {},
-              results: {},
             },
           },
         },
@@ -60,8 +56,6 @@ describe('the ResolverLibrary', () => {
     const subFlowSpec = {
       tasks: {
         dummyTask: {
-          requires: [],
-          provides: [],
           resolver: { name: 'noop', params: {}, results: {} },
         },
       },
@@ -326,12 +320,8 @@ describe('the ResolverLibrary', () => {
         {
           tasks: {
             throwAnError: {
-              requires: [],
-              provides: [],
               resolver: {
                 name: 'err',
-                params: {},
-                results: {},
               },
             },
           },
@@ -357,14 +347,11 @@ describe('the ResolverLibrary', () => {
         {
           tasks: {
             throwAnError: {
-              requires: [],
-              provides: [],
               resolver: {
                 name: 'err',
                 params: {
                   message: { value: "Hey, I'm a custom error message!" },
                 },
-                results: {},
               },
             },
           },
@@ -390,14 +377,11 @@ describe('the ResolverLibrary', () => {
         {
           tasks: {
             throwAnError: {
-              requires: [],
-              provides: [],
               resolver: {
                 name: 'err',
                 params: {
                   message: { value: '' },
                 },
-                results: {},
               },
             },
           },
@@ -421,7 +405,7 @@ describe('the ResolverLibrary', () => {
     try {
       FlowManager.run(
         {
-          tasks: { aTask: { provides: [], requires: [], resolver: { name: 'r', params: {}, results: {} } } },
+          tasks: { aTask: { resolver: { name: 'r' } } },
         },
         {},
         [],

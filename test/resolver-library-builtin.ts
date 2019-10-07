@@ -7,12 +7,8 @@ describe('the ResolverLibrary', () => {
     return FlowManager.run({
       tasks: {
         doNothing: {
-          requires: [],
-          provides: [],
           resolver: {
             name: 'flowed::Noop',
-            params: {},
-            results: {},
           },
         },
       },
@@ -48,9 +44,7 @@ describe('the ResolverLibrary', () => {
     const subFlowSpec = {
       tasks: {
         dummyTask: {
-          requires: [],
-          provides: [],
-          resolver: { name: 'flowed::Noop', params: {}, results: {} },
+          resolver: { name: 'flowed::Noop' },
         },
       },
     };
@@ -165,12 +159,8 @@ describe('the ResolverLibrary', () => {
       await FlowManager.run({
         tasks: {
           throwAnError: {
-            requires: [],
-            provides: [],
             resolver: {
               name: 'flowed::ThrowError',
-              params: {},
-              results: {},
             },
           },
         },

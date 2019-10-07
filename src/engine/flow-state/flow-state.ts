@@ -308,6 +308,10 @@ export abstract class FlowState implements IFlow {
     debug(`[${this.runStatus.id}]   🛈 Changed state to '${newState}'`);
   }
 
+  public getSerializableState() {
+    throw this.createMethodError('getSerializableState');
+  }
+
   protected taskFinished(task: Task, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
     const taskSpec = task.getSpec();
     const taskProvisions = taskSpec.provides || [];
@@ -363,5 +367,9 @@ export abstract class FlowState implements IFlow {
 
   protected createTransitionError(transition: string) {
     return new Error(`Cannot execute transition ${transition} in current state ${this.getStateCode()}.`);
+  }
+
+  protected createMethodError(method: string) {
+    return new Error(`Cannot execute method ${method} in current state ${this.getStateCode()}.`);
   }
 }

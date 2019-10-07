@@ -16,12 +16,12 @@ export const example5: ExampleFunction = () => {
         A: {
           requires: ['b'],
           provides: ['a'],
-          resolver: { name: 'r', params: {}, results: {} },
+          resolver: { name: 'r' },
         },
         B: {
           requires: ['a'],
           provides: ['b'],
-          resolver: { name: 'r', params: {}, results: {} },
+          resolver: { name: 'r' },
         },
       },
     },

@@ -28,7 +28,6 @@ export const example1: ExampleFunction = () => {
           provides: ['b1'],
           resolver: {
             name: 'timer',
-            params: {},
             results: { a: 'b1' },
           },
         },
@@ -38,8 +37,6 @@ export const example1: ExampleFunction = () => {
           defaultResult: undefined,
           resolver: {
             name: 'direct',
-            params: {},
-            results: {},
           },
         },
         A: {
@@ -48,7 +45,6 @@ export const example1: ExampleFunction = () => {
           defaultResult: null,
           resolver: {
             name: 'timer',
-            params: {},
             results: { a: 'a4', b: 'a5' }, // @todo invert this mapping to support same result mapped to multiple provisions (or support array)? To be analyzed. Similar case for params?
           },
         },
@@ -58,8 +54,6 @@ export const example1: ExampleFunction = () => {
           defaultResult: true,
           resolver: {
             name: 'timer',
-            params: {},
-            results: {},
           },
         },
         E: {
@@ -68,8 +62,6 @@ export const example1: ExampleFunction = () => {
           defaultResult: false,
           resolver: {
             name: 'timer',
-            params: {},
-            results: {},
           },
         },
         F: {
@@ -77,7 +69,6 @@ export const example1: ExampleFunction = () => {
           provides: ['f1'],
           resolver: {
             name: 'direct',
-            params: {},
             results: { b: 'f1' },
           },
         },
@@ -87,8 +78,6 @@ export const example1: ExampleFunction = () => {
           defaultResult: 8,
           resolver: {
             name: 'timer',
-            params: {},
-            results: {},
           },
         },
       },

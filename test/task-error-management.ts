@@ -23,12 +23,8 @@ describe('error thrown in tasks', () => {
       {
         tasks: {
           T: {
-            requires: [],
-            provides: [],
             resolver: {
               name: 'throwError',
-              params: {},
-              results: {},
             },
           },
         },
@@ -53,12 +49,8 @@ describe('error thrown in tasks', () => {
       {
         tasks: {
           T: {
-            requires: [],
-            provides: [],
             resolver: {
               name: 'throwError',
-              params: {},
-              results: {},
             },
           },
         },

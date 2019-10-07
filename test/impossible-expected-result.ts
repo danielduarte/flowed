@@ -14,7 +14,6 @@ describe('flow with non solvable results', () => {
     const flowSpec = {
       tasks: {
         t1: {
-          requires: [],
           provides: ['B', 'E'],
           resolver: {
             name: 'runner',
@@ -29,7 +28,6 @@ describe('flow with non solvable results', () => {
           },
         },
         t2: {
-          requires: [],
           provides: ['F', 'G'],
           resolver: {
             name: 'runner',
@@ -44,7 +42,6 @@ describe('flow with non solvable results', () => {
           },
         },
         t3: {
-          requires: [],
           provides: ['H', 'B'],
           resolver: {
             name: 'runner',

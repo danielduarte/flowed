@@ -23,4 +23,8 @@ export class FlowPaused extends FlowState {
 
     return Promise.resolve(this.getResults());
   }
+
+  public getSerializableState() {
+    return this.runStatus;
+  }
 }

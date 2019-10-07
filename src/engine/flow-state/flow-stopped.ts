@@ -10,4 +10,8 @@ export class FlowStopped extends FlowState {
     this.setState(FlowStateEnum.Ready);
     this.initRunStatus(this.runStatus.spec);
   }
+
+  public getSerializableState() {
+    return this.runStatus;
+  }
 }

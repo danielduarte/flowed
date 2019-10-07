@@ -11,9 +11,7 @@ class DummyResolver {
 
 describe('the FlowManager', () => {
   it('can run an empty flow', () => {
-    const flowSpec: FlowSpec = {
-      tasks: {},
-    };
+    const flowSpec: FlowSpec = {};
 
     return FlowManager.run(flowSpec);
   });
@@ -22,12 +20,8 @@ describe('the FlowManager', () => {
     const flowSpec: FlowSpec = {
       tasks: {
         sampleTask: {
-          requires: [],
-          provides: [],
           resolver: {
             name: 'sampleResolver',
-            params: {},
-            results: {},
           },
         },
       },

@@ -36,4 +36,8 @@ export class FlowReady extends FlowState {
 
     return finishPromise;
   }
+
+  public getSerializableState() {
+    return this.runStatus;
+  }
 }
