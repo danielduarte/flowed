@@ -4,10 +4,6 @@ import { GenericValueMap } from '../src';
 import { Flow, Task } from '../src/engine';
 const debug = rawDebug('flowed:test');
 
-// @todo run tests with branch coverage
-// @todo Set coverage threshold for failure
-// @todo Set coverage decrease threshold for failure
-
 describe('the flow', () => {
   const text1 = '(text1)';
   const text2 = '(text2)';
@@ -62,11 +58,14 @@ describe('the flow', () => {
     const flow = new Flow(flowSpec);
 
     const pauseFlow = async () => {
+      debug('-- Pausing flow --');
       const partialResult = await flow.pause();
+      debug('-- Flow paused --');
       expect(partialResult).to.deep.equal({
         result1: text1,
         result2: text1 + text2,
       });
+      debug('-- Flow resumed --');
       flow.resume();
     };
 

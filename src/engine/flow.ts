@@ -8,9 +8,9 @@ import { FlowSpec } from './specs';
 export class Flow implements IFlow {
   protected runStatus!: FlowRunStatus;
 
-  public constructor(spec?: FlowSpec) {
-    this.runStatus = new FlowRunStatus();
-    this.runStatus.state.initRunStatus(spec || {});
+  public constructor(spec?: FlowSpec, runState?: any) {
+    this.runStatus = new FlowRunStatus(runState);
+    this.runStatus.state.initRunStatus(spec || {}, runState);
   }
 
   public start(

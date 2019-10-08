@@ -26,7 +26,7 @@ export class FlowRunStatus {
    */
   public id: number;
 
-  public runningTasks: string[] = [];
+  public runningTasks: string[];
 
   public tasksReady: Task[] = [];
 
@@ -73,9 +73,11 @@ export class FlowRunStatus {
    */
   public tasks!: TaskMap;
 
-  public constructor() {
+  public constructor(runStatus?: FlowRunStatus) {
     this.id = FlowRunStatus.nextId;
     FlowRunStatus.nextId++; // @todo Check overflow
+
+    this.runningTasks = (runStatus && runStatus.runningTasks) || [];
 
     this.states = {
       Ready: new FlowReady(this),

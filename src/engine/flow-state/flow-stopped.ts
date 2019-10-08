@@ -12,6 +12,12 @@ export class FlowStopped extends FlowState {
   }
 
   public getSerializableState() {
-    return this.runStatus;
+    return {
+      runningTasks: this.runStatus.runningTasks,
+      tasksReady: this.runStatus.tasksReady,
+      tasksByReq: this.runStatus.tasksByReq,
+      expectedResults: this.runStatus.expectedResults,
+      results: this.runStatus.results,
+    };
   }
 }

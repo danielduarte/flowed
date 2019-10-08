@@ -38,7 +38,7 @@ export abstract class FlowState implements IFlow {
     this.runStatus = runStatus;
   }
 
-  public initRunStatus(spec: FlowSpec) {
+  public initRunStatus(spec: FlowSpec, runState?: any) {
     this.runStatus.spec = spec;
     this.runStatus.tasks = {};
 
