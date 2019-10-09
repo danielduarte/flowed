@@ -36,5 +36,12 @@ export interface TaskResultsMap {
 }
 
 export interface FlowConfigs {
+  // Defaults to false
   throwErrorOnUnsolvableResult?: boolean;
+
+  // Defaults to false
+  resolverAutomapParams?: boolean;
+
+  // Defaults to false
+  resolverAutomapResults?: boolean;
 }

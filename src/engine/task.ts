@@ -1,6 +1,8 @@
+import { debug as rawDebug } from 'debug';
 import { GenericValueMap, TaskResolverClass } from '../types';
 import { TaskSpec } from './specs';
 import { TaskRunStatus } from './task-types';
+const debug = rawDebug('flowed:flow');
 
 export class Task {
   protected code: string;
@@ -66,15 +68,21 @@ export class Task {
     }
   }
 
-  public run(taskResolverConstructor: TaskResolverClass, context: GenericValueMap): Promise<GenericValueMap> {
+  public run(
+    taskResolverConstructor: TaskResolverClass,
+    context: GenericValueMap,
+    automapParams: boolean,
+    automapResults: boolean,
+    flowId: number,
+  ): Promise<GenericValueMap> {
     const resolver = new taskResolverConstructor();
 
     return new Promise((resolve, reject) => {
-      const params = this.mapParamsForResolver(this.runStatus.solvedReqs);
+      const params = this.mapParamsForResolver(this.runStatus.solvedReqs, automapParams, flowId);
 
       resolver.exec(params, context, this).then(
         resolverValue => {
-          const results = this.mapResultsFromResolver(resolverValue);
+          const results = this.mapResultsFromResolver(resolverValue, automapResults, flowId);
           this.runStatus.solvedResults = results;
           resolve(this.runStatus.solvedResults);
         },
@@ -89,11 +97,23 @@ export class Task {
     this.resetRunStatus();
   }
 
-  protected mapParamsForResolver(solvedReqs: GenericValueMap) {
+  protected mapParamsForResolver(solvedReqs: GenericValueMap, automap: boolean, flowId: number) {
     const params: GenericValueMap = {};
 
+    let resolverParams = this.spec.resolver.params || {};
+
+    if (automap) {
+      const requires = this.spec.requires || [];
+      // When `Object.fromEntries()` is available in ES, use it instead of the following solution
+      const automappedParams = requires
+        .map(req => ({ [req]: req }))
+        .reduce((accum, peer) => Object.assign(accum, peer));
+      debug(`[${flowId}]     Automapped resolver params in task ${this.getCode()}:`, automappedParams);
+      resolverParams = Object.assign(automappedParams, resolverParams);
+    }
+
     let paramValue;
-    for (const [resolverParamName, paramSolvingInfo] of Object.entries(this.spec.resolver.params || {})) {
+    for (const [resolverParamName, paramSolvingInfo] of Object.entries(resolverParams)) {
       // If it is string, it is a task param name
       if (typeof paramSolvingInfo === 'string') {
         const taskParamName = paramSolvingInfo;
@@ -114,18 +134,24 @@ export class Task {
     return params;
   }
 
-  protected mapResultsFromResolver(resolverResults: GenericValueMap) {
+  protected mapResultsFromResolver(solvedResults: GenericValueMap, automap: boolean, flowId: number) {
     const results: GenericValueMap = {};
 
-    for (const resolverResultName in this.spec.resolver.results) {
-      if (
-        this.spec.resolver.results.hasOwnProperty(resolverResultName) &&
-        resolverResults.hasOwnProperty(resolverResultName)
-      ) {
-        const taskResultName = this.spec.resolver.results[resolverResultName];
-        // noinspection UnnecessaryLocalVariableJS
-        const resolverResult = resolverResults[resolverResultName];
-        results[taskResultName] = resolverResult;
+    let resolverResults = this.spec.resolver.results || {};
+
+    if (automap) {
+      const provides = this.spec.provides || [];
+      // When `Object.fromEntries()` is available in ES, use it instead of the following solution
+      const automappedResults = provides
+        .map(prov => ({ [prov]: prov }))
+        .reduce((accum, peer) => Object.assign(accum, peer));
+      debug(`[${flowId}]     Automapped resolver results in task ${this.getCode()}:`, automappedResults);
+      resolverResults = Object.assign(automappedResults, resolverResults);
+    }
+
+    for (const [resolverResultName, taskResultName] of Object.entries(resolverResults)) {
+      if (solvedResults.hasOwnProperty(resolverResultName)) {
+        results[taskResultName] = solvedResults[resolverResultName];
       }
     }
 

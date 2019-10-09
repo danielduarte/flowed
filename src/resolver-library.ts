@@ -65,7 +65,13 @@ export class RepeaterResolver {
 
       // @todo add test with repeater task with taskContext
 
-      const result = task.run(params.taskResolver, params.taskContext);
+      const result = task.run(
+        params.taskResolver,
+        params.taskContext,
+        !!params.resolverAutomapParams,
+        !!params.resolverAutomapResults,
+        params.flowId,
+      );
 
       if (params.parallel) {
         resultPromises.push(result);

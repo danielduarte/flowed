@@ -15,6 +15,8 @@ import { Task } from './task';
 import { TaskMap } from './task-types';
 const debug = rawDebug('flowed:flow');
 
+// @todo Consider replace tslint with eslint
+
 export class Flow {
   /**
    * Next flow instance id, used for debugging
@@ -217,14 +219,22 @@ export class Flow {
       this.runStatus.runningTasks.push(task.getCode());
 
       const taskResolver = this.getResolverForTask(task);
-      task.run(taskResolver, this.runStatus.context).then(
-        () => {
-          this.taskFinished(task);
-        },
-        (error: Error) => {
-          this.taskFinished(task, error, true);
-        },
-      );
+      task
+        .run(
+          taskResolver,
+          this.runStatus.context,
+          !!this.configs.resolverAutomapParams,
+          !!this.configs.resolverAutomapResults,
+          this.id,
+        )
+        .then(
+          () => {
+            this.taskFinished(task);
+          },
+          (error: Error) => {
+            this.taskFinished(task, error, true);
+          },
+        );
 
       debug(`[${this.id}] ` + `  ‣ Task ${task.getCode()} started, params:`, task.getParams());
     }
