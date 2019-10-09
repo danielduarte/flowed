@@ -123,19 +123,19 @@ const flow = {
     A: {
       provides: ['resultA'],
       resolver: {
-        name: 'doNothing',
+        name: 'flowed::Noop',
       },
     },
     B: {
       provides: ['resultB'],
       resolver: {
-        name: 'doNothing',
+        name: 'flowed::Noop',
       },
     },
     C: {
       requires: ['resultA', 'resultB'],
       resolver: {
-        name: 'doNothing',
+        name: 'flowed::Noop',
       },
     },
   },
@@ -143,9 +143,7 @@ const flow = {
 ```
 
 ```JavaScript
-FlowManager.run(flow, {}, [], {
-  doNothing: ResolverLibrary.NoopResolver,
-});
+FlowManager.run(flow);
 ```
 
 ### Dependent Tasks
@@ -158,20 +156,20 @@ const flow = {
     A: {
       provides: ['resultA'],
       resolver: {
-        name: 'doNothing',
+        name: 'flowed::Noop',
       },
     },
     B: {
       requires: ['resultA'],
       provides: ['resultB'],
       resolver: {
-        name: 'doNothing',
+        name: 'flowed::Noop',
       },
     },
     C: {
       requires: ['resultB'],
       resolver: {
-        name: 'doNothing',
+        name: 'flowed::Noop',
       },
     },
   },
@@ -179,7 +177,5 @@ const flow = {
 ```
 
 ```JavaScript
-FlowManager.run(flow, {}, [], {
-  doNothing: ResolverLibrary.NoopResolver,
-});
+FlowManager.run(flow);
 ```
