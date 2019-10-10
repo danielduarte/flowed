@@ -18,7 +18,7 @@ npm i flowed
 ## Getting Started
 
 - [Tutorial](./doc/tutorial.md)
-- [Code examples](./test/examples)
+- [Code examples](https://github.com/daniel-duarte/flowed/tree/master/test/examples)
 
 
 ## Main Features

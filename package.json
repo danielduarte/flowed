@@ -1,7 +1,7 @@
 {
   "name": "flowed",
   "version": "1.4.0",
-  "description": "A fast and reliable flow manager for JavaScript",
+  "description": "A fast and reliable flow manager and task runner for Node.js",
   "keywords": [
     "flow",
     "engine",
@@ -16,7 +16,7 @@
   ],
   "author": "Daniel Duarte <danieldd.ar@gmail.com> (https://github.com/daniel-duarte)",
   "license": "MIT",
-  "homepage": "http://tiny.cc/flowed",
+  "homepage": "https://daniel-duarte.github.io/flowed",
   "repository": "github:daniel-duarte/flowed",
   "main": "dist/index.js",
   "scripts": {
