@@ -20,7 +20,6 @@ const debug = rawDebug('flowed:flow');
 // @todo Consider replace tslint with eslint
 
 export class Flow implements IFlow {
-
   public runStatus!: FlowRunStatus;
 
   /**
@@ -76,64 +75,6 @@ export class Flow implements IFlow {
 
   public getSpec() {
     return this.spec;
-  }
-
-  public getResults() {
-    return this.state.getResults();
-  }
-
-  public createFinishPromise(): Promise<GenericValueMap> {
-    return this.state.createFinishPromise();
-  }
-
-  public createPausePromise(): Promise<GenericValueMap> {
-    return this.state.createPausePromise();
-  }
-
-  public createStopPromise(): Promise<GenericValueMap> {
-    return this.state.createStopPromise();
-  }
-
-  public execFinishResolve() {
-    this.state.execFinishResolve();
-  }
-
-  public execFinishReject(error: Error) {
-    this.state.execFinishReject(error);
-  }
-
-  public execPauseResolve() {
-    this.state.execPauseResolve();
-  }
-
-  public execPauseReject(error: Error) {
-    this.state.execPauseReject(error);
-  }
-
-  public execStopResolve() {
-    this.state.execStopResolve();
-  }
-
-  public execStopReject(error: Error) {
-    this.state.execStopReject(error);
-  }
-
-  public setExpectedResults(expectedResults: string[] = []) {
-    this.state.setExpectedResults(expectedResults);
-  }
-
-  public setResolvers(resolvers: TaskResolverMap = {}) {
-    this.state.setResolvers(resolvers);
-  }
-
-  public setContext(context: GenericValueMap) {
-    this.state.setContext(context);
-  }
-
-  public supplyParameters(params: GenericValueMap) {
-    for (const [paramCode, paramValue] of Object.entries(params)) {
-      this.state.supplyResult(paramCode, paramValue);
-    }
   }
 
   public startReadyTasks() {

@@ -1,9 +1,5 @@
 import { debug as rawDebug } from 'debug';
 import { Flow } from '..';
-import { GenericValueMap, TaskResolverMap } from '../../types';
-import { FlowRunStatus, FlowStateEnum, FlowTransitionEnum } from '../flow-types';
-import { IFlow } from './iflow';
-import { Task } from '../task';
 import {
   ConditionalResolver,
   NoopResolver,
@@ -12,10 +8,13 @@ import {
   ThrowErrorResolver,
   WaitResolver,
 } from '../../resolver-library';
+import { GenericValueMap, TaskResolverMap } from '../../types';
+import { FlowRunStatus, FlowStateEnum, FlowTransitionEnum } from '../flow-types';
+import { Task } from '../task';
+import { IFlow } from './iflow';
 const debug = rawDebug('flowed:flow');
 
 export abstract class FlowState implements IFlow {
-
   /**
    * Built-in resolver library.
    * @type {TaskResolverMap}
@@ -28,7 +27,6 @@ export abstract class FlowState implements IFlow {
     'flowed::SubFlow': SubFlowResolver,
     'flowed::Repeater': RepeaterResolver,
   };
-
 
   public runStatus: FlowRunStatus;
 
@@ -146,7 +144,9 @@ export abstract class FlowState implements IFlow {
   }
 
   public supplyParameters(params: GenericValueMap) {
-    this.flow.supplyParameters(params);
+    for (const [paramCode, paramValue] of Object.entries(params)) {
+      this.supplyResult(paramCode, paramValue);
+    }
   }
 
   public getSpec() {

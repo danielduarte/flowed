@@ -1,8 +1,8 @@
 import { GenericValueMap, TaskResolverMap } from '../types';
+import { FlowState } from './flow-state';
+import { FlowConfigs } from './specs';
 import { Task } from './task';
 import { TaskMap } from './task-types';
-import { FlowConfigs } from './specs';
-import { FlowState } from './flow-state';
 
 export enum FlowStateEnum {
   Ready = 'Ready',
