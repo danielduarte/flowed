@@ -4,22 +4,16 @@ import { FlowStateEnum } from '../flow-types';
 import { FlowReady } from './flow-ready';
 
 export class FlowStopped extends FlowState {
-  public static getInstance(): FlowState {
-    return this.instance || (this.instance = new this());
-  }
-
-  protected static instance: FlowState;
-
-  private constructor() {
-    super();
+  public static getInstance(flow: Flow): FlowState {
+    return flow.getStateInstance(FlowStateEnum.Stopped);
   }
 
   public getStateCode(): FlowStateEnum {
     return FlowStateEnum.Stopped;
   }
 
-  public reset(flow: Flow, flowProtectedScope: any) {
-    flowProtectedScope.setState.call(flow, FlowReady.getInstance());
-    flowProtectedScope.initRunStatus.call(flow);
+  public reset(flowProtectedScope: any) {
+    flowProtectedScope.setState.call(this.flow, FlowReady.getInstance(this.flow));
+    flowProtectedScope.initRunStatus.call(this.flow);
   }
 }

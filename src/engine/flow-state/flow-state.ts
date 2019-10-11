@@ -4,42 +4,47 @@ import { FlowStateEnum, FlowTransitionEnum } from '../flow-types';
 import { IFlow } from './iflow';
 
 export abstract class FlowState implements IFlow {
+  protected flow: Flow;
+
+  public constructor(flow: Flow) {
+    this.flow = flow;
+  }
+
   public start(
-    flow: Flow,
-    flowProtectedScope: any,
     params: GenericValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
     context: GenericValueMap = {},
+    flowProtectedScope: any,
   ): Promise<GenericValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Start);
   }
 
-  public finished(flow: Flow, flowProtectedScope: any, error: Error | boolean = false) {
+  public finished(flowProtectedScope: any, error: Error | boolean = false) {
     throw this.createTransitionError(FlowTransitionEnum.Finished);
   }
 
-  public pause(flow: Flow, flowProtectedScope: any): Promise<GenericValueMap> {
+  public pause(flowProtectedScope: any): Promise<GenericValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Pause);
   }
 
-  public paused(flow: Flow, flowProtectedScope: any) {
+  public paused(flowProtectedScope: any) {
     throw this.createTransitionError(FlowTransitionEnum.Paused);
   }
 
-  public resume(flow: Flow, flowProtectedScope: any) {
+  public resume(flowProtectedScope: any) {
     throw this.createTransitionError(FlowTransitionEnum.Resume);
   }
 
-  public stop(flow: Flow, flowProtectedScope: any): Promise<GenericValueMap> {
+  public stop(flowProtectedScope: any): Promise<GenericValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Stop);
   }
 
-  public stopped(flow: Flow, flowProtectedScope: any) {
+  public stopped(flowProtectedScope: any) {
     throw this.createTransitionError(FlowTransitionEnum.Stopped);
   }
 
-  public reset(flow: Flow, flowProtectedScope: any) {
+  public reset(flowProtectedScope: any) {
     throw this.createTransitionError(FlowTransitionEnum.Reset);
   }
 

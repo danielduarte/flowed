@@ -8,7 +8,16 @@ import {
   WaitResolver,
 } from '../resolver-library';
 import { GenericValueMap, TaskResolverMap } from '../types';
-import { FlowReady, FlowState } from './flow-state';
+import {
+  FlowFinished,
+  FlowPaused,
+  FlowPausing,
+  FlowReady,
+  FlowRunning,
+  FlowState,
+  FlowStopped,
+  FlowStopping,
+} from './flow-state';
 import { IFlow } from './flow-state/iflow';
 import { FlowRunStatus, FlowStateEnum } from './flow-types';
 import { FlowConfigs, FlowSpec } from './specs';
@@ -53,6 +62,8 @@ export class Flow implements IFlow {
    * Current flow state with conditional functionality and state logic (state machine).
    */
   protected state!: FlowState;
+
+  protected states: { [stateKey: string]: FlowState };
 
   /**
    * Flow run status information. It holds all the data related to the flow execution.
@@ -106,6 +117,16 @@ export class Flow implements IFlow {
     this.id = Flow.nextId;
     Flow.nextId++; // @todo Check overflow
 
+    this.states = {
+      Ready: new FlowReady(this),
+      Running: new FlowRunning(this),
+      Finished: new FlowFinished(this),
+      Pausing: new FlowPausing(this),
+      Paused: new FlowPaused(this),
+      Stopping: new FlowStopping(this),
+      Stopped: new FlowStopped(this),
+    };
+
     this.parseSpec(spec);
     this.initRunStatus();
   }
@@ -116,23 +137,23 @@ export class Flow implements IFlow {
     resolvers: TaskResolverMap = {},
     context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
-    return this.state.start(this, this.protectedScope, params, expectedResults, resolvers, context);
+    return this.state.start(params, expectedResults, resolvers, context, this.protectedScope);
   }
 
   public pause(): Promise<GenericValueMap> {
-    return this.state.pause(this, this.protectedScope);
+    return this.state.pause(this.protectedScope);
   }
 
   public resume() {
-    this.state.resume(this, this.protectedScope);
+    this.state.resume(this.protectedScope);
   }
 
   public stop(): Promise<GenericValueMap> {
-    return this.state.stop(this, this.protectedScope);
+    return this.state.stop(this.protectedScope);
   }
 
   public reset() {
-    this.state.reset(this, this.protectedScope);
+    this.state.reset(this.protectedScope);
   }
 
   // @todo Add a step() feature, for step-by-step execution
@@ -147,6 +168,10 @@ export class Flow implements IFlow {
 
   public getResults() {
     return this.runStatus.results;
+  }
+
+  public getStateInstance(state: FlowStateEnum) {
+    return this.states[state];
   }
 
   protected setState(newState: FlowState) {
@@ -279,7 +304,7 @@ export class Flow implements IFlow {
   }
 
   protected initRunStatus() {
-    this.state = FlowReady.getInstance();
+    this.state = FlowReady.getInstance(this);
 
     this.runStatus = new FlowRunStatus();
 
@@ -387,7 +412,7 @@ export class Flow implements IFlow {
       }
 
       if (!this.isRunning()) {
-        this.state.finished(this, this.protectedScope, error);
+        this.state.finished(this.protectedScope, error);
       }
     }
 
@@ -395,22 +420,22 @@ export class Flow implements IFlow {
       const currentState = this.state.getStateCode();
 
       if (currentState === FlowStateEnum.Pausing) {
-        this.state.paused(this, this.protectedScope);
+        this.state.paused(this.protectedScope);
       } else if (currentState === FlowStateEnum.Stopping) {
-        this.state.stopped(this, this.protectedScope);
+        this.state.stopped(this.protectedScope);
       }
     }
   }
 
   protected finished() {
-    this.state.finished(this, this.protectedScope);
+    this.state.finished(this.protectedScope);
   }
 
   protected paused() {
-    this.state.paused(this, this.protectedScope);
+    this.state.paused(this.protectedScope);
   }
 
   protected stopped() {
-    this.state.stopped(this, this.protectedScope);
+    this.state.stopped(this.protectedScope);
   }
 }

@@ -7,14 +7,8 @@ import { FlowStateEnum } from '../flow-types';
 const debug = rawDebug('flowed:flow');
 
 export class FlowReady extends FlowState {
-  public static getInstance(): FlowState {
-    return this.instance || (this.instance = new this());
-  }
-
-  protected static instance: FlowState;
-
-  private constructor() {
-    super();
+  public static getInstance(flow: Flow): FlowState {
+    return flow.getStateInstance(FlowStateEnum.Ready);
   }
 
   public getStateCode(): FlowStateEnum {
@@ -22,30 +16,29 @@ export class FlowReady extends FlowState {
   }
 
   public start(
-    flow: Flow,
-    flowProtectedScope: any,
     params: GenericValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
     context: GenericValueMap = {},
+    flowProtectedScope: any,
   ): Promise<GenericValueMap> {
-    debug(`[${flow.id}] ` + '▶ Flow started with params:', params);
+    debug(`[${this.flow.id}] ` + '▶ Flow started with params:', params);
 
-    flowProtectedScope.setState.call(flow, FlowRunning.getInstance());
+    flowProtectedScope.setState.call(this.flow, FlowRunning.getInstance(this.flow));
 
-    flowProtectedScope.setExpectedResults.call(flow, [...expectedResults]);
-    flowProtectedScope.setResolvers.call(flow, resolvers);
-    flowProtectedScope.setContext.call(flow, context);
-    flowProtectedScope.supplyParameters.call(flow, params);
+    flowProtectedScope.setExpectedResults.call(this.flow, [...expectedResults]);
+    flowProtectedScope.setResolvers.call(this.flow, resolvers);
+    flowProtectedScope.setContext.call(this.flow, context);
+    flowProtectedScope.supplyParameters.call(this.flow, params);
 
     // Run tasks
-    flowProtectedScope.startReadyTasks.call(flow);
+    flowProtectedScope.startReadyTasks.call(this.flow);
 
-    const finishPromise = flowProtectedScope.createFinishPromise.call(flow);
+    const finishPromise = flowProtectedScope.createFinishPromise.call(this.flow);
 
     // Notify flow finished when flow has no tasks
-    if (Object.keys(flow.getSpec().tasks || {}).length === 0) {
-      flowProtectedScope.finished.call(flow);
+    if (Object.keys(this.flow.getSpec().tasks || {}).length === 0) {
+      flowProtectedScope.finished.call(this.flow);
     }
 
     return finishPromise;
