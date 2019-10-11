@@ -1,5 +1,4 @@
 import { debug as rawDebug } from 'debug';
-import { Flow } from '..';
 import {
   ConditionalResolver,
   NoopResolver,
@@ -10,6 +9,7 @@ import {
 } from '../../resolver-library';
 import { GenericValueMap, TaskResolverMap } from '../../types';
 import { FlowRunStatus, FlowStateEnum, FlowTransitionEnum } from '../flow-types';
+import { FlowSpec } from '../specs';
 import { Task } from '../task';
 import { IFlow } from './iflow';
 const debug = rawDebug('flowed:flow');
@@ -28,13 +28,46 @@ export abstract class FlowState implements IFlow {
     'flowed::Repeater': RepeaterResolver,
   };
 
-  public runStatus: FlowRunStatus;
+  protected runStatus: FlowRunStatus;
 
-  protected flow: Flow;
+  public constructor(runStatus: FlowRunStatus) {
+    this.runStatus = runStatus;
+  }
 
-  public constructor(flow: Flow) {
-    this.flow = flow;
-    this.runStatus = flow.runStatus;
+  public initRunStatus(spec: FlowSpec) {
+    this.runStatus.spec = spec;
+    this.runStatus.tasks = {};
+
+    const provisions: string[] = [];
+
+    for (const [taskCode, taskSpec] of Object.entries(this.runStatus.spec.tasks || {})) {
+      provisions.push.apply(provisions, taskSpec.provides || []);
+      this.runStatus.tasks[taskCode] = new Task(taskCode, taskSpec);
+    }
+
+    // To be used later to check if expectedResults can be fulfilled.
+    this.runStatus.taskProvisions = Array.from(new Set(provisions));
+
+    this.runStatus.configs = this.runStatus.spec.configs || {};
+
+    for (const taskCode in this.runStatus.tasks) {
+      if (this.runStatus.tasks.hasOwnProperty(taskCode)) {
+        const task = this.runStatus.tasks[taskCode];
+        task.resetRunStatus();
+
+        if (task.isReadyToRun()) {
+          this.runStatus.tasksReady.push(task);
+        }
+
+        const taskReqs = task.getSpec().requires || [];
+        for (const req of taskReqs) {
+          if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
+            this.runStatus.tasksByReq[req] = {};
+          }
+          this.runStatus.tasksByReq[req][task.getCode()] = task;
+        }
+      }
+    }
   }
 
   public start(
@@ -76,14 +109,6 @@ export abstract class FlowState implements IFlow {
 
   public abstract getStateCode(): FlowStateEnum;
 
-  public setState(newState: FlowStateEnum) {
-    this.flow.setState(newState);
-  }
-
-  public initRunStatus() {
-    this.flow.initRunStatus();
-  }
-
   public execFinishResolve() {
     this.runStatus.finishResolve(this.runStatus.results);
   }
@@ -110,10 +135,6 @@ export abstract class FlowState implements IFlow {
 
   public isRunning() {
     return this.runStatus.runningTasks.length > 0;
-  }
-
-  public startReadyTasks() {
-    this.flow.startReadyTasks();
   }
 
   public setExpectedResults(expectedResults: string[] = []) {
@@ -150,7 +171,7 @@ export abstract class FlowState implements IFlow {
   }
 
   public getSpec() {
-    return this.flow.getSpec();
+    return this.runStatus.spec;
   }
 
   public createFinishPromise(): Promise<GenericValueMap> {
@@ -228,6 +249,92 @@ export abstract class FlowState implements IFlow {
 
   public getStateInstance(state: FlowStateEnum) {
     return this.runStatus.states[state];
+  }
+
+  public startReadyTasks() {
+    const readyTasks = this.runStatus.tasksReady;
+    this.runStatus.tasksReady = [];
+
+    for (const task of readyTasks) {
+      this.runStatus.runningTasks.push(task.getCode());
+
+      const taskResolver = this.runStatus.state.getResolverForTask(task);
+      task
+        .run(
+          taskResolver,
+          this.runStatus.context,
+          !!this.runStatus.configs.resolverAutomapParams,
+          !!this.runStatus.configs.resolverAutomapResults,
+          this.runStatus.id,
+        )
+        .then(
+          () => {
+            this.taskFinished(task);
+          },
+          (error: Error) => {
+            this.taskFinished(task, error, true);
+          },
+        );
+
+      debug(`[${this.runStatus.id}] ` + `  ‣ Task ${task.getCode()} started, params:`, task.getParams());
+    }
+  }
+
+  public setState(newState: FlowStateEnum) {
+    this.runStatus.state = this.getStateInstance(newState);
+  }
+
+  protected taskFinished(task: Task, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
+    const taskSpec = task.getSpec();
+    const taskProvisions = taskSpec.provides || [];
+    const taskResults = task.getResults();
+    const taskCode = task.getCode();
+    const hasDefaultResult = taskSpec.hasOwnProperty('defaultResult');
+
+    if (error) {
+      debug(`[${this.runStatus.id}]   ✗ Error in task ${taskCode}, results:`, taskResults);
+    } else {
+      debug(`[${this.runStatus.id}]   ✓ Finished task ${taskCode}, results:`, taskResults);
+    }
+
+    // Remove the task from running tasks collection
+    this.runStatus.runningTasks.splice(this.runStatus.runningTasks.indexOf(taskCode), 1);
+
+    for (const resultName of taskProvisions) {
+      if (taskResults.hasOwnProperty(resultName)) {
+        this.runStatus.state.supplyResult(resultName, taskResults[resultName]);
+      } else if (hasDefaultResult) {
+        // @todo add defaultResult to repeater task
+        this.runStatus.state.supplyResult(resultName, taskSpec.defaultResult);
+      } else {
+        debug(
+          `[${
+            this.runStatus.id
+          }] ⚠️ Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`,
+        );
+      }
+    }
+
+    if (this.runStatus.state.getStateCode() === FlowStateEnum.Running) {
+      const stopExecution = error && stopFlowExecutionOnError;
+      if (!stopExecution) {
+        this.startReadyTasks();
+      }
+
+      if (!this.runStatus.state.isRunning()) {
+        this.runStatus.state.finished(error);
+      }
+    }
+
+    if (!this.runStatus.state.isRunning()) {
+      const currentState = this.runStatus.state.getStateCode();
+
+      if (currentState === FlowStateEnum.Pausing) {
+        this.runStatus.state.paused();
+      } else if (currentState === FlowStateEnum.Stopping) {
+        this.runStatus.state.stopped();
+      }
+    }
   }
 
   protected createTransitionError(transition: string) {

@@ -14,7 +14,7 @@ export class FlowPaused extends FlowState {
     this.startReadyTasks();
 
     if (!this.isRunning()) {
-      this.flow.finished();
+      this.runStatus.state.finished();
     }
   }
 

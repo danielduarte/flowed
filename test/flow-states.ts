@@ -8,15 +8,15 @@ import { Flow } from '../src/engine';
 // Created this class to test protected and private methods in Flow
 class PublicFlow extends Flow {
   public finished() {
-    super.finished();
+    this.runStatus.state.finished();
   }
 
   public paused() {
-    super.paused();
+    this.runStatus.state.paused();
   }
 
   public stopped() {
-    super.stopped();
+    this.runStatus.state.stopped();
   }
 }
 

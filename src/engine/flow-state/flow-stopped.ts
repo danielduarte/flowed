@@ -8,6 +8,6 @@ export class FlowStopped extends FlowState {
 
   public reset() {
     this.setState(FlowStateEnum.Ready);
-    this.initRunStatus();
+    this.initRunStatus(this.runStatus.spec);
   }
 }

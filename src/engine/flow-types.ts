@@ -1,6 +1,15 @@
 import { GenericValueMap, TaskResolverMap } from '../types';
-import { FlowState } from './flow-state';
-import { FlowConfigs } from './specs';
+import {
+  FlowFinished,
+  FlowPaused,
+  FlowPausing,
+  FlowReady,
+  FlowRunning,
+  FlowState,
+  FlowStopped,
+  FlowStopping,
+} from './flow-state';
+import { FlowConfigs, FlowSpec } from './specs';
 import { Task } from './task';
 import { TaskMap } from './task-types';
 
@@ -68,10 +77,37 @@ export class FlowRunStatus {
 
   public configs!: FlowConfigs;
 
-  public states!: { [stateKey: string]: FlowState };
+  public states: { [stateKey: string]: FlowState };
+
+  /**
+   * Flow specification in plain JS object format.
+   */
+  public spec!: FlowSpec;
+
+  /**
+   * Current flow state with conditional functionality and state logic (state machine).
+   */
+  public state: FlowState;
+
+  /**
+   * Task objects map by code.
+   */
+  public tasks!: TaskMap;
 
   public constructor() {
     this.id = FlowRunStatus.nextId;
     FlowRunStatus.nextId++; // @todo Check overflow
+
+    this.states = {
+      Ready: new FlowReady(this),
+      Running: new FlowRunning(this),
+      Finished: new FlowFinished(this),
+      Pausing: new FlowPausing(this),
+      Paused: new FlowPaused(this),
+      Stopping: new FlowStopping(this),
+      Stopped: new FlowStopped(this),
+    };
+
+    this.state = this.states[FlowStateEnum.Ready];
   }
 }
