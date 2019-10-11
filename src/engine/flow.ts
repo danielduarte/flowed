@@ -258,8 +258,8 @@ export class Flow implements IFlow {
     this.state.finished(error);
   }
 
-  public setState(newState: FlowState) {
-    this.state = newState;
+  public setState(newState: FlowStateEnum) {
+    this.state = this.getStateInstance(newState);
   }
 
   protected getResolverForTask(task: Task) {

@@ -51,7 +51,7 @@ export abstract class FlowState implements IFlow {
 
   public abstract getStateCode(): FlowStateEnum;
 
-  public setState(newState: FlowState) {
+  public setState(newState: FlowStateEnum) {
     this.flow.setState(newState);
   }
 
@@ -85,6 +85,46 @@ export abstract class FlowState implements IFlow {
 
   public isRunning() {
     return this.flow.isRunning();
+  }
+
+  public startReadyTasks() {
+    this.flow.startReadyTasks();
+  }
+
+  public setExpectedResults(expectedResults: string[] = []) {
+    this.flow.setExpectedResults(expectedResults);
+  }
+
+  public getResults() {
+    return this.flow.getResults();
+  }
+
+  public setResolvers(resolvers: TaskResolverMap = {}) {
+    this.flow.setResolvers(resolvers);
+  }
+
+  public setContext(context: GenericValueMap) {
+    this.flow.setContext(context);
+  }
+
+  public supplyParameters(params: GenericValueMap) {
+    this.flow.supplyParameters(params);
+  }
+
+  public createFinishPromise(): Promise<GenericValueMap> {
+    return this.flow.createFinishPromise();
+  }
+
+  public getSpec() {
+    return this.flow.getSpec();
+  }
+
+  public createPausePromise(): Promise<GenericValueMap> {
+    return this.flow.createPausePromise();
+  }
+
+  public createStopPromise(): Promise<GenericValueMap> {
+    return this.flow.createStopPromise();
   }
 
   protected createTransitionError(transition: string) {

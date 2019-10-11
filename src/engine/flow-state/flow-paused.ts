@@ -1,24 +1,17 @@
 import { FlowState } from '.';
-import { FlowStopping } from '.';
-import { Flow } from '../';
 import { GenericValueMap } from '../../types';
 import { FlowStateEnum } from '../flow-types';
-import { FlowRunning } from './flow-running';
 
 export class FlowPaused extends FlowState {
-  public static getInstance(flow: Flow): FlowState {
-    return flow.getStateInstance(FlowStateEnum.Paused);
-  }
-
   public getStateCode(): FlowStateEnum {
     return FlowStateEnum.Paused;
   }
 
   public resume() {
-    this.setState(FlowRunning.getInstance(this.flow));
+    this.setState(FlowStateEnum.Running);
 
     // @todo Send resume signal to tasks, when it is implemented
-    this.flow.startReadyTasks();
+    this.startReadyTasks();
 
     if (!this.isRunning()) {
       this.flow.finished();
@@ -26,8 +19,8 @@ export class FlowPaused extends FlowState {
   }
 
   public stop(): Promise<GenericValueMap> {
-    this.setState(FlowStopping.getInstance(this.flow));
+    this.setState(FlowStateEnum.Stopping);
 
-    return Promise.resolve(this.flow.getResults());
+    return Promise.resolve(this.getResults());
   }
 }

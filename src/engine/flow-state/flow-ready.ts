@@ -1,16 +1,10 @@
 import { debug as rawDebug } from 'debug';
-import { FlowRunning } from '.';
 import { FlowState } from '.';
-import { Flow } from '../';
 import { GenericValueMap, TaskResolverMap } from '../../types';
 import { FlowStateEnum } from '../flow-types';
 const debug = rawDebug('flowed:flow');
 
 export class FlowReady extends FlowState {
-  public static getInstance(flow: Flow): FlowState {
-    return flow.getStateInstance(FlowStateEnum.Ready);
-  }
-
   public getStateCode(): FlowStateEnum {
     return FlowStateEnum.Ready;
   }
@@ -23,20 +17,20 @@ export class FlowReady extends FlowState {
   ): Promise<GenericValueMap> {
     debug(`[${this.runStatus.id}] ` + '▶ Flow started with params:', params);
 
-    this.setState(FlowRunning.getInstance(this.flow));
+    this.setState(FlowStateEnum.Running);
 
-    this.flow.setExpectedResults([...expectedResults]);
-    this.flow.setResolvers(resolvers);
-    this.flow.setContext(context);
-    this.flow.supplyParameters(params);
+    this.setExpectedResults([...expectedResults]);
+    this.setResolvers(resolvers);
+    this.setContext(context);
+    this.supplyParameters(params);
 
     // Run tasks
-    this.flow.startReadyTasks();
+    this.startReadyTasks();
 
-    const finishPromise = this.flow.createFinishPromise();
+    const finishPromise = this.createFinishPromise();
 
     // Notify flow finished when flow has no tasks
-    if (Object.keys(this.flow.getSpec().tasks || {}).length === 0) {
+    if (Object.keys(this.getSpec().tasks || {}).length === 0) {
       this.flow.finished();
     }
 
