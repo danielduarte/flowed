@@ -12,8 +12,8 @@ export class FlowPausing extends FlowState {
     return FlowStateEnum.Pausing;
   }
 
-  public paused(flowProtectedScope: any) {
-    flowProtectedScope.setState.call(this.flow, FlowPaused.getInstance(this.flow));
-    flowProtectedScope.execPauseResolve.call(this.flow);
+  public paused() {
+    this.setState(FlowPaused.getInstance(this.flow));
+    this.execPauseResolve();
   }
 }

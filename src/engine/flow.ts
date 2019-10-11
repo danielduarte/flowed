@@ -29,12 +29,6 @@ const debug = rawDebug('flowed:flow');
 
 export class Flow implements IFlow {
   /**
-   * Flow instance id to be assigned to the next Flow instance. Intended to be used for debugging.
-   * @type {number}
-   */
-  public static nextId = 1;
-
-  /**
    * Built-in resolver library.
    * @type {TaskResolverMap}
    */
@@ -47,11 +41,7 @@ export class Flow implements IFlow {
     'flowed::Repeater': RepeaterResolver,
   };
 
-  /**
-   * Flow instance id. Intended to be used for debugging.
-   * @type {number}
-   */
-  public id: number;
+  public runStatus!: FlowRunStatus;
 
   /**
    * Flow specification in plain JS object format.
@@ -63,22 +53,7 @@ export class Flow implements IFlow {
    */
   protected state!: FlowState;
 
-  protected states: { [stateKey: string]: FlowState };
-
-  /**
-   * Flow run status information. It holds all the data related to the flow execution.
-   */
-  protected runStatus!: FlowRunStatus;
-
-  /**
-   * Callbacks to be called over different task events.
-   */
-  protected pauseResolve!: (result: GenericValueMap) => void;
-  protected pauseReject!: (error: Error) => void;
-  protected stopResolve!: (result: GenericValueMap) => void;
-  protected stopReject!: (error: Error) => void;
-  protected finishResolve!: (result: GenericValueMap) => void;
-  protected finishReject!: (error: Error) => void;
+  protected states!: { [stateKey: string]: FlowState };
 
   /**
    * Task objects map by code.
@@ -89,44 +64,7 @@ export class Flow implements IFlow {
 
   protected configs!: FlowConfigs;
 
-  protected protectedScope = {
-    createFinishPromise: this.createFinishPromise,
-    execFinishResolve: this.execFinishResolve,
-    execFinishReject: this.execFinishReject,
-
-    createPausePromise: this.createPausePromise,
-    execPauseResolve: this.execPauseResolve,
-    execPauseReject: this.execPauseReject,
-
-    createStopPromise: this.createStopPromise,
-    execStopResolve: this.execStopResolve,
-    execStopReject: this.execStopReject,
-
-    setExpectedResults: this.setExpectedResults,
-    setResolvers: this.setResolvers,
-    setState: this.setState,
-    setContext: this.setContext,
-
-    initRunStatus: this.initRunStatus,
-    startReadyTasks: this.startReadyTasks,
-    supplyParameters: this.supplyParameters,
-    finished: this.finished,
-  };
-
   public constructor(spec: FlowSpec) {
-    this.id = Flow.nextId;
-    Flow.nextId++; // @todo Check overflow
-
-    this.states = {
-      Ready: new FlowReady(this),
-      Running: new FlowRunning(this),
-      Finished: new FlowFinished(this),
-      Pausing: new FlowPausing(this),
-      Paused: new FlowPaused(this),
-      Stopping: new FlowStopping(this),
-      Stopped: new FlowStopped(this),
-    };
-
     this.parseSpec(spec);
     this.initRunStatus();
   }
@@ -137,23 +75,23 @@ export class Flow implements IFlow {
     resolvers: TaskResolverMap = {},
     context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
-    return this.state.start(params, expectedResults, resolvers, context, this.protectedScope);
+    return this.state.start(params, expectedResults, resolvers, context);
   }
 
   public pause(): Promise<GenericValueMap> {
-    return this.state.pause(this.protectedScope);
+    return this.state.pause();
   }
 
   public resume() {
-    this.state.resume(this.protectedScope);
+    this.state.resume();
   }
 
   public stop(): Promise<GenericValueMap> {
-    return this.state.stop(this.protectedScope);
+    return this.state.stop();
   }
 
   public reset() {
-    this.state.reset(this.protectedScope);
+    this.state.reset();
   }
 
   // @todo Add a step() feature, for step-by-step execution
@@ -174,56 +112,56 @@ export class Flow implements IFlow {
     return this.states[state];
   }
 
-  protected setState(newState: FlowState) {
-    this.state = newState;
+  public getRunStatus() {
+    return this.runStatus;
   }
 
-  protected createPausePromise(): Promise<GenericValueMap> {
+  public createPausePromise(): Promise<GenericValueMap> {
     return new Promise<GenericValueMap>((resolve, reject) => {
-      this.pauseResolve = resolve;
-      this.pauseReject = reject;
+      this.runStatus.pauseResolve = resolve;
+      this.runStatus.pauseReject = reject;
     });
   }
 
-  protected createStopPromise(): Promise<GenericValueMap> {
+  public createStopPromise(): Promise<GenericValueMap> {
     return new Promise<GenericValueMap>((resolve, reject) => {
-      this.stopResolve = resolve;
-      this.stopReject = reject;
+      this.runStatus.stopResolve = resolve;
+      this.runStatus.stopReject = reject;
     });
   }
 
-  protected createFinishPromise(): Promise<GenericValueMap> {
+  public createFinishPromise(): Promise<GenericValueMap> {
     return new Promise<GenericValueMap>((resolve, reject) => {
-      this.finishResolve = resolve;
-      this.finishReject = reject;
+      this.runStatus.finishResolve = resolve;
+      this.runStatus.finishReject = reject;
     });
   }
 
-  protected execFinishResolve() {
-    this.finishResolve(this.runStatus.results);
+  public execFinishResolve() {
+    this.runStatus.finishResolve(this.runStatus.results);
   }
 
-  protected execFinishReject(error: Error) {
-    this.finishReject(error);
+  public execFinishReject(error: Error) {
+    this.runStatus.finishReject(error);
   }
 
-  protected execPauseResolve() {
-    this.pauseResolve(this.runStatus.results);
+  public execPauseResolve() {
+    this.runStatus.pauseResolve(this.runStatus.results);
   }
 
-  protected execPauseReject(error: Error) {
-    this.pauseReject(error);
+  public execPauseReject(error: Error) {
+    this.runStatus.pauseReject(error);
   }
 
-  protected execStopResolve() {
-    this.stopResolve(this.runStatus.results);
+  public execStopResolve() {
+    this.runStatus.stopResolve(this.runStatus.results);
   }
 
-  protected execStopReject(error: Error) {
-    this.stopReject(error);
+  public execStopReject(error: Error) {
+    this.runStatus.stopReject(error);
   }
 
-  protected setExpectedResults(expectedResults: string[] = []) {
+  public setExpectedResults(expectedResults: string[] = []) {
     // Check expected results that cannot be fulfilled
     const missingExpected = expectedResults.filter(r => !this.taskProvisions.includes(r));
     if (missingExpected.length > 0) {
@@ -238,21 +176,21 @@ export class Flow implements IFlow {
     this.runStatus.expectedResults = [...expectedResults];
   }
 
-  protected setResolvers(resolvers: TaskResolverMap = {}) {
+  public setResolvers(resolvers: TaskResolverMap = {}) {
     this.runStatus.resolvers = resolvers;
   }
 
-  protected setContext(context: GenericValueMap) {
+  public setContext(context: GenericValueMap) {
     this.runStatus.context = context;
   }
 
-  protected supplyParameters(params: GenericValueMap) {
+  public supplyParameters(params: GenericValueMap) {
     for (const [paramCode, paramValue] of Object.entries(params)) {
       this.supplyResult(paramCode, paramValue);
     }
   }
 
-  protected startReadyTasks() {
+  public startReadyTasks() {
     const readyTasks = this.runStatus.tasksReady;
     this.runStatus.tasksReady = [];
 
@@ -266,7 +204,7 @@ export class Flow implements IFlow {
           this.runStatus.context,
           !!this.configs.resolverAutomapParams,
           !!this.configs.resolverAutomapResults,
-          this.id,
+          this.runStatus.id,
         )
         .then(
           () => {
@@ -277,8 +215,51 @@ export class Flow implements IFlow {
           },
         );
 
-      debug(`[${this.id}] ` + `  ‣ Task ${task.getCode()} started, params:`, task.getParams());
+      debug(`[${this.runStatus.id}] ` + `  ‣ Task ${task.getCode()} started, params:`, task.getParams());
     }
+  }
+
+  public initRunStatus() {
+    this.runStatus = new FlowRunStatus();
+
+    this.states = {
+      Ready: new FlowReady(this),
+      Running: new FlowRunning(this),
+      Finished: new FlowFinished(this),
+      Pausing: new FlowPausing(this),
+      Paused: new FlowPaused(this),
+      Stopping: new FlowStopping(this),
+      Stopped: new FlowStopped(this),
+    };
+
+    this.state = this.states[FlowStateEnum.Ready];
+
+    for (const taskCode in this.tasks) {
+      if (this.tasks.hasOwnProperty(taskCode)) {
+        const task = this.tasks[taskCode];
+        task.resetRunStatus();
+
+        if (task.isReadyToRun()) {
+          this.runStatus.tasksReady.push(task);
+        }
+
+        const taskReqs = task.getSpec().requires || [];
+        for (const req of taskReqs) {
+          if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
+            this.runStatus.tasksByReq[req] = {};
+          }
+          this.runStatus.tasksByReq[req][task.getCode()] = task;
+        }
+      }
+    }
+  }
+
+  public finished(error: Error | boolean = false) {
+    this.state.finished(error);
+  }
+
+  public setState(newState: FlowState) {
+    this.state = newState;
   }
 
   protected getResolverForTask(task: Task) {
@@ -301,31 +282,6 @@ export class Flow implements IFlow {
         this.runStatus.resolvers,
       ).join(', ')}].`,
     );
-  }
-
-  protected initRunStatus() {
-    this.state = FlowReady.getInstance(this);
-
-    this.runStatus = new FlowRunStatus();
-
-    for (const taskCode in this.tasks) {
-      if (this.tasks.hasOwnProperty(taskCode)) {
-        const task = this.tasks[taskCode];
-        task.resetRunStatus();
-
-        if (task.isReadyToRun()) {
-          this.runStatus.tasksReady.push(task);
-        }
-
-        const taskReqs = task.getSpec().requires || [];
-        for (const req of taskReqs) {
-          if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
-            this.runStatus.tasksByReq[req] = {};
-          }
-          this.runStatus.tasksByReq[req][task.getCode()] = task;
-        }
-      }
-    }
   }
 
   protected supplyResult(resultName: string, result: any) {
@@ -382,9 +338,9 @@ export class Flow implements IFlow {
     const hasDefaultResult = taskSpec.hasOwnProperty('defaultResult');
 
     if (error) {
-      debug(`[${this.id}]   ✗ Error in task ${taskCode}, results:`, taskResults);
+      debug(`[${this.runStatus.id}]   ✗ Error in task ${taskCode}, results:`, taskResults);
     } else {
-      debug(`[${this.id}]   ✓ Finished task ${taskCode}, results:`, taskResults);
+      debug(`[${this.runStatus.id}]   ✓ Finished task ${taskCode}, results:`, taskResults);
     }
 
     // Remove the task from running tasks collection
@@ -399,7 +355,7 @@ export class Flow implements IFlow {
       } else {
         debug(
           `[${
-            this.id
+            this.runStatus.id
           }] ⚠️ Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`,
         );
       }
@@ -412,7 +368,7 @@ export class Flow implements IFlow {
       }
 
       if (!this.isRunning()) {
-        this.state.finished(this.protectedScope, error);
+        this.state.finished(error);
       }
     }
 
@@ -420,22 +376,18 @@ export class Flow implements IFlow {
       const currentState = this.state.getStateCode();
 
       if (currentState === FlowStateEnum.Pausing) {
-        this.state.paused(this.protectedScope);
+        this.state.paused();
       } else if (currentState === FlowStateEnum.Stopping) {
-        this.state.stopped(this.protectedScope);
+        this.state.stopped();
       }
     }
   }
 
-  protected finished() {
-    this.state.finished(this.protectedScope);
-  }
-
   protected paused() {
-    this.state.paused(this.protectedScope);
+    this.state.paused();
   }
 
   protected stopped() {
-    this.state.stopped(this.protectedScope);
+    this.state.stopped();
   }
 }

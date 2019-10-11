@@ -1,19 +1,24 @@
 import { GenericValueMap, TaskResolverMap } from '../../types';
+import { FlowRunStatus } from '../flow-types';
 
 export interface IFlow {
+  /**
+   * Flow run status information. It holds all the data related to the flow execution.
+   */
+  runStatus: FlowRunStatus;
+
   start(
     params: GenericValueMap,
     expectedResults: string[],
     resolvers: TaskResolverMap,
     context: GenericValueMap,
-    flowProtectedScope: any,
   ): Promise<GenericValueMap>;
 
-  pause(flowProtectedScope: any): Promise<GenericValueMap>;
+  pause(): Promise<GenericValueMap>;
 
-  resume(flowProtectedScope: any): void;
+  resume(): void;
 
-  stop(flowProtectedScope: any): Promise<GenericValueMap>;
+  stop(): Promise<GenericValueMap>;
 
-  reset(flowProtectedScope: any): void;
+  reset(): void;
 }

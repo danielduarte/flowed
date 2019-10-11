@@ -17,29 +17,29 @@ export class FlowRunning extends FlowState {
     return FlowStateEnum.Running;
   }
 
-  public pause(flowProtectedScope: any): Promise<GenericValueMap> {
-    flowProtectedScope.setState.call(this.flow, FlowPausing.getInstance(this.flow));
+  public pause(): Promise<GenericValueMap> {
+    this.setState(FlowPausing.getInstance(this.flow));
 
     // @todo Send pause signal to tasks, when it is implemented
-    return flowProtectedScope.createPausePromise.call(this.flow);
+    return this.flow.createPausePromise();
   }
 
-  public stop(flowProtectedScope: any): Promise<GenericValueMap> {
-    flowProtectedScope.setState.call(this.flow, FlowStopping.getInstance(this.flow));
+  public stop(): Promise<GenericValueMap> {
+    this.setState(FlowStopping.getInstance(this.flow));
 
     // @todo Send stop signal to tasks, when it is implemented
-    return flowProtectedScope.createStopPromise.call(this.flow);
+    return this.flow.createStopPromise();
   }
 
-  public finished(flowProtectedScope: any, error: Error | boolean = false) {
-    flowProtectedScope.setState.call(this.flow, FlowFinished.getInstance(this.flow));
+  public finished(error: Error | boolean = false) {
+    this.setState(FlowFinished.getInstance(this.flow));
 
     if (error) {
-      debug(`[${this.flow.id}] ` + '✘ Flow finished with error. Results:', this.flow.getResults());
-      flowProtectedScope.execFinishReject.call(this.flow, error);
+      debug(`[${this.runStatus.id}] ` + '✘ Flow finished with error. Results:', this.flow.getResults());
+      this.execFinishReject(error as Error);
     } else {
-      debug(`[${this.flow.id}] ` + '✔ Flow finished with results:', this.flow.getResults());
-      flowProtectedScope.execFinishResolve.call(this.flow);
+      debug(`[${this.runStatus.id}] ` + '✔ Flow finished with results:', this.flow.getResults());
+      this.execFinishResolve();
     }
   }
 }

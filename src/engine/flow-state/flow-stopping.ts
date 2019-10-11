@@ -12,8 +12,8 @@ export class FlowStopping extends FlowState {
     return FlowStateEnum.Stopping;
   }
 
-  public stopped(flowProtectedScope: any) {
-    flowProtectedScope.setState.call(this.flow, FlowStopped.getInstance(this.flow));
-    flowProtectedScope.execStopResolve.call(this.flow);
+  public stopped() {
+    this.setState(FlowStopped.getInstance(this.flow));
+    this.execStopResolve();
   }
 }

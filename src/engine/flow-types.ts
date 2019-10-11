@@ -24,6 +24,18 @@ export enum FlowTransitionEnum {
 }
 
 export class FlowRunStatus {
+  /**
+   * Flow instance id to be assigned to the next Flow instance. Intended to be used for debugging.
+   * @type {number}
+   */
+  public static nextId = 1;
+
+  /**
+   * Flow instance id. Intended to be used for debugging.
+   * @type {number}
+   */
+  public id: number;
+
   public runningTasks: string[] = [];
 
   public tasksReady: Task[] = [];
@@ -39,4 +51,19 @@ export class FlowRunStatus {
   public results: GenericValueMap = {};
 
   public context: GenericValueMap = {};
+
+  /**
+   * Callbacks to be called over different task events.
+   */
+  public pauseResolve!: (result: GenericValueMap) => void;
+  public pauseReject!: (error: Error) => void;
+  public stopResolve!: (result: GenericValueMap) => void;
+  public stopReject!: (error: Error) => void;
+  public finishResolve!: (result: GenericValueMap) => void;
+  public finishReject!: (error: Error) => void;
+
+  public constructor() {
+    this.id = FlowRunStatus.nextId;
+    FlowRunStatus.nextId++; // @todo Check overflow
+  }
 }
