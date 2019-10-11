@@ -1,5 +1,26 @@
 import { Task } from './engine';
 
+export enum FlowStateEnum {
+  Ready = 'Ready',
+  Running = 'Running',
+  Finished = 'Finished',
+  Pausing = 'Pausing',
+  Paused = 'Paused',
+  Stopping = 'Stopping',
+  Stopped = 'Stopped',
+}
+
+export enum FlowTransitionEnum {
+  Start = 'Start',
+  Finished = 'Finished',
+  Reset = 'Reset',
+  Pause = 'Pause',
+  Paused = 'Paused',
+  Resume = 'Resume',
+  Stop = 'Stop',
+  Stopped = 'Stopped',
+}
+
 export interface GenericValueMap {
   [key: string]: any;
 }
@@ -15,4 +36,20 @@ export type TaskResolverClass = typeof TaskResolver;
 
 export class TaskResolverMap {
   [key: string]: TaskResolverClass;
+}
+
+export interface TaskMap {
+  [code: string]: Task;
+}
+
+export interface TaskRunStatus {
+  pendingReqs: string[];
+
+  solvedReqs: {
+    [name: string]: any;
+  };
+
+  solvedResults: {
+    [name: string]: any;
+  };
 }

@@ -1,7 +1,7 @@
 import { debug as rawDebug } from 'debug';
 import { FlowState } from '.';
 import { GenericValueMap } from '../../types';
-import { FlowStateEnum } from '../flow-types';
+import { FlowStateEnum } from '../../types';
 const debug = rawDebug('flowed:flow');
 
 export class FlowRunning extends FlowState {

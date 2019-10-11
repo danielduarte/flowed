@@ -1,4 +1,4 @@
-import { FlowStateEnum } from '../flow-types';
+import { FlowStateEnum } from '../../types';
 import { FlowState } from './flow-state';
 
 export class FlowPausing extends FlowState {

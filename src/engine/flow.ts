@@ -1,6 +1,6 @@
 import { GenericValueMap, TaskResolverMap } from '../types';
+import { FlowRunStatus } from './flow-run-status';
 import { IFlow } from './flow-state/iflow';
-import { FlowRunStatus } from './flow-types';
 import { FlowSpec } from './specs';
 
 // @todo Consider replace tslint with eslint

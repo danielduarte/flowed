@@ -1,6 +1,6 @@
 import { FlowState } from '.';
 import { GenericValueMap } from '../../types';
-import { FlowStateEnum } from '../flow-types';
+import { FlowStateEnum } from '../../types';
 
 export class FlowPaused extends FlowState {
   public getStateCode(): FlowStateEnum {

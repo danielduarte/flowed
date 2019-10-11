@@ -1,4 +1,5 @@
 import { GenericValueMap, TaskResolverMap } from '../types';
+import { FlowStateEnum, TaskMap } from '../types';
 import {
   FlowFinished,
   FlowPaused,
@@ -11,28 +12,6 @@ import {
 } from './flow-state';
 import { FlowConfigs, FlowSpec } from './specs';
 import { Task } from './task';
-import { TaskMap } from './task-types';
-
-export enum FlowStateEnum {
-  Ready = 'Ready',
-  Running = 'Running',
-  Finished = 'Finished',
-  Pausing = 'Pausing',
-  Paused = 'Paused',
-  Stopping = 'Stopping',
-  Stopped = 'Stopped',
-}
-
-export enum FlowTransitionEnum {
-  Start = 'Start',
-  Finished = 'Finished',
-  Reset = 'Reset',
-  Pause = 'Pause',
-  Paused = 'Paused',
-  Resume = 'Resume',
-  Stop = 'Stop',
-  Stopped = 'Stopped',
-}
 
 export class FlowRunStatus {
   /**

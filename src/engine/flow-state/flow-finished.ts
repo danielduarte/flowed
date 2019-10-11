@@ -1,5 +1,5 @@
 import { FlowState } from '.';
-import { FlowStateEnum } from '../flow-types';
+import { FlowStateEnum } from '../../types';
 
 export class FlowFinished extends FlowState {
   public getStateCode(): FlowStateEnum {

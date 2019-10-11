@@ -7,8 +7,8 @@ import {
   ThrowErrorResolver,
   WaitResolver,
 } from '../../resolver-library';
-import { GenericValueMap, TaskResolverMap } from '../../types';
-import { FlowRunStatus, FlowStateEnum, FlowTransitionEnum } from '../flow-types';
+import { FlowStateEnum, FlowTransitionEnum, GenericValueMap, TaskResolverMap } from '../../types';
+import { FlowRunStatus } from '../flow-run-status';
 import { FlowSpec } from '../specs';
 import { Task } from '../task';
 import { IFlow } from './iflow';

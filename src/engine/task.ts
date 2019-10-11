@@ -1,7 +1,7 @@
 import { debug as rawDebug } from 'debug';
 import { GenericValueMap, TaskResolverClass } from '../types';
+import { TaskRunStatus } from '../types';
 import { TaskSpec } from './specs';
-import { TaskRunStatus } from './task-types';
 const debug = rawDebug('flowed:flow');
 
 export class Task {
