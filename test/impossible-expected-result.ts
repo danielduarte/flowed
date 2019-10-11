@@ -76,7 +76,7 @@ describe('flow with non solvable results', () => {
       errorMsg = error.message;
       debug(errorMsg);
     }
-    expect(errorMsg).to.be.eql('Warning: The results [A, C, D] are not provided by any task');
+    expect(errorMsg).to.be.eql('The results [A, C, D] are not provided by any task');
 
     // Should NOT throw an error (turning of throwErrorOnUnsolvableResult)
     flowSpec.configs.throwErrorOnUnsolvableResult = false;

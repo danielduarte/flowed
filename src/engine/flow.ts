@@ -9,6 +9,7 @@ import {
 } from '../resolver-library';
 import { GenericValueMap, TaskResolverMap } from '../types';
 import { FlowReady, FlowState } from './flow-state';
+import { IFlow } from './flow-state/iflow';
 import { FlowRunStatus, FlowStateEnum } from './flow-types';
 import { FlowConfigs, FlowSpec } from './specs';
 import { Task } from './task';
@@ -17,13 +18,17 @@ const debug = rawDebug('flowed:flow');
 
 // @todo Consider replace tslint with eslint
 
-export class Flow {
+export class Flow implements IFlow {
   /**
-   * Next flow instance id, used for debugging
+   * Flow instance id to be assigned to the next Flow instance. Intended to be used for debugging.
    * @type {number}
    */
   public static nextId = 1;
 
+  /**
+   * Built-in resolver library.
+   * @type {TaskResolverMap}
+   */
   protected static builtInResolvers: TaskResolverMap = {
     'flowed::Noop': NoopResolver,
     'flowed::ThrowError': ThrowErrorResolver,
@@ -34,26 +39,39 @@ export class Flow {
   };
 
   /**
-   * Flow instance id, used for debugging
+   * Flow instance id. Intended to be used for debugging.
    * @type {number}
    */
   public id: number;
 
+  /**
+   * Flow specification in plain JS object format.
+   */
   protected spec!: FlowSpec;
 
+  /**
+   * Current flow state with conditional functionality and state logic (state machine).
+   */
   protected state!: FlowState;
 
+  /**
+   * Flow run status information. It holds all the data related to the flow execution.
+   */
   protected runStatus!: FlowRunStatus;
 
+  /**
+   * Callbacks to be called over different task events.
+   */
   protected pauseResolve!: (result: GenericValueMap) => void;
   protected pauseReject!: (error: Error) => void;
-
   protected stopResolve!: (result: GenericValueMap) => void;
   protected stopReject!: (error: Error) => void;
-
   protected finishResolve!: (result: GenericValueMap) => void;
   protected finishReject!: (error: Error) => void;
 
+  /**
+   * Task objects map by code.
+   */
   protected tasks!: TaskMap;
 
   protected taskProvisions!: string[];
@@ -117,7 +135,7 @@ export class Flow {
     this.state.reset(this, this.protectedScope);
   }
 
-  // @todo Add a step() feature, for debugging
+  // @todo Add a step() feature, for step-by-step execution
 
   public isRunning() {
     return this.runStatus.runningTasks.length > 0;
@@ -184,10 +202,11 @@ export class Flow {
     // Check expected results that cannot be fulfilled
     const missingExpected = expectedResults.filter(r => !this.taskProvisions.includes(r));
     if (missingExpected.length > 0) {
-      const msg = `Warning: The results [${missingExpected.join(', ')}] are not provided by any task`;
-      debug(msg);
+      const msg = `The results [${missingExpected.join(', ')}] are not provided by any task`;
       if (this.configs.throwErrorOnUnsolvableResult) {
         throw new Error(msg);
+      } else {
+        debug(`Warning: ${msg}`);
       }
     }
 
@@ -203,11 +222,8 @@ export class Flow {
   }
 
   protected supplyParameters(params: GenericValueMap) {
-    for (const paramCode in params) {
-      if (params.hasOwnProperty(paramCode)) {
-        const paramValue = params[paramCode];
-        this.supplyResult(paramCode, paramValue);
-      }
+    for (const [paramCode, paramValue] of Object.entries(params)) {
+      this.supplyResult(paramCode, paramValue);
     }
   }
 
@@ -324,14 +340,9 @@ export class Flow {
 
     const provisions: string[] = [];
 
-    for (const taskCode in this.spec.tasks) {
-      if (this.spec.tasks.hasOwnProperty(taskCode)) {
-        const taskSpec = this.spec.tasks[taskCode];
-
-        provisions.push.apply(provisions, taskSpec.provides || []);
-
-        this.tasks[taskCode] = new Task(taskCode, taskSpec);
-      }
+    for (const [taskCode, taskSpec] of Object.entries(this.spec.tasks || {})) {
+      provisions.push.apply(provisions, taskSpec.provides || []);
+      this.tasks[taskCode] = new Task(taskCode, taskSpec);
     }
 
     // To be used later to check if expectedResults can be fulfilled.
@@ -339,9 +350,11 @@ export class Flow {
   }
 
   protected taskFinished(task: Task, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
-    const taskProvisions = task.getSpec().provides || [];
+    const taskSpec = task.getSpec();
+    const taskProvisions = taskSpec.provides || [];
     const taskResults = task.getResults();
     const taskCode = task.getCode();
+    const hasDefaultResult = taskSpec.hasOwnProperty('defaultResult');
 
     if (error) {
       debug(`[${this.id}]   ✗ Error in task ${taskCode}, results:`, taskResults);
@@ -352,12 +365,10 @@ export class Flow {
     // Remove the task from running tasks collection
     this.runStatus.runningTasks.splice(this.runStatus.runningTasks.indexOf(taskCode), 1);
 
-    const taskSpec = task.getSpec();
-
     for (const resultName of taskProvisions) {
       if (taskResults.hasOwnProperty(resultName)) {
         this.supplyResult(resultName, taskResults[resultName]);
-      } else if (taskSpec.hasOwnProperty('defaultResult')) {
+      } else if (hasDefaultResult) {
         // @todo add defaultResult to repeater task
         this.supplyResult(resultName, taskSpec.defaultResult);
       } else {
@@ -369,19 +380,14 @@ export class Flow {
       }
     }
 
-    const stopExecution = error && stopFlowExecutionOnError;
-
     if (this.state.getStateCode() === FlowStateEnum.Running) {
+      const stopExecution = error && stopFlowExecutionOnError;
       if (!stopExecution) {
         this.startReadyTasks();
       }
 
       if (!this.isRunning()) {
-        if (!error) {
-          this.state.finished(this, this.protectedScope);
-        } else {
-          this.state.finished(this, this.protectedScope, error);
-        }
+        this.state.finished(this, this.protectedScope, error);
       }
     }
 

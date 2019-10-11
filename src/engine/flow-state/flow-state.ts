@@ -1,8 +1,9 @@
 import { Flow } from '..';
 import { GenericValueMap, TaskResolverMap } from '../../types';
 import { FlowStateEnum, FlowTransitionEnum } from '../flow-types';
+import { IFlow } from './iflow';
 
-export abstract class FlowState {
+export abstract class FlowState implements IFlow {
   public start(
     flow: Flow,
     flowProtectedScope: any,
