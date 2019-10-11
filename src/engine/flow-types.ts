@@ -1,6 +1,8 @@
 import { GenericValueMap, TaskResolverMap } from '../types';
 import { Task } from './task';
 import { TaskMap } from './task-types';
+import { FlowConfigs } from './specs';
+import { FlowState } from './flow-state';
 
 export enum FlowStateEnum {
   Ready = 'Ready',
@@ -44,6 +46,8 @@ export class FlowRunStatus {
     [req: string]: TaskMap;
   } = {};
 
+  public taskProvisions!: string[];
+
   public resolvers: TaskResolverMap = {};
 
   public expectedResults: string[] = [];
@@ -61,6 +65,10 @@ export class FlowRunStatus {
   public stopReject!: (error: Error) => void;
   public finishResolve!: (result: GenericValueMap) => void;
   public finishReject!: (error: Error) => void;
+
+  public configs!: FlowConfigs;
+
+  public states!: { [stateKey: string]: FlowState };
 
   public constructor() {
     this.id = FlowRunStatus.nextId;
