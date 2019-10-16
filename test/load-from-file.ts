@@ -6,7 +6,7 @@ class TimerResolver {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve({ a: 1 });
-      }, 100);
+      }, 10);
     });
   }
 }

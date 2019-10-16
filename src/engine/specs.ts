@@ -1,6 +1,7 @@
 export interface FlowSpec {
   tasks?: TaskSpecMap;
 
+  // @todo Change for options or opts?
   configs?: FlowConfigs;
 }
 

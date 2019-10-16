@@ -45,13 +45,14 @@
   ],
   "dependencies": {
     "@types/debug": "^4.1.5",
-    "debug": "^4.1.1"
+    "debug": "^4.1.1",
+    "stjs": "0.0.5"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
     "@types/chai": "^4.2.3",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.12",
+    "@types/node": "^12.11.1",
     "chai": "^4.2.0",
     "coveralls": "^3.0.6",
     "mocha": "^6.2.1",

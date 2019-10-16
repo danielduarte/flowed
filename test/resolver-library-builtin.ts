@@ -35,7 +35,7 @@ describe('the ResolverLibrary', () => {
         },
       },
       {
-        time: 1000,
+        time: 100,
         providedResultAfterTimeout: 'I am the correct result',
       },
       ['timeoutResult'],

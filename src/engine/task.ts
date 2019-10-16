@@ -3,6 +3,8 @@ import { GenericValueMap, TaskResolverClass } from '../types';
 import { TaskRunStatus } from '../types';
 import { TaskSpec } from './specs';
 const debug = rawDebug('flowed:flow');
+// tslint:disable-next-line:no-var-requires
+const ST = require('stjs');
 
 export class Task {
   protected code: string;
@@ -105,27 +107,40 @@ export class Task {
     if (automap) {
       const requires = this.spec.requires || [];
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
+      // @todo Add test with requires = []
       const automappedParams = requires
         .map(req => ({ [req]: req }))
-        .reduce((accum, peer) => Object.assign(accum, peer));
+        .reduce((accum, peer) => Object.assign(accum, peer), {});
       debug(`[${flowId}]     Automapped resolver params in task ${this.getCode()}:`, automappedParams);
       resolverParams = Object.assign(automappedParams, resolverParams);
     }
 
     let paramValue;
     for (const [resolverParamName, paramSolvingInfo] of Object.entries(resolverParams)) {
+      // Added to make sure default value is undefined
+      // @todo Add test to check the case when a loop round does not set anything and make sure next value is undefined by default
+      paramValue = undefined;
+
       // If it is string, it is a task param name
       if (typeof paramSolvingInfo === 'string') {
         const taskParamName = paramSolvingInfo;
         paramValue = solvedReqs[taskParamName];
       }
-      // If it is an object, expect the format { value: <some value> }, and the parameter is the direct value <some value>
-      else if (
-        typeof paramSolvingInfo === 'object' &&
-        paramSolvingInfo !== null &&
-        paramSolvingInfo.hasOwnProperty('value')
-      ) {
-        paramValue = paramSolvingInfo.value;
+
+      // If it is an object, expect the format { [value: <some value>], [transform: <some template>] }
+      else if (typeof paramSolvingInfo === 'object' && paramSolvingInfo !== null) {
+        // Direct value pre-processor
+        if (paramSolvingInfo.hasOwnProperty('value')) {
+          paramValue = paramSolvingInfo.value;
+        }
+
+        // Template transform pre-processor
+        else if (paramSolvingInfo.hasOwnProperty('transform')) {
+          const template = paramSolvingInfo.transform;
+          paramValue = ST.select(solvedReqs)
+            .transformWith(template)
+            .root();
+        }
       }
 
       params[resolverParamName] = paramValue;
@@ -142,9 +157,10 @@ export class Task {
     if (automap) {
       const provides = this.spec.provides || [];
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
+      // @todo Add test with provides = []
       const automappedResults = provides
         .map(prov => ({ [prov]: prov }))
-        .reduce((accum, peer) => Object.assign(accum, peer));
+        .reduce((accum, peer) => Object.assign(accum, peer), {});
       debug(`[${flowId}]     Automapped resolver results in task ${this.getCode()}:`, automappedResults);
       resolverResults = Object.assign(automappedResults, resolverResults);
     }
