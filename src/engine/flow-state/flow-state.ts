@@ -1,6 +1,8 @@
 import { debug as rawDebug } from 'debug';
 import {
+  ArrayMapResolver,
   ConditionalResolver,
+  EchoResolver,
   NoopResolver,
   RepeaterResolver,
   SubFlowResolver,
@@ -21,11 +23,13 @@ export abstract class FlowState implements IFlow {
    */
   protected static builtInResolvers: TaskResolverMap = {
     'flowed::Noop': NoopResolver,
+    'flowed::Echo': EchoResolver,
     'flowed::ThrowError': ThrowErrorResolver,
     'flowed::Conditional': ConditionalResolver,
     'flowed::Wait': WaitResolver,
     'flowed::SubFlow': SubFlowResolver,
     'flowed::Repeater': RepeaterResolver,
+    'flowed::ArrayMap': ArrayMapResolver,
   };
 
   protected runStatus: FlowRunStatus;

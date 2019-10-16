@@ -8,6 +8,12 @@ export class NoopResolver {
   }
 }
 
+export class EchoResolver {
+  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    return { out: params.in };
+  }
+}
+
 export class ThrowErrorResolver {
   public async exec(params: GenericValueMap): Promise<GenericValueMap> {
     throw new Error(
@@ -70,6 +76,42 @@ export class RepeaterResolver {
         params.taskContext,
         !!params.resolverAutomapParams,
         !!params.resolverAutomapResults,
+        params.flowId,
+      );
+
+      if (params.parallel) {
+        resultPromises.push(result);
+      } else {
+        results.push(await result); // If rejected, exception is not thrown here, it is delegated
+      }
+    }
+
+    if (params.parallel) {
+      results = await Promise.all(resultPromises); // If rejected, exception is not thrown here, it is delegated
+    }
+
+    return { results };
+  }
+}
+
+// Do nothing and finish
+export class ArrayMapResolver {
+  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    const task = new Task('task-loop-model', params.spec);
+
+    const resultPromises = [];
+    let results = [];
+    for (const taskParams of params.params) {
+      task.resetRunStatus();
+      task.supplyReqs(taskParams);
+
+      // @todo add test with loop task with context
+
+      const result = task.run(
+        params.resolver,
+        params.context,
+        !!params.automapParams,
+        !!params.automapResults,
         params.flowId,
       );
 
