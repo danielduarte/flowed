@@ -9,11 +9,13 @@ describe('resolver loop', () => {
       }
     }
 
+    // @todo Add test to check if flow finishes even when there are not ran tasks (put a non satisfied requirements in a task)
+
     const results = (await FlowManager.run(
       {
         tasks: {
           concatArray: {
-            requires: ['params', 'context'],
+            requires: ['params'],
             provides: ['preResults'],
             resolver: {
               name: 'flowed::ArrayMap',
@@ -27,7 +29,7 @@ describe('resolver loop', () => {
                     },
                   },
                 },
-                resolver: { value: Concat }, // @todo Make this reference serializable instead of a constructor pointer
+                resolver: { value: 'Concat' }, // @todo Make this reference serializable instead of a constructor pointer
                 automapParams: { value: true },
                 automapResults: { value: true },
               },
@@ -57,9 +59,10 @@ describe('resolver loop', () => {
       },
       {
         params: [{ x: 'x1', y: 'y1' }, { x: 'x2', y: 'y2' }, { x: 'x3', y: 'y3' }, { x: 'x4', y: 'y4' }],
-        context: { separator: '-' },
       },
       ['results'],
+      { Concat },
+      { separator: '-' },
     )).results;
 
     expect(results).to.be.eql(['x1-y1', 'x2-y2', 'x3-y3', 'x4-y4']);

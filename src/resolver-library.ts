@@ -42,7 +42,7 @@ export class WaitResolver {
 
 // Run a flow and finish
 export class SubFlowResolver {
-  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+  public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
     // @todo add test with subflow task with flowContext
 
     const flowResult = await FlowManager.run(
@@ -50,7 +50,7 @@ export class SubFlowResolver {
       params.flowParams,
       params.flowExpectedResults,
       params.flowResolvers,
-      params.flowContext,
+      context,
     );
 
     return { flowResult };
@@ -60,7 +60,7 @@ export class SubFlowResolver {
 // Run a task multiple times and finishes returning an array with all results.
 // If one execution fails, the repeater resolver ends with an exception (this is valid for both parallel and not parallel modes).
 export class RepeaterResolver {
-  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+  public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
     const task = new Task('task-repeat-model', params.taskSpec);
 
     const resultPromises = [];
@@ -73,7 +73,7 @@ export class RepeaterResolver {
 
       const result = task.run(
         params.taskResolver,
-        params.taskContext,
+        context,
         !!params.resolverAutomapParams,
         !!params.resolverAutomapResults,
         params.flowId,
@@ -96,7 +96,12 @@ export class RepeaterResolver {
 
 // Do nothing and finish
 export class ArrayMapResolver {
-  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+  public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
+    const resolver = context.$flowed.getResolverByName(params.resolver);
+    if (resolver === null) {
+      throw new Error(`Task resolver '${params.resolver}' for inner ArrayMap task has no definition.`);
+    }
+
     const task = new Task('task-loop-model', params.spec);
 
     const resultPromises = [];
@@ -107,13 +112,7 @@ export class ArrayMapResolver {
 
       // @todo add test with loop task with context
 
-      const result = task.run(
-        params.resolver,
-        params.context,
-        !!params.automapParams,
-        !!params.automapResults,
-        params.flowId,
-      );
+      const result = task.run(resolver, context, !!params.automapParams, !!params.automapResults, params.flowId);
 
       if (params.parallel) {
         resultPromises.push(result);

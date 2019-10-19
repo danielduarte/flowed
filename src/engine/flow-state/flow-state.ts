@@ -165,7 +165,12 @@ export abstract class FlowState implements IFlow {
   }
 
   public setContext(context: GenericValueMap) {
-    this.runStatus.context = context;
+    this.runStatus.context = {
+      $flowed: {
+        getResolverByName: this.getResolverByName.bind(this),
+      },
+      ...context,
+    };
   }
 
   public supplyParameters(params: GenericValueMap) {
@@ -202,10 +207,25 @@ export abstract class FlowState implements IFlow {
   public getResolverForTask(task: Task) {
     const name = task.getResolverName();
 
+    const resolver = this.getResolverByName(name);
+
+    if (resolver === null) {
+      throw new Error(
+        `Task resolver '${name}' for task '${task.getCode()}' has no definition. Defined custom resolvers are: [${Object.keys(
+          this.runStatus.resolvers,
+        ).join(', ')}].`,
+      );
+    }
+
+    return resolver;
+  }
+
+  public getResolverByName(name: string) {
     // Look for custom resolvers
-    const hasCustomResolver = this.runStatus.resolvers.hasOwnProperty(name);
+    const resolvers = this.runStatus.resolvers;
+    const hasCustomResolver = resolvers.hasOwnProperty(name);
     if (hasCustomResolver) {
-      return this.runStatus.resolvers[name];
+      return resolvers[name];
     }
 
     // Look for built-in resolvers
@@ -214,11 +234,7 @@ export abstract class FlowState implements IFlow {
       return FlowState.builtInResolvers[name];
     }
 
-    throw new Error(
-      `Task resolver '${name}' for task '${task.getCode()}' has no definition. Defined custom resolvers are: [${Object.keys(
-        this.runStatus.resolvers,
-      ).join(', ')}].`,
-    );
+    return null;
   }
 
   public supplyResult(resultName: string, result: any) {
