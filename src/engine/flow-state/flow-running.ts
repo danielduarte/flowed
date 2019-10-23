@@ -27,10 +27,10 @@ export class FlowRunning extends FlowState {
     this.setState(FlowStateEnum.Finished);
 
     if (error) {
-      debug(`[${this.runStatus.id}] ` + '✘ Flow finished with error. Results:', this.getResults());
+      debug(`[${this.runStatus.id}] ✘ Flow finished with error. Results:`, this.getResults());
       this.execFinishReject(error as Error);
     } else {
-      debug(`[${this.runStatus.id}] ` + '✔ Flow finished with results:', this.getResults());
+      debug(`[${this.runStatus.id}] ✔ Flow finished with results:`, this.getResults());
       this.execFinishResolve();
     }
   }

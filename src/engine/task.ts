@@ -55,6 +55,7 @@ export class Task {
   public supplyReq(reqName: string, value: any) {
     const reqIndex = this.runStatus.pendingReqs.indexOf(reqName);
     if (reqIndex === -1) {
+      // This can only happen if supplyReq is called manually by the user. The flow will never call with an invalid reqName.
       throw new Error(`Requirement '${reqName}' for task '${this.code}' is not valid or has already been supplied.`);
     }
 
@@ -111,7 +112,7 @@ export class Task {
       const automappedParams = requires
         .map(req => ({ [req]: req }))
         .reduce((accum, peer) => Object.assign(accum, peer), {});
-      debug(`[${flowId}]     Automapped resolver params in task ${this.getCode()}:`, automappedParams);
+      debug(`[${flowId}]   🛈 Automapped resolver params in task '${this.getCode()}':`, automappedParams);
       resolverParams = Object.assign(automappedParams, resolverParams);
     }
 
@@ -161,7 +162,7 @@ export class Task {
       const automappedResults = provides
         .map(prov => ({ [prov]: prov }))
         .reduce((accum, peer) => Object.assign(accum, peer), {});
-      debug(`[${flowId}]     Automapped resolver results in task ${this.getCode()}:`, automappedResults);
+      debug(`[${flowId}]   🛈 Automapped resolver results in task '${this.getCode()}':`, automappedResults);
       resolverResults = Object.assign(automappedResults, resolverResults);
     }
 

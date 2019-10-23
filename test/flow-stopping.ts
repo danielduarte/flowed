@@ -1,8 +1,6 @@
 import { expect } from 'chai';
-import { debug as rawDebug } from 'debug';
 import { GenericValueMap } from '../src';
 import { Flow, Task } from '../src/engine';
-const debug = rawDebug('flowed:test');
 
 describe('the flow', () => {
   it('can be stopped', async () => {
@@ -10,6 +8,13 @@ describe('the flow', () => {
     const text2 = '(text2)';
     const text3 = '(text3)';
     const text4 = '(text4)';
+
+    let testPromiseResolve: () => void;
+    let testPromiseReject: (error: any) => void;
+    const testPromise = new Promise((resolve, reject) => {
+      testPromiseResolve = resolve;
+      testPromiseReject = reject;
+    });
 
     const flow = new Flow({
       tasks: {
@@ -54,8 +59,7 @@ describe('the flow', () => {
 
     class AppendString {
       public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-        debug(`Starting to execute task ${task.getCode()}`);
-        return new Promise<GenericValueMap>(resolve => {
+        return new Promise<GenericValueMap>((resolve, reject) => {
           setTimeout(() => {
             if (task.getCode() === 'task2' && !stoppedOnce) {
               stoppedOnce = true;
@@ -88,22 +92,31 @@ describe('the flow', () => {
     let stoppedOnce = false;
 
     const stopFlow = async () => {
-      debug('Stopping flow');
-      const partialResult = await flow.stop();
-      expect(partialResult).to.deep.equal({
-        result1: text1,
-        result2: text1 + text2,
-      });
+      await flow
+        .stop()
+        .then(partialResult => {
+          // If this assertion is not satisfied, the .catch() branch is executed
+          expect(partialResult).to.deep.equal({
+            result1: text1,
+            result2: text1 + text2,
+          });
 
-      debug('Resetting flow');
+          testPromiseResolve();
+          return partialResult;
+        })
+        .catch(() => {
+          testPromiseReject(new Error('Error when trying to stop the flow'));
+        });
+
       flow.reset();
 
-      debug('Restarting flow');
       const finalResult = await flow.start(runParams, expectedResults, resolvers);
       expect(finalResult.finalStr).to.equal(text1 + text2 + text3 + text4);
     };
 
     // noinspection JSIgnoredPromiseFromCall
     flow.start(runParams, expectedResults, resolvers);
+
+    return testPromise;
   });
 });

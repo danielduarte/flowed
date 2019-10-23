@@ -15,7 +15,7 @@ export class FlowReady extends FlowState {
     resolvers: TaskResolverMap = {},
     context: GenericValueMap = {},
   ): Promise<GenericValueMap> {
-    debug(`[${this.runStatus.id}] ` + '▶ Flow started with params:', params);
+    debug(`[${this.runStatus.id}] ▶ Flow started with params:`, params);
 
     this.setState(FlowStateEnum.Running);
 

@@ -54,6 +54,8 @@ export abstract class FlowState implements IFlow {
 
     this.runStatus.configs = this.runStatus.spec.configs || {};
 
+    this.runStatus.tasksByReq = {};
+    this.runStatus.tasksReady = [];
     for (const taskCode in this.runStatus.tasks) {
       if (this.runStatus.tasks.hasOwnProperty(taskCode)) {
         const task = this.runStatus.tasks[taskCode];
@@ -72,6 +74,8 @@ export abstract class FlowState implements IFlow {
         }
       }
     }
+
+    this.runStatus.results = {};
   }
 
   public start(
@@ -91,7 +95,7 @@ export abstract class FlowState implements IFlow {
     throw this.createTransitionError(FlowTransitionEnum.Pause);
   }
 
-  public paused() {
+  public paused(error: Error | boolean = false) {
     throw this.createTransitionError(FlowTransitionEnum.Paused);
   }
 
@@ -103,7 +107,7 @@ export abstract class FlowState implements IFlow {
     throw this.createTransitionError(FlowTransitionEnum.Stop);
   }
 
-  public stopped() {
+  public stopped(error: Error | boolean = false) {
     throw this.createTransitionError(FlowTransitionEnum.Stopped);
   }
 
@@ -238,10 +242,9 @@ export abstract class FlowState implements IFlow {
   }
 
   public supplyResult(resultName: string, result: any) {
-    const suppliesSomeTask = this.runStatus.tasksByReq.hasOwnProperty(resultName);
-
     // Checks if the task result is required by other tasks.
-    // If it is not, it is probably a flow output value.
+    // If it is not, it is likely a flow output value.
+    const suppliesSomeTask = this.runStatus.tasksByReq.hasOwnProperty(resultName);
     if (suppliesSomeTask) {
       const suppliedTasks = this.runStatus.tasksByReq[resultName];
       const suppliedTaskCodes = Object.keys(suppliedTasks);
@@ -296,12 +299,13 @@ export abstract class FlowState implements IFlow {
           },
         );
 
-      debug(`[${this.runStatus.id}] ` + `  ‣ Task ${task.getCode()} started, params:`, task.getParams());
+      debug(`[${this.runStatus.id}]   ‣ Task '${task.getCode()}' started, params:`, task.getParams());
     }
   }
 
   public setState(newState: FlowStateEnum) {
     this.runStatus.state = this.getStateInstance(newState);
+    debug(`[${this.runStatus.id}]   🛈 Changed state to '${newState}'`);
   }
 
   protected taskFinished(task: Task, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
@@ -312,9 +316,9 @@ export abstract class FlowState implements IFlow {
     const hasDefaultResult = taskSpec.hasOwnProperty('defaultResult');
 
     if (error) {
-      debug(`[${this.runStatus.id}]   ✗ Error in task ${taskCode}, results:`, taskResults);
+      debug(`[${this.runStatus.id}]   ✗ Error in task '${taskCode}', results:`, taskResults);
     } else {
-      debug(`[${this.runStatus.id}]   ✓ Finished task ${taskCode}, results:`, taskResults);
+      debug(`[${this.runStatus.id}]   ✓ Finished task '${taskCode}', results:`, taskResults);
     }
 
     // Remove the task from running tasks collection
