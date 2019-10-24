@@ -3,58 +3,61 @@ import { GenericValueMap } from '../src';
 import { Flow, Task } from '../src/engine';
 
 describe('the flow', () => {
-  it('can be stopped', async () => {
-    const text1 = '(text1)';
-    const text2 = '(text2)';
-    const text3 = '(text3)';
-    const text4 = '(text4)';
+  const text1 = '(text1)';
+  const text2 = '(text2)';
+  const text3 = '(text3)';
+  const text4 = '(text4)';
 
-    let testPromiseResolve: () => void;
-    let testPromiseReject: (error: any) => void;
+  let testPromiseResolve: () => void;
+  let testPromiseReject: (error: any) => void;
+
+  const flowSpec = {
+    tasks: {
+      task1: {
+        requires: ['initialStr', 'text1'],
+        provides: ['result1'],
+        resolver: {
+          name: 'append',
+          params: { text1: 'initialStr', text2: 'text1' },
+          results: { result: 'result1' },
+        },
+      },
+      task2: {
+        requires: ['result1', 'text2'],
+        provides: ['result2'],
+        resolver: {
+          name: 'append',
+          params: { text1: 'result1', text2: 'text2' },
+          results: { result: 'result2' },
+        },
+      },
+      task3: {
+        requires: ['result2', 'text3'],
+        provides: ['result3'],
+        resolver: {
+          name: 'append',
+          params: { text1: 'result2', text2: 'text3' },
+          results: { result: 'result3' },
+        },
+      },
+      task4: {
+        requires: ['result3', 'text4'],
+        provides: ['finalStr'],
+        resolver: {
+          name: 'append',
+          params: { text1: 'result3', text2: 'text4' },
+          results: { result: 'finalStr' },
+        },
+      },
+    },
+  };
+
+  it('can be stopped', async () => {
+    const flow = new Flow(flowSpec);
+
     const testPromise = new Promise((resolve, reject) => {
       testPromiseResolve = resolve;
       testPromiseReject = reject;
-    });
-
-    const flow = new Flow({
-      tasks: {
-        task1: {
-          requires: ['initialStr', 'text1'],
-          provides: ['result1'],
-          resolver: {
-            name: 'append',
-            params: { text1: 'initialStr', text2: 'text1' },
-            results: { result: 'result1' },
-          },
-        },
-        task2: {
-          requires: ['result1', 'text2'],
-          provides: ['result2'],
-          resolver: {
-            name: 'append',
-            params: { text1: 'result1', text2: 'text2' },
-            results: { result: 'result2' },
-          },
-        },
-        task3: {
-          requires: ['result2', 'text3'],
-          provides: ['result3'],
-          resolver: {
-            name: 'append',
-            params: { text1: 'result2', text2: 'text3' },
-            results: { result: 'result3' },
-          },
-        },
-        task4: {
-          requires: ['result3', 'text4'],
-          provides: ['finalStr'],
-          resolver: {
-            name: 'append',
-            params: { text1: 'result3', text2: 'text4' },
-            results: { result: 'finalStr' },
-          },
-        },
-      },
     });
 
     class AppendString {
@@ -116,6 +119,45 @@ describe('the flow', () => {
 
     // noinspection JSIgnoredPromiseFromCall
     flow.start(runParams, expectedResults, resolvers);
+
+    return testPromise;
+  });
+
+  it('can be stopped with error', async () => {
+    const flow = new Flow(flowSpec);
+
+    const testPromise = new Promise((resolve, reject) => {
+      testPromiseResolve = resolve;
+      testPromiseReject = reject;
+    });
+
+    class AppendString {
+      public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
+        return new Promise<GenericValueMap>((resolve, reject) => {
+          flow
+            .stop()
+            .then(() => testPromiseReject(new Error('Expected stop to fail'))) // Important: The test promise is rejected if the stop succeeds (stop is expected to fail)
+            .catch(testPromiseResolve); // Important: The test promise is resolved if the stop fails (stop is expected to fail)
+
+          throw new Error('Intentional error during stopping process');
+        });
+      }
+    }
+
+    // noinspection JSIgnoredPromiseFromCall
+    flow.start(
+      {
+        initialStr: '',
+        text1,
+        text2,
+        text3,
+        text4,
+      },
+      ['result1', 'result2', 'result3', 'finalStr'],
+      {
+        append: AppendString,
+      },
+    );
 
     return testPromise;
   });

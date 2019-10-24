@@ -7,16 +7,16 @@ import { Flow } from '../src/engine';
 
 // Created this class to test protected and private methods in Flow
 class PublicFlow extends Flow {
-  public finished() {
-    this.runStatus.state.finished();
+  public finished(error: Error | boolean = false) {
+    this.runStatus.state.finished(error);
   }
 
-  public paused() {
-    this.runStatus.state.paused();
+  public paused(error: Error | boolean = false) {
+    this.runStatus.state.paused(error);
   }
 
-  public stopped() {
-    this.runStatus.state.stopped();
+  public stopped(error: Error | boolean = false) {
+    this.runStatus.state.stopped(error);
   }
 }
 

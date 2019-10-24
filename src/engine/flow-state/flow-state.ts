@@ -354,9 +354,9 @@ export abstract class FlowState implements IFlow {
       const currentState = this.runStatus.state.getStateCode();
 
       if (currentState === FlowStateEnum.Pausing) {
-        this.runStatus.state.paused();
+        this.runStatus.state.paused(error);
       } else if (currentState === FlowStateEnum.Stopping) {
-        this.runStatus.state.stopped();
+        this.runStatus.state.stopped(error);
       }
     }
   }
