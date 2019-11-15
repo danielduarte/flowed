@@ -61,6 +61,11 @@ export class SubFlowResolver {
 // If one execution fails, the repeater resolver ends with an exception (this is valid for both parallel and not parallel modes).
 export class RepeaterResolver {
   public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
+    const resolver = context.$flowed.getResolverByName(params.resolver);
+    if (resolver === null) {
+      throw new Error(`Task resolver '${params.resolver}' for inner Repeater task has no definition.`);
+    }
+
     const task = new Task('task-repeat-model', params.taskSpec);
 
     const resultPromises = [];
@@ -72,7 +77,7 @@ export class RepeaterResolver {
       // @todo add test with repeater task with taskContext
 
       const result = task.run(
-        params.taskResolver,
+        resolver,
         context,
         !!params.resolverAutomapParams,
         !!params.resolverAutomapResults,

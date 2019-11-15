@@ -27,7 +27,7 @@ describe('the ResolverLibrary / task repeater', () => {
           name: 'taskRepeater',
           params: {
             taskSpec: 'task-spec',
-            taskResolver: 'task-resolver',
+            resolver: 'task-resolver',
             taskParams: 'task-params',
             count: 'count',
             parallel: 'parallel',
@@ -80,7 +80,7 @@ describe('the ResolverLibrary / task repeater', () => {
       flowSpec,
       {
         'task-spec': taskSpec,
-        'task-resolver': LogTextSampleResolver,
+        'task-resolver': 'LogTextSample',
         'task-params': { 'a-value': 'Hi sync!' },
         count: 5,
         parallel: false,
@@ -88,6 +88,7 @@ describe('the ResolverLibrary / task repeater', () => {
       ['result-array'],
       {
         taskRepeater: ResolverLibrary.RepeaterResolver,
+        LogTextSample: LogTextSampleResolver,
       },
     );
   });
@@ -97,7 +98,7 @@ describe('the ResolverLibrary / task repeater', () => {
       flowSpec,
       {
         'task-spec': taskSpec,
-        'task-resolver': LogTextSampleResolver,
+        'task-resolver': 'LogTextSample',
         'task-params': { 'a-value': 'Hi sync in parallel!' },
         count: 5,
         parallel: true,
@@ -105,6 +106,7 @@ describe('the ResolverLibrary / task repeater', () => {
       ['result-array'],
       {
         taskRepeater: ResolverLibrary.RepeaterResolver,
+        LogTextSample: LogTextSampleResolver,
       },
     );
   });
@@ -114,7 +116,7 @@ describe('the ResolverLibrary / task repeater', () => {
       flowSpec,
       {
         'task-spec': taskSpec,
-        'task-resolver': DelayedLogTextSampleResolver,
+        'task-resolver': 'DelayedLogTextSample',
         'task-params': { 'a-value': 'Hi async!' },
         count: 5,
         parallel: false,
@@ -122,6 +124,7 @@ describe('the ResolverLibrary / task repeater', () => {
       ['result-array'],
       {
         taskRepeater: ResolverLibrary.RepeaterResolver,
+        DelayedLogTextSample: DelayedLogTextSampleResolver,
       },
     );
   });
@@ -131,7 +134,7 @@ describe('the ResolverLibrary / task repeater', () => {
       flowSpec,
       {
         'task-spec': taskSpec,
-        'task-resolver': DelayedLogTextSampleResolver,
+        'task-resolver': 'DelayedLogTextSample',
         'task-params': { 'a-value': 'Hi async in parallel!' },
         count: 5,
         parallel: true,
@@ -139,6 +142,7 @@ describe('the ResolverLibrary / task repeater', () => {
       ['result-array'],
       {
         taskRepeater: ResolverLibrary.RepeaterResolver,
+        DelayedLogTextSample: DelayedLogTextSampleResolver,
       },
     );
   });
@@ -151,7 +155,7 @@ describe('the ResolverLibrary / task repeater', () => {
         flowSpec,
         {
           'task-spec': taskSpec,
-          'task-resolver': LogTextSampleResolverError,
+          'task-resolver': 'LogTextSampleError',
           'task-params': { 'a-value': 'Hi sync!' },
           count: 5,
           parallel: false,
@@ -159,6 +163,7 @@ describe('the ResolverLibrary / task repeater', () => {
         ['result-array'],
         {
           taskRepeater: ResolverLibrary.RepeaterResolver,
+          LogTextSampleError: LogTextSampleResolverError,
         },
       );
     } catch (error) {
@@ -176,7 +181,7 @@ describe('the ResolverLibrary / task repeater', () => {
         flowSpec,
         {
           'task-spec': taskSpec,
-          'task-resolver': DelayedLogTextSampleResolverError,
+          'task-resolver': 'DelayedLogTextSampleError',
           'task-params': { 'a-value': 'Hi sync!' },
           count: 5,
           parallel: true,
@@ -184,6 +189,7 @@ describe('the ResolverLibrary / task repeater', () => {
         ['result-array'],
         {
           taskRepeater: ResolverLibrary.RepeaterResolver,
+          DelayedLogTextSampleError: DelayedLogTextSampleResolverError,
         },
       );
     } catch (error) {
