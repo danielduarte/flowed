@@ -9,29 +9,31 @@ describe('resolvers with direct value', () => {
       }
     }
 
-    const sum = (await FlowManager.run(
-      {
-        tasks: {
-          sum: {
-            requires: [],
-            provides: ['result'],
-            resolver: {
-              name: 'sum',
-              params: {
-                x: { value: 111 },
-                y: { value: 222 },
+    const sum = (
+      await FlowManager.run(
+        {
+          tasks: {
+            sum: {
+              requires: [],
+              provides: ['result'],
+              resolver: {
+                name: 'sum',
+                params: {
+                  x: { value: 111 },
+                  y: { value: 222 },
+                },
+                results: { z: 'result' },
               },
-              results: { z: 'result' },
             },
           },
         },
-      },
-      {},
-      ['result'],
-      {
-        sum: Sum,
-      },
-    )).result;
+        {},
+        ['result'],
+        {
+          sum: Sum,
+        },
+      )
+    ).result;
 
     expect(sum).to.be.eql(111 + 222);
   });

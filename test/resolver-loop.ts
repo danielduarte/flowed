@@ -68,15 +68,22 @@ describe('resolver loop', () => {
   it('run without error in sequence', async () => {
     // @todo Add test to check if flow finishes even when there are not ran tasks (put a non satisfied requirements in a task)
 
-    const results = (await FlowManager.run(
-      getFlowSpec(false),
-      {
-        parameters: [{ x: 'x1', y: 'y1' }, { x: 'x2', y: 'y2' }, { x: 'x3', y: 'y3' }, { x: 'x4', y: 'y4' }],
-      },
-      ['results'],
-      { resConcat: Concat },
-      { separator: '-' },
-    )).results;
+    const results = (
+      await FlowManager.run(
+        getFlowSpec(false),
+        {
+          parameters: [
+            { x: 'x1', y: 'y1' },
+            { x: 'x2', y: 'y2' },
+            { x: 'x3', y: 'y3' },
+            { x: 'x4', y: 'y4' },
+          ],
+        },
+        ['results'],
+        { resConcat: Concat },
+        { separator: '-' },
+      )
+    ).results;
 
     expect(results).to.be.eql(['x1-y1', 'x2-y2', 'x3-y3', 'x4-y4']);
   });
@@ -84,15 +91,22 @@ describe('resolver loop', () => {
   it('run without error in parallel', async () => {
     // @todo Add test to check if flow finishes even when there are not ran tasks (put a non satisfied requirements in a task)
 
-    const results = (await FlowManager.run(
-      getFlowSpec(true),
-      {
-        parameters: [{ x: 'x1', y: 'y1' }, { x: 'x2', y: 'y2' }, { x: 'x3', y: 'y3' }, { x: 'x4', y: 'y4' }],
-      },
-      ['results'],
-      { resConcat: Concat },
-      { separator: '-' },
-    )).results;
+    const results = (
+      await FlowManager.run(
+        getFlowSpec(true),
+        {
+          parameters: [
+            { x: 'x1', y: 'y1' },
+            { x: 'x2', y: 'y2' },
+            { x: 'x3', y: 'y3' },
+            { x: 'x4', y: 'y4' },
+          ],
+        },
+        ['results'],
+        { resConcat: Concat },
+        { separator: '-' },
+      )
+    ).results;
 
     expect(results).to.be.eql(['x1-y1', 'x2-y2', 'x3-y3', 'x4-y4']);
   });
@@ -104,7 +118,12 @@ describe('resolver loop', () => {
       await FlowManager.run(
         getFlowSpec(false),
         {
-          parameters: [{ x: 'x1', y: 'y1' }, { x: 'x2', y: 'y2' }, { x: 'x3', y: 'y3' }, { x: 'x4', y: 'y4' }],
+          parameters: [
+            { x: 'x1', y: 'y1' },
+            { x: 'x2', y: 'y2' },
+            { x: 'x3', y: 'y3' },
+            { x: 'x4', y: 'y4' },
+          ],
         },
         ['results'],
         { resConcatIncorrectName: Concat },
@@ -124,7 +143,12 @@ describe('resolver loop', () => {
       await FlowManager.run(
         getFlowSpec(true),
         {
-          parameters: [{ x: 'x1', y: 'y1' }, { x: 'x2', y: 'y2' }, { x: 'x3', y: 'y3' }, { x: 'x4', y: 'y4' }],
+          parameters: [
+            { x: 'x1', y: 'y1' },
+            { x: 'x2', y: 'y2' },
+            { x: 'x3', y: 'y3' },
+            { x: 'x4', y: 'y4' },
+          ],
         },
         ['results'],
         { resConcatIncorrectName: Concat },

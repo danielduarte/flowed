@@ -39,9 +39,9 @@ echo "Sonar file: ${SONAR_FILE}"
 # Update the version
 REPLACE='^sonar.projectVersion=.*$'
 WITH="sonar.projectVersion=${PACKAGE_VERSION}"
-sed -i "s#${REPLACE}#${WITH}#g" ${SONAR_FILE}
+sed -i '' -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}
 
 # Update the project name
 REPLACE='^sonar.projectName=.*$'
 WITH="sonar.projectName=${PACKAGE_NAME}"
-sed -i "s#${REPLACE}#${WITH}#g" ${SONAR_FILE}
+sed -i '' -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}
