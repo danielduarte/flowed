@@ -121,7 +121,7 @@ describe('can run a flow', function() {
 
       throw new Error('An error should have been thrown');
     } catch (error) {
-      expect(error.message).to.be.eql('getaddrinfo ENOTFOUND any-unknown-domain-here');
+      expect(error.message).to.have.string('getaddrinfo ENOTFOUND any-unknown-domain-here');
     }
   });
 
