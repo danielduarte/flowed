@@ -36,12 +36,17 @@ echo "Version: ${PACKAGE_VERSION}"
 SONAR_FILE=$(find ./ -iname sonar*.properties -type f)
 echo "Sonar file: ${SONAR_FILE}"
 
+SED_EXTRA_OPTS="-i"
+if [[ "$OSTYPE" == "darwin" ]]; then
+  SED_EXTRA_OPTS="-i ''"
+fi
+
 # Update the version
 REPLACE='^sonar.projectVersion=.*$'
 WITH="sonar.projectVersion=${PACKAGE_VERSION}"
-sed -i '' -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}
+sed $SED_EXTRA_OPTS -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}
 
 # Update the project name
 REPLACE='^sonar.projectName=.*$'
 WITH="sonar.projectName=${PACKAGE_NAME}"
-sed -i '' -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}
+sed $SED_EXTRA_OPTS -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}

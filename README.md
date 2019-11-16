@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/npm/l/flowed?color=%23007ec6)](https://github.com/daniel-duarte/flowed/blob/master/LICENSE)
 [![NPM Package Version](https://img.shields.io/npm/v/flowed)](https://www.npmjs.com/package/flowed)
 [![Build Status](https://travis-ci.org/daniel-duarte/flowed.svg?branch=master)](https://travis-ci.org/daniel-duarte/flowed)
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B13599%2Fgithub.com%2Fdaniel-duarte%2Fflowed.svg?type=shield)](https://app.fossa.com/projects/custom%2B13599%2Fgithub.com%2Fdaniel-duarte%2Fflowed?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B13599%2Fgithub.com%2Fdaniel-duarte%2Fflowed.svg?type=shield)](https://app.fossa.com/reports/4c6d7507-f3be-4d2a-a8ee-9fb8b2418116)
 [![Coverage Status](https://coveralls.io/repos/github/daniel-duarte/flowed/badge.svg?branch=master)](https://coveralls.io/github/daniel-duarte/flowed?branch=master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-duarte_flowed&metric=alert_status)](https://sonarcloud.io/dashboard?id=daniel-duarte_flowed)
 
