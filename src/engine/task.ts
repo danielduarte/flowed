@@ -20,6 +20,14 @@ export class Task {
     this.parseSpec();
   }
 
+  public getSerializableState() {
+    return this.runStatus;
+  }
+
+  public setSerializableState(runStatus: TaskRunStatus) {
+    this.runStatus = runStatus;
+  }
+
   public getCode() {
     return this.code;
   }

@@ -11,7 +11,6 @@ import {
 } from '../../resolver-library';
 import { FlowStateEnum, FlowTransitionEnum, GenericValueMap, TaskResolverMap } from '../../types';
 import { FlowRunStatus } from '../flow-run-status';
-import { FlowSpec } from '../specs';
 import { Task } from '../task';
 import { IFlow } from './iflow';
 const debug = rawDebug('flowed:flow');
@@ -36,46 +35,6 @@ export abstract class FlowState implements IFlow {
 
   public constructor(runStatus: FlowRunStatus) {
     this.runStatus = runStatus;
-  }
-
-  public initRunStatus(spec: FlowSpec, runState?: any) {
-    this.runStatus.spec = spec;
-    this.runStatus.tasks = {};
-
-    const provisions: string[] = [];
-
-    for (const [taskCode, taskSpec] of Object.entries(this.runStatus.spec.tasks || {})) {
-      provisions.push.apply(provisions, taskSpec.provides || []);
-      this.runStatus.tasks[taskCode] = new Task(taskCode, taskSpec);
-    }
-
-    // To be used later to check if expectedResults can be fulfilled.
-    this.runStatus.taskProvisions = Array.from(new Set(provisions));
-
-    this.runStatus.configs = this.runStatus.spec.configs || {};
-
-    this.runStatus.tasksByReq = {};
-    this.runStatus.tasksReady = [];
-    for (const taskCode in this.runStatus.tasks) {
-      if (this.runStatus.tasks.hasOwnProperty(taskCode)) {
-        const task = this.runStatus.tasks[taskCode];
-        task.resetRunStatus();
-
-        if (task.isReadyToRun()) {
-          this.runStatus.tasksReady.push(task);
-        }
-
-        const taskReqs = task.getSpec().requires || [];
-        for (const req of taskReqs) {
-          if (!this.runStatus.tasksByReq.hasOwnProperty(req)) {
-            this.runStatus.tasksByReq[req] = {};
-          }
-          this.runStatus.tasksByReq[req][task.getCode()] = task;
-        }
-      }
-    }
-
-    this.runStatus.results = {};
   }
 
   public start(
@@ -179,7 +138,7 @@ export abstract class FlowState implements IFlow {
 
   public supplyParameters(params: GenericValueMap) {
     for (const [paramCode, paramValue] of Object.entries(params)) {
-      this.supplyResult(paramCode, paramValue);
+      this.runStatus.state.supplyResult(paramCode, paramValue);
     }
   }
 

@@ -15,8 +15,7 @@ describe('a flow state can be', () => {
     const testRunState = (f: Flow, msg: string) => {
       const state = f.getSerializableState();
       debug(msg, state);
-      // @todo Fix this test
-      // expect(state).to.be.eql(JSON.parse(JSON.stringify(state)));
+      expect(state).to.be.eql(JSON.parse(JSON.stringify(state)));
     };
 
     const text1 = '(text1)';
@@ -132,6 +131,7 @@ describe('a flow state can be', () => {
     // ------------------------------
 
     const flowRestored = new Flow(spec, pausedState);
+    expect(flowRestored.getSerializableState()).to.be.deep.equal(pausedState);
 
     const pauseFlow2 = async () => {
       debug('-- Pausing flow --');
@@ -187,7 +187,6 @@ describe('a flow state can be', () => {
 
     expect(finalResult.finalStr).to.equal(finalResultRestored.finalStr);
 
-    // @todo Add support for this test:
-    // expect(restoredFlowTasksRan).to.be.eql(['task3', 'task4']);
+    expect(restoredFlowTasksRan).to.be.eql(['task3', 'task4']);
   });
 });

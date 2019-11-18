@@ -25,12 +25,6 @@ export class FlowPaused extends FlowState {
   }
 
   public getSerializableState() {
-    return {
-      runningTasks: this.runStatus.runningTasks,
-      tasksReady: this.runStatus.tasksReady,
-      tasksByReq: this.runStatus.tasksByReq,
-      expectedResults: this.runStatus.expectedResults,
-      results: this.runStatus.results,
-    };
+    return this.runStatus.toSerializable();
   }
 }

@@ -9,8 +9,7 @@ export class Flow implements IFlow {
   protected runStatus!: FlowRunStatus;
 
   public constructor(spec?: FlowSpec, runState?: any) {
-    this.runStatus = new FlowRunStatus(runState);
-    this.runStatus.state.initRunStatus(spec || {}, runState);
+    this.runStatus = new FlowRunStatus(spec || {}, runState);
   }
 
   public start(
@@ -41,6 +40,6 @@ export class Flow implements IFlow {
   // @todo Add a step() feature, for step-by-step execution
 
   public getSerializableState() {
-    this.runStatus.state.getSerializableState();
+    return this.runStatus.state.getSerializableState();
   }
 }
