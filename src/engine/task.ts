@@ -3,6 +3,7 @@ import { GenericValueMap, TaskResolverClass } from '../types';
 import { TaskRunStatus } from '../types';
 import { TaskSpec } from './specs';
 import { UserValueQueueManager } from './user-value-queue-manager';
+import { TaskProcess } from './flow-run-status';
 const debug = rawDebug('flowed:flow');
 // tslint:disable-next-line:no-var-requires
 const ST = require('stjs');
@@ -50,6 +51,10 @@ export class Task {
       solvedReqs: new UserValueQueueManager(reqs),
       solvedResults: {},
     };
+  }
+
+  public createProcess() {
+    return new TaskProcess();
   }
 
   public isReadyToRun() {

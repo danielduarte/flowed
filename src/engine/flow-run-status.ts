@@ -4,6 +4,8 @@ import { FlowFinished, FlowPaused, FlowPausing, FlowReady, FlowRunning, FlowStat
 import { FlowConfigs, FlowSpec } from './specs';
 import { Task } from './task';
 
+export class TaskProcess {}
+
 export class FlowRunStatus {
   /**
    * Flow instance id to be assigned to the next Flow instance. Intended to be used for debugging.
@@ -17,7 +19,10 @@ export class FlowRunStatus {
    */
   public id: number;
 
+  // @todo To be removed when full support for processes is finished
   public runningTasks: string[] = [];
+
+  public processes: TaskProcess[] = [];
 
   public tasksReady: Task[] = [];
 
@@ -129,7 +134,8 @@ export class FlowRunStatus {
 
   public fromSerializable(runState: SerializedFlowRunStatus) {
     this.id = runState.id;
-    this.runningTasks = [];
+    this.runningTasks = []; // @todo To be removed when full support for processes is finished
+    this.processes = [];
     this.tasksReady = runState.tasksReady.map(taskCode => this.tasks[taskCode]);
 
     this.tasksByReq = {};

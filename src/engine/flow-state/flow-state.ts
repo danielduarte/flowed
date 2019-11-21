@@ -101,7 +101,7 @@ export abstract class FlowState implements IFlow {
   }
 
   public isRunning() {
-    return this.runStatus.runningTasks.length > 0;
+    return this.runStatus.processes.length > 0;
   }
 
   public setExpectedResults(expectedResults: string[] = []) {
@@ -238,7 +238,8 @@ export abstract class FlowState implements IFlow {
     this.runStatus.tasksReady = [];
 
     for (const task of readyTasks) {
-      this.runStatus.runningTasks.push(task.getCode());
+      this.runStatus.runningTasks.push(task.getCode()); // @todo To be removed when full support for processes is finished
+      this.runStatus.processes.push(task.createProcess());
 
       const taskResolver = this.runStatus.state.getResolverForTask(task);
       task
@@ -285,7 +286,9 @@ export abstract class FlowState implements IFlow {
     }
 
     // Remove the task from running tasks collection
-    this.runStatus.runningTasks.splice(this.runStatus.runningTasks.indexOf(taskCode), 1);
+    const processIndex = this.runStatus.runningTasks.indexOf(taskCode);
+    this.runStatus.runningTasks.splice(processIndex, 1); // @todo To be removed when full support for processes is finished
+    this.runStatus.processes.splice(processIndex, 1);
 
     for (const resultName of taskProvisions) {
       if (taskResults.hasOwnProperty(resultName)) {
