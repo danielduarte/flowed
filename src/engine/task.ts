@@ -1,19 +1,19 @@
 import { debug as rawDebug } from 'debug';
-import { GenericValueMap, TaskResolverClass } from '../types';
-import { TaskRunStatus } from '../types';
+import { GenericValueMap, TaskResolverClass, TaskRunStatus } from '../types';
 import { TaskSpec } from './specs';
+import { TaskProcess } from './task-process';
 import { UserValueQueueManager } from './user-value-queue-manager';
-import { TaskProcess } from './flow-run-status';
 const debug = rawDebug('flowed:flow');
 // tslint:disable-next-line:no-var-requires
 const ST = require('stjs');
 
 export class Task {
+  // @todo convert to protected
+  public runStatus!: TaskRunStatus;
+
   protected code: string;
 
   protected spec: TaskSpec;
-
-  protected runStatus!: TaskRunStatus;
 
   public constructor(code: string, spec: TaskSpec) {
     this.code = code;
@@ -51,10 +51,6 @@ export class Task {
       solvedReqs: new UserValueQueueManager(reqs),
       solvedResults: {},
     };
-  }
-
-  public createProcess() {
-    return new TaskProcess();
   }
 
   public isReadyToRun() {
@@ -95,44 +91,13 @@ export class Task {
     automapResults: boolean,
     flowId: number,
   ): Promise<GenericValueMap> {
-    const resolver = new taskResolverConstructor();
+    const process = new TaskProcess(taskResolverConstructor, context, automapParams, automapResults, flowId, this);
 
-    return new Promise((resolve, reject) => {
-      const params = this.mapParamsForResolver(this.runStatus.solvedReqs.topAll(), automapParams, flowId);
-
-      const resolverPromise = resolver.exec(params, context, this);
-
-      if (
-        typeof resolverPromise !== 'object' ||
-        typeof resolverPromise.constructor === 'undefined' ||
-        resolverPromise.constructor.name !== 'Promise'
-      ) {
-        throw new Error(
-          `Expected resolver for task '${this.getCode()}' to return an object or Promise that resolves to object. Returned value is of type '${typeof resolverPromise}'.`,
-        );
-      }
-
-      resolverPromise
-        .then(
-          resolverValue => {
-            const results = this.mapResultsFromResolver(resolverValue, automapResults, flowId);
-            this.runStatus.solvedResults = results;
-            resolve(this.runStatus.solvedResults);
-          },
-          (resolverError: Error) => {
-            // @todo Check if this is needed even having the .catch
-            reject(resolverError);
-          },
-        )
-        .catch(reject);
-    });
+    return process.run();
   }
 
-  protected parseSpec() {
-    this.resetRunStatus();
-  }
-
-  protected mapParamsForResolver(solvedReqs: GenericValueMap, automap: boolean, flowId: number) {
+  // @todo convert to protected
+  public mapParamsForResolver(solvedReqs: GenericValueMap, automap: boolean, flowId: number) {
     const params: GenericValueMap = {};
 
     let resolverParams = this.spec.resolver.params || {};
@@ -180,7 +145,8 @@ export class Task {
     return params;
   }
 
-  protected mapResultsFromResolver(solvedResults: GenericValueMap, automap: boolean, flowId: number) {
+  // @todo convert to protected
+  public mapResultsFromResolver(solvedResults: GenericValueMap, automap: boolean, flowId: number) {
     if (typeof solvedResults !== 'object') {
       throw new Error(
         `Expected resolver for task '${this.getCode()}' to return an object or Promise that resolves to object. Returned value is of type '${typeof solvedResults}'.`,
@@ -207,5 +173,9 @@ export class Task {
     }
 
     return results;
+  }
+
+  protected parseSpec() {
+    this.resetRunStatus();
   }
 }

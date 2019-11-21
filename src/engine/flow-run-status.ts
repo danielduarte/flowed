@@ -3,8 +3,7 @@ import { FlowStateEnum, TaskMap } from '../types';
 import { FlowFinished, FlowPaused, FlowPausing, FlowReady, FlowRunning, FlowState, FlowStopped, FlowStopping } from './flow-state';
 import { FlowConfigs, FlowSpec } from './specs';
 import { Task } from './task';
-
-export class TaskProcess {}
+import { TaskProcess } from './task-process';
 
 export class FlowRunStatus {
   /**

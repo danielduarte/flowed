@@ -12,6 +12,7 @@ import {
 import { FlowStateEnum, FlowTransitionEnum, GenericValueMap, TaskResolverMap } from '../../types';
 import { FlowRunStatus } from '../flow-run-status';
 import { Task } from '../task';
+import { TaskProcess } from '../task-process';
 import { IFlow } from './iflow';
 const debug = rawDebug('flowed:flow');
 
@@ -239,25 +240,28 @@ export abstract class FlowState implements IFlow {
 
     for (const task of readyTasks) {
       this.runStatus.runningTasks.push(task.getCode()); // @todo To be removed when full support for processes is finished
-      this.runStatus.processes.push(task.createProcess());
 
       const taskResolver = this.runStatus.state.getResolverForTask(task);
-      task
-        .run(
-          taskResolver,
-          this.runStatus.context,
-          !!this.runStatus.configs.resolverAutomapParams,
-          !!this.runStatus.configs.resolverAutomapResults,
-          this.runStatus.id,
-        )
-        .then(
-          () => {
-            this.taskFinished(task);
-          },
-          (error: Error) => {
-            this.taskFinished(task, error, true);
-          },
-        );
+
+      const process = new TaskProcess(
+        taskResolver,
+        this.runStatus.context,
+        !!this.runStatus.configs.resolverAutomapParams,
+        !!this.runStatus.configs.resolverAutomapResults,
+        this.runStatus.id,
+        task,
+      );
+
+      this.runStatus.processes.push(process);
+
+      process.run().then(
+        () => {
+          this.taskFinished(task);
+        },
+        (error: Error) => {
+          this.taskFinished(task, error, true);
+        },
+      );
 
       debug(`[${this.runStatus.id}]   ‣ Task '${task.getCode()}' started, params:`, task.getParams());
     }
