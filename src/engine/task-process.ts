@@ -2,27 +2,14 @@ import { GenericValueMap, TaskResolverClass } from '../types';
 import { Task } from './task';
 
 export class TaskProcess {
-  protected taskResolverConstructor: TaskResolverClass;
-  protected context: GenericValueMap;
-  protected automapParams: boolean;
-  protected automapResults: boolean;
-  protected flowId: number;
-  protected task: Task;
   constructor(
-    taskResolverConstructor: TaskResolverClass,
-    context: GenericValueMap,
-    automapParams: boolean,
-    automapResults: boolean,
-    flowId: number,
-    task: Task,
-  ) {
-    this.taskResolverConstructor = taskResolverConstructor;
-    this.context = context;
-    this.automapParams = automapParams;
-    this.automapResults = automapResults;
-    this.flowId = flowId;
-    this.task = task;
-  }
+    public task: Task, // @todo convert to protected?
+    protected taskResolverConstructor: TaskResolverClass,
+    protected context: GenericValueMap,
+    protected automapParams: boolean,
+    protected automapResults: boolean,
+    protected flowId: number,
+  ) {}
 
   public run(): Promise<GenericValueMap> {
     const resolver = new this.taskResolverConstructor();

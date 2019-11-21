@@ -18,9 +18,6 @@ export class FlowRunStatus {
    */
   public id: number;
 
-  // @todo To be removed when full support for processes is finished
-  public runningTasks: string[] = [];
-
   public processes: TaskProcess[] = [];
 
   public tasksReady: Task[] = [];
@@ -133,7 +130,6 @@ export class FlowRunStatus {
 
   public fromSerializable(runState: SerializedFlowRunStatus) {
     this.id = runState.id;
-    this.runningTasks = []; // @todo To be removed when full support for processes is finished
     this.processes = [];
     this.tasksReady = runState.tasksReady.map(taskCode => this.tasks[taskCode]);
 

@@ -91,7 +91,7 @@ export class Task {
     automapResults: boolean,
     flowId: number,
   ): Promise<GenericValueMap> {
-    const process = new TaskProcess(taskResolverConstructor, context, automapParams, automapResults, flowId, this);
+    const process = new TaskProcess(this, taskResolverConstructor, context, automapParams, automapResults, flowId);
 
     return process.run();
   }

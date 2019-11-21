@@ -239,17 +239,15 @@ export abstract class FlowState implements IFlow {
     this.runStatus.tasksReady = [];
 
     for (const task of readyTasks) {
-      this.runStatus.runningTasks.push(task.getCode()); // @todo To be removed when full support for processes is finished
-
       const taskResolver = this.runStatus.state.getResolverForTask(task);
 
       const process = new TaskProcess(
+        task,
         taskResolver,
         this.runStatus.context,
         !!this.runStatus.configs.resolverAutomapParams,
         !!this.runStatus.configs.resolverAutomapResults,
         this.runStatus.id,
-        task,
       );
 
       this.runStatus.processes.push(process);
@@ -290,8 +288,7 @@ export abstract class FlowState implements IFlow {
     }
 
     // Remove the task from running tasks collection
-    const processIndex = this.runStatus.runningTasks.indexOf(taskCode);
-    this.runStatus.runningTasks.splice(processIndex, 1); // @todo To be removed when full support for processes is finished
+    const processIndex = this.runStatus.processes.findIndex(process => process.task.getCode() === taskCode);
     this.runStatus.processes.splice(processIndex, 1);
 
     for (const resultName of taskProvisions) {
