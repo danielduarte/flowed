@@ -16,9 +16,7 @@ export class EchoResolver {
 
 export class ThrowErrorResolver {
   public async exec(params: GenericValueMap): Promise<GenericValueMap> {
-    throw new Error(
-      typeof params.message !== 'undefined' ? params.message : 'ThrowErrorResolver resolver has thrown an error',
-    );
+    throw new Error(typeof params.message !== 'undefined' ? params.message : 'ThrowErrorResolver resolver has thrown an error');
   }
 }
 
@@ -45,13 +43,7 @@ export class SubFlowResolver {
   public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
     // @todo add test with subflow task with flowContext
 
-    const flowResult = await FlowManager.run(
-      params.flowSpec,
-      params.flowParams,
-      params.flowExpectedResults,
-      params.flowResolvers,
-      context,
-    );
+    const flowResult = await FlowManager.run(params.flowSpec, params.flowParams, params.flowExpectedResults, params.flowResolvers, context);
 
     return { flowResult };
   }
@@ -76,13 +68,7 @@ export class RepeaterResolver {
 
       // @todo add test with repeater task with taskContext
 
-      const result = task.run(
-        resolver,
-        context,
-        !!params.resolverAutomapParams,
-        !!params.resolverAutomapResults,
-        params.flowId,
-      );
+      const result = task.run(resolver, context, !!params.resolverAutomapParams, !!params.resolverAutomapResults, params.flowId);
 
       if (params.parallel) {
         resultPromises.push(result);

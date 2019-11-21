@@ -1,15 +1,6 @@
 import { GenericValueMap, TaskResolverMap, TaskRunStatus } from '../types';
 import { FlowStateEnum, TaskMap } from '../types';
-import {
-  FlowFinished,
-  FlowPaused,
-  FlowPausing,
-  FlowReady,
-  FlowRunning,
-  FlowState,
-  FlowStopped,
-  FlowStopping,
-} from './flow-state';
+import { FlowFinished, FlowPaused, FlowPausing, FlowReady, FlowRunning, FlowState, FlowStopped, FlowStopping } from './flow-state';
 import { FlowConfigs, FlowSpec } from './specs';
 import { Task } from './task';
 

@@ -83,9 +83,7 @@ describe('a flow in state', () => {
     let pubFlow = initRunningPublicFlow();
 
     // Invalid transitions/operations
-    expect(() => flow.getSerializableState()).to.throw(
-      'Cannot execute method getSerializableState in current state Running.',
-    );
+    expect(() => flow.getSerializableState()).to.throw('Cannot execute method getSerializableState in current state Running.');
     expect(() => flow.start()).to.throw('Cannot execute transition Start in current state Running.');
     expect(() => flow.resume()).to.throw('Cannot execute transition Resume in current state Running.');
     expect(() => flow.reset()).to.throw('Cannot execute transition Reset in current state Running.');
@@ -115,9 +113,7 @@ describe('a flow in state', () => {
     pubFlow.pause();
 
     // Invalid transitions/operations (all public transitions are invalid)
-    expect(() => flow.getSerializableState()).to.throw(
-      'Cannot execute method getSerializableState in current state Pausing.',
-    );
+    expect(() => flow.getSerializableState()).to.throw('Cannot execute method getSerializableState in current state Pausing.');
     expect(() => flow.pause()).to.throw('Cannot execute transition Pause in current state Pausing.');
     expect(() => flow.resume()).to.throw('Cannot execute transition Resume in current state Pausing.');
     expect(() => flow.stop()).to.throw('Cannot execute transition Stop in current state Pausing.');
@@ -187,9 +183,7 @@ describe('a flow in state', () => {
     pubFlow.stop();
 
     // Invalid transitions/operations (all public transitions are invalid)
-    expect(() => flow.getSerializableState()).to.throw(
-      'Cannot execute method getSerializableState in current state Stopping.',
-    );
+    expect(() => flow.getSerializableState()).to.throw('Cannot execute method getSerializableState in current state Stopping.');
     expect(() => flow.pause()).to.throw('Cannot execute transition Pause in current state Stopping.');
     expect(() => flow.resume()).to.throw('Cannot execute transition Resume in current state Stopping.');
     expect(() => flow.stop()).to.throw('Cannot execute transition Stop in current state Stopping.');

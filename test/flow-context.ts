@@ -36,25 +36,13 @@ describe('context for flows', () => {
 
     let texts;
 
-    texts = await FlowManager.run(
-      flowSpec,
-      {},
-      ['out1', 'out2'],
-      { SampleWithContext },
-      { prefix: '<<', suffix: '>>' },
-    );
+    texts = await FlowManager.run(flowSpec, {}, ['out1', 'out2'], { SampleWithContext }, { prefix: '<<', suffix: '>>' });
     expect(texts).to.be.eql({
       out1: '<<this is the first task>>',
       out2: '<<this is the second task>>',
     });
 
-    texts = await FlowManager.run(
-      flowSpec,
-      {},
-      ['out1', 'out2'],
-      { SampleWithContext },
-      { prefix: '(', suffix: ')', moreStuff: 'ignored value' },
-    );
+    texts = await FlowManager.run(flowSpec, {}, ['out1', 'out2'], { SampleWithContext }, { prefix: '(', suffix: ')', moreStuff: 'ignored value' });
     expect(texts).to.be.eql({
       out1: '(this is the first task)',
       out2: '(this is the second task)',

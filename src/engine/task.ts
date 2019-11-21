@@ -2,6 +2,7 @@ import { debug as rawDebug } from 'debug';
 import { GenericValueMap, TaskResolverClass } from '../types';
 import { TaskRunStatus } from '../types';
 import { TaskSpec } from './specs';
+import { UserValueQueueManager } from './user-value-queue-manager';
 const debug = rawDebug('flowed:flow');
 // tslint:disable-next-line:no-var-requires
 const ST = require('stjs');
@@ -20,14 +21,6 @@ export class Task {
     this.parseSpec();
   }
 
-  public getSerializableState() {
-    return this.runStatus;
-  }
-
-  public setSerializableState(runStatus: TaskRunStatus) {
-    this.runStatus = runStatus;
-  }
-
   public getCode() {
     return this.code;
   }
@@ -40,10 +33,21 @@ export class Task {
     return this.spec.resolver.name;
   }
 
+  public getSerializableState() {
+    return this.runStatus;
+  }
+
+  public setSerializableState(runStatus: TaskRunStatus) {
+    runStatus.solvedReqs = Object.assign(Object.create(UserValueQueueManager.prototype), runStatus.solvedReqs);
+    this.runStatus = runStatus;
+  }
+
   public resetRunStatus() {
+    const reqs = [...(this.spec.requires || [])];
+
     this.runStatus = {
-      pendingReqs: [...(this.spec.requires || [])],
-      solvedReqs: {},
+      pendingReqs: reqs,
+      solvedReqs: new UserValueQueueManager(reqs),
       solvedResults: {},
     };
   }
@@ -53,7 +57,7 @@ export class Task {
   }
 
   public getParams(): { [name: string]: any } {
-    return this.runStatus.solvedReqs;
+    return this.runStatus.solvedReqs.topAll();
   }
 
   public getResults(): { [name: string]: any } {
@@ -68,7 +72,7 @@ export class Task {
     }
 
     this.runStatus.pendingReqs.splice(reqIndex, 1);
-    this.runStatus.solvedReqs[reqName] = value;
+    this.runStatus.solvedReqs.push(reqName, value);
   }
 
   public supplyReqs(reqsMap: GenericValueMap) {
@@ -89,7 +93,7 @@ export class Task {
     const resolver = new taskResolverConstructor();
 
     return new Promise((resolve, reject) => {
-      const params = this.mapParamsForResolver(this.runStatus.solvedReqs, automapParams, flowId);
+      const params = this.mapParamsForResolver(this.runStatus.solvedReqs.topAll(), automapParams, flowId);
 
       const resolverPromise = resolver.exec(params, context, this);
 
@@ -132,9 +136,7 @@ export class Task {
       const requires = this.spec.requires || [];
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with requires = []
-      const automappedParams = requires
-        .map(req => ({ [req]: req }))
-        .reduce((accum, peer) => Object.assign(accum, peer), {});
+      const automappedParams = requires.map(req => ({ [req]: req })).reduce((accum, peer) => Object.assign(accum, peer), {});
       debug(`[${flowId}]   🛈 Automapped resolver params in task '${this.getCode()}':`, automappedParams);
       resolverParams = Object.assign(automappedParams, resolverParams);
     }
@@ -188,9 +190,7 @@ export class Task {
       const provides = this.spec.provides || [];
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with provides = []
-      const automappedResults = provides
-        .map(prov => ({ [prov]: prov }))
-        .reduce((accum, peer) => Object.assign(accum, peer), {});
+      const automappedResults = provides.map(prov => ({ [prov]: prov })).reduce((accum, peer) => Object.assign(accum, peer), {});
       debug(`[${flowId}]   🛈 Automapped resolver results in task '${this.getCode()}':`, automappedResults);
       resolverResults = Object.assign(automappedResults, resolverResults);
     }

@@ -46,10 +46,7 @@ export class FlowManager {
         if (err) {
           reject(err);
         } else {
-          FlowManager.runFromString(fileContents, params, expectedResults, resolvers, context).then(
-            resolveFlow,
-            reject,
-          );
+          FlowManager.runFromString(fileContents, params, expectedResults, resolvers, context).then(resolveFlow, reject);
         }
       });
     });
@@ -76,11 +73,7 @@ export class FlowManager {
         actualProtocol = matchResult[1];
       }
       return Promise.reject(
-        new Error(
-          `Protocol not supported${
-            actualProtocol ? `: ${actualProtocol}` : ''
-          }. Supported protocols are: [http, https]`,
-        ),
+        new Error(`Protocol not supported${actualProtocol ? `: ${actualProtocol}` : ''}. Supported protocols are: [http, https]`),
       );
     }
 
@@ -94,9 +87,7 @@ export class FlowManager {
           if (statusCode !== 200) {
             error = new Error(`Request failed with status code: ${statusCode}`);
           } else if (!(/^application\/json/.test(contentType) || /^text\/plain/.test(contentType))) {
-            error = new Error(
-              `Invalid content-type. Expected application/json or text/plain but received ${contentType}`,
-            );
+            error = new Error(`Invalid content-type. Expected application/json or text/plain but received ${contentType}`);
           }
 
           if (error) {

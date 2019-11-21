@@ -295,9 +295,7 @@ export abstract class FlowState implements IFlow {
         this.runStatus.state.supplyResult(resultName, taskSpec.defaultResult);
       } else {
         debug(
-          `[${
-            this.runStatus.id
-          }] ⚠️ Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`,
+          `[${this.runStatus.id}] ⚠️ Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`,
         );
       }
     }

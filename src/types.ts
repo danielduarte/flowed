@@ -1,4 +1,5 @@
 import { Task } from './engine';
+import { UserValueQueueManager } from './engine/user-value-queue-manager';
 
 export enum FlowStateEnum {
   Ready = 'Ready',
@@ -45,9 +46,7 @@ export interface TaskMap {
 export interface TaskRunStatus {
   pendingReqs: string[];
 
-  solvedReqs: {
-    [name: string]: any;
-  };
+  solvedReqs: UserValueQueueManager;
 
   solvedResults: {
     [name: string]: any;
