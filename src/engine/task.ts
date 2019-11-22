@@ -91,16 +91,31 @@ export class Task {
     return new Promise((resolve, reject) => {
       const params = this.mapParamsForResolver(this.runStatus.solvedReqs, automapParams, flowId);
 
-      resolver.exec(params, context, this).then(
-        resolverValue => {
-          const results = this.mapResultsFromResolver(resolverValue, automapResults, flowId);
-          this.runStatus.solvedResults = results;
-          resolve(this.runStatus.solvedResults);
-        },
-        (resolverError: Error) => {
-          reject(resolverError);
-        },
-      );
+      const resolverPromise = resolver.exec(params, context, this);
+
+      if (
+        typeof resolverPromise !== 'object' ||
+        typeof resolverPromise.constructor === 'undefined' ||
+        resolverPromise.constructor.name !== 'Promise'
+      ) {
+        throw new Error(
+          `Expected resolver for task '${this.getCode()}' to return an object or Promise that resolves to object. Returned value is of type '${typeof resolverPromise}'.`,
+        );
+      }
+
+      resolverPromise
+        .then(
+          resolverValue => {
+            const results = this.mapResultsFromResolver(resolverValue, automapResults, flowId);
+            this.runStatus.solvedResults = results;
+            resolve(this.runStatus.solvedResults);
+          },
+          (resolverError: Error) => {
+            // @todo Check if this is needed even having the .catch
+            reject(resolverError);
+          },
+        )
+        .catch(reject);
     });
   }
 
@@ -159,6 +174,12 @@ export class Task {
   }
 
   protected mapResultsFromResolver(solvedResults: GenericValueMap, automap: boolean, flowId: number) {
+    if (typeof solvedResults !== 'object') {
+      throw new Error(
+        `Expected resolver for task '${this.getCode()}' to return an object or Promise that resolves to object. Returned value is of type '${typeof solvedResults}'.`,
+      );
+    }
+
     const results: GenericValueMap = {};
 
     let resolverResults = this.spec.resolver.results || {};
