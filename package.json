@@ -33,7 +33,7 @@
     "bundle": "webpack"
   },
   "config": {
-    "maxPackagesNumber": 300,
+    "maxPackagesNumber": 600,
     "maxSizeBites": 52428800,
     "allowedLicenseTypes": [
       "permissive",
