@@ -25,21 +25,23 @@ export class TaskProcess {
         resolverPromise.constructor.name !== 'Promise'
       ) {
         throw new Error(
-          `Expected resolver for task '${this.getCode()}' to return an object or Promise that resolves to object. Returned value is of type '${typeof resolverPromise}'.`,
+          `Expected resolver for task '${this.task.getCode()}' to return an object or Promise that resolves to object. Returned value is of type '${typeof resolverPromise}'.`,
         );
       }
 
-      resolverPromise.then(
-        resolverValue => {
-          const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId);
-          this.task.runStatus.solvedResults = results;
-          resolve(this.task.runStatus.solvedResults);
-        },
-        (resolverError: Error) => {
-          // @todo Check if this is needed even having the .catch
-          reject(resolverError);
-        },
-      ).catch(reject);
+      resolverPromise
+        .then(
+          resolverValue => {
+            const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId);
+            this.task.runStatus.solvedResults = results;
+            resolve(this.task.runStatus.solvedResults);
+          },
+          (resolverError: Error) => {
+            // @todo Check if this is needed even having the .catch
+            reject(resolverError);
+          },
+        )
+        .catch(reject);
     });
   }
 }
