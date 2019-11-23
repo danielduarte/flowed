@@ -252,14 +252,19 @@ export abstract class FlowState implements IFlow {
 
       this.runStatus.processes.push(process);
 
-      process.run().then(
-        () => {
-          this.taskFinished(task);
-        },
-        (error: Error) => {
+      process
+        .run()
+        .then(
+          () => {
+            this.taskFinished(task);
+          },
+          (error: Error) => {
+            this.taskFinished(task, error, true);
+          },
+        )
+        .catch((error: Error) => {
           this.taskFinished(task, error, true);
-        },
-      );
+        });
 
       debug(`[${this.runStatus.id}]   ‣ Task '${task.getCode()}' started, params:`, task.getParams());
     }

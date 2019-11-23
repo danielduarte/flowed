@@ -35,12 +35,14 @@ export class Task {
   }
 
   public getSerializableState() {
-    return this.runStatus;
+    const result = JSON.parse(JSON.stringify(this.runStatus));
+    result.solvedReqs = this.runStatus.solvedReqs.toSerializable();
+    return result;
   }
 
-  public setSerializableState(runStatus: TaskRunStatus) {
-    runStatus.solvedReqs = Object.assign(Object.create(UserValueQueueManager.prototype), runStatus.solvedReqs);
-    this.runStatus = runStatus;
+  public setSerializableState(runStatus: any) {
+    this.runStatus = JSON.parse(JSON.stringify(runStatus));
+    this.runStatus.solvedReqs = UserValueQueueManager.fromSerializable(runStatus.solvedReqs);
   }
 
   public resetRunStatus() {

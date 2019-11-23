@@ -15,12 +15,28 @@ export interface UserValueQueueMap {
 export type SerializableUserValueQueueManager = UserValueQueueMap;
 
 export class UserValueQueueManager {
+  public static fromSerializable(serializable: SerializableUserValueQueueManager): UserValueQueueManager {
+    const queueNames = Object.keys(serializable);
+    const instance = new UserValueQueueManager(queueNames);
+    instance.queues = serializable;
+    instance.nonEmptyQueues = queueNames.reduce((acc, name) => {
+      if (instance.queues[name].length > 0) {
+        acc.add(name);
+      }
+      return acc;
+    }, new Set<string>());
+    return instance;
+  }
   protected queues: UserValueQueueMap;
 
   // This field can be calculated from this.queues
   protected queueNames: string[]; // List of queue names
 
+  // This field can be calculated from this.queues
+  protected nonEmptyQueues: Set<string>; // List of queue names
+
   public constructor(queueNames: string[]) {
+    this.nonEmptyQueues = new Set();
     this.queueNames = [...queueNames];
     this.queues = queueNames.reduce((acc: UserValueQueueMap, name) => {
       acc[name] = [];
@@ -33,6 +49,7 @@ export class UserValueQueueManager {
       throw new Error(`Queue name ${queueName} does not exist in queue manager. Existing queues are: [${this.queueNames.join(', ')}].`);
     }
 
+    this.nonEmptyQueues.add(queueName);
     this.queues[queueName].push(value);
   }
 
@@ -49,6 +66,7 @@ export class UserValueQueueManager {
     this.validateAllNonEmpty();
 
     return this.queueNames.reduce((acc: UserValueMap, name: string) => {
+      this.nonEmptyQueues.delete(name);
       acc[name] = this.queues[name].shift();
       return acc;
     }, {});
@@ -65,18 +83,12 @@ export class UserValueQueueManager {
 
   // For this to work, all user values must be serializable to JSON
   public toSerializable(): SerializableUserValueQueueManager {
-    return this.queues;
-  }
-
-  public fromSerializable(serializable: SerializableUserValueQueueManager) {
-    this.queues = serializable;
-    this.queueNames = Object.keys(serializable);
+    return JSON.parse(JSON.stringify(this.queues));
   }
 
   public validateAllNonEmpty() {
-    const emptyQueues = this.getEmptyQueueNames();
-    if (emptyQueues.length > 0) {
-      throw new Error(`Some of the queues are empty: [${emptyQueues.join(', ')}].`);
+    if (this.nonEmptyQueues.size < this.queueNames.length) {
+      throw new Error(`Some of the queues are empty: [${this.getEmptyQueueNames().join(', ')}].`);
     }
   }
 }
