@@ -1,7 +1,6 @@
 import { debug as rawDebug } from 'debug';
-import { GenericValueMap, TaskResolverClass, TaskRunStatus } from '../types';
+import { GenericValueMap, TaskRunStatus } from '../types';
 import { TaskSpec } from './specs';
-import { TaskProcess } from './task-process';
 import { UserValueQueueManager } from './user-value-queue-manager';
 const debug = rawDebug('flowed:flow');
 // tslint:disable-next-line:no-var-requires
@@ -84,18 +83,6 @@ export class Task {
         this.supplyReq(reqName, reqsMap[reqName]);
       }
     }
-  }
-
-  public run(
-    taskResolverConstructor: TaskResolverClass,
-    context: GenericValueMap,
-    automapParams: boolean,
-    automapResults: boolean,
-    flowId: number,
-  ): Promise<GenericValueMap> {
-    const process = new TaskProcess(this, taskResolverConstructor, context, automapParams, automapResults, flowId);
-
-    return process.run();
   }
 
   // @todo convert to protected

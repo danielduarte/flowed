@@ -1,4 +1,5 @@
 import { FlowManager, Task } from './engine';
+import { TaskProcess } from './engine/task-process';
 import { GenericValueMap } from './types';
 
 // Do nothing and finish
@@ -68,7 +69,9 @@ export class RepeaterResolver {
 
       // @todo add test with repeater task with taskContext
 
-      const result = task.run(resolver, context, !!params.resolverAutomapParams, !!params.resolverAutomapResults, params.flowId);
+      const process = new TaskProcess(0, task, resolver, context, !!params.resolverAutomapParams, !!params.resolverAutomapResults, params.flowId);
+
+      const result = process.run();
 
       if (params.parallel) {
         resultPromises.push(result);
@@ -103,7 +106,9 @@ export class ArrayMapResolver {
 
       // @todo add test with loop task with context
 
-      const result = task.run(resolver, context, !!params.automapParams, !!params.automapResults, params.flowId);
+      const process = new TaskProcess(0, task, resolver, context, !!params.automapParams, !!params.automapResults, params.flowId);
+
+      const result = process.run();
 
       if (params.parallel) {
         resultPromises.push(result);

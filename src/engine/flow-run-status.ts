@@ -18,6 +18,8 @@ export class FlowRunStatus {
    */
   public id: number;
 
+  public nextProcessId: number;
+
   public processes: TaskProcess[] = [];
 
   public tasksReady: Task[] = [];
@@ -67,6 +69,7 @@ export class FlowRunStatus {
 
   public constructor(spec: FlowSpec, runStatus?: any) {
     this.id = FlowRunStatus.nextId;
+    this.nextProcessId = 1;
     FlowRunStatus.nextId++; // @todo Check overflow
 
     this.states = {
@@ -130,6 +133,7 @@ export class FlowRunStatus {
 
   public fromSerializable(runState: SerializedFlowRunStatus) {
     this.id = runState.id;
+    this.nextProcessId = runState.nextProcessId;
     this.processes = [];
     this.tasksReady = runState.tasksReady.map(taskCode => this.tasks[taskCode]);
 
@@ -155,6 +159,7 @@ export class FlowRunStatus {
   public toSerializable(): SerializedFlowRunStatus {
     const serialized: SerializedFlowRunStatus = {
       id: this.id,
+      nextProcessId: this.nextProcessId,
       tasksReady: this.tasksReady.map(task => task.getCode()),
       tasksByReq: {},
       taskProvisions: JSON.parse(JSON.stringify(this.taskProvisions)),
@@ -183,6 +188,7 @@ export class FlowRunStatus {
 
 export interface SerializedFlowRunStatus {
   id: number;
+  nextProcessId: number;
   tasksReady: string[];
   tasksByReq: { [req: string]: string[] };
   taskProvisions: string[];

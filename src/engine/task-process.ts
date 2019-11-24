@@ -3,6 +3,7 @@ import { Task } from './task';
 
 export class TaskProcess {
   constructor(
+    public id: number,
     public task: Task, // @todo convert to protected?
     protected taskResolverConstructor: TaskResolverClass,
     protected context: GenericValueMap,

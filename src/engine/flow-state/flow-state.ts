@@ -242,6 +242,7 @@ export abstract class FlowState implements IFlow {
       const taskResolver = this.runStatus.state.getResolverForTask(task);
 
       const process = new TaskProcess(
+        this.runStatus.nextProcessId++,
         task,
         taskResolver,
         this.runStatus.context,
@@ -256,14 +257,14 @@ export abstract class FlowState implements IFlow {
         .run()
         .then(
           () => {
-            this.taskFinished(task);
+            this.processFinished(process);
           },
           (error: Error) => {
-            this.taskFinished(task, error, true);
+            this.processFinished(process, error, true);
           },
         )
         .catch((error: Error) => {
-          this.taskFinished(task, error, true);
+          this.processFinished(process, error, true);
         });
 
       debug(`[${this.runStatus.id}]   ‣ Task '${task.getCode()}' started, params:`, task.getParams());
@@ -279,7 +280,8 @@ export abstract class FlowState implements IFlow {
     throw this.createMethodError('getSerializableState');
   }
 
-  protected taskFinished(task: Task, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
+  protected processFinished(process: TaskProcess, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
+    const task = process.task;
     const taskSpec = task.getSpec();
     const taskProvisions = taskSpec.provides || [];
     const taskResults = task.getResults();
@@ -293,7 +295,7 @@ export abstract class FlowState implements IFlow {
     }
 
     // Remove the task from running tasks collection
-    const processIndex = this.runStatus.processes.findIndex(process => process.task.getCode() === taskCode);
+    const processIndex = this.runStatus.processes.findIndex(p => p.id === process.id);
     this.runStatus.processes.splice(processIndex, 1);
 
     for (const resultName of taskProvisions) {
