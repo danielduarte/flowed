@@ -31,7 +31,7 @@ describe('edge cases', () => {
       errorMsg = err.message;
     }
 
-    expect(errorMsg).to.be.eql("Requirement 'someReq' for task 'T' is not valid or has already been supplied.");
+    expect(errorMsg).to.be.eql("Requirement 'someReq' for task 'T' is not valid.");
   });
 
   // Added to improve error messaging when resolvers does not return as expected.

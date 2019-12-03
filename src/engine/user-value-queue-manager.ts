@@ -87,8 +87,12 @@ export class UserValueQueueManager {
   }
 
   public validateAllNonEmpty() {
-    if (this.nonEmptyQueues.size < this.queueNames.length) {
+    if (!this.allHaveContent()) {
       throw new Error(`Some of the queues are empty: [${this.getEmptyQueueNames().join(', ')}].`);
     }
+  }
+
+  public allHaveContent() {
+    return this.nonEmptyQueues.size === this.queueNames.length;
   }
 }

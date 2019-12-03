@@ -48,14 +48,13 @@ export class Task {
     const reqs = [...(this.spec.requires || [])];
 
     this.runStatus = {
-      pendingReqs: reqs,
       solvedReqs: new UserValueQueueManager(reqs),
       solvedResults: {},
     };
   }
 
   public isReadyToRun() {
-    return this.runStatus.pendingReqs.length === 0;
+    return this.runStatus.solvedReqs.allHaveContent();
   }
 
   public getParams(): { [name: string]: any } {
@@ -67,13 +66,12 @@ export class Task {
   }
 
   public supplyReq(reqName: string, value: any) {
-    const reqIndex = this.runStatus.pendingReqs.indexOf(reqName);
+    const reqIndex = (this.spec.requires || []).indexOf(reqName);
     if (reqIndex === -1) {
       // This can only happen if supplyReq is called manually by the user. The flow will never call with an invalid reqName.
-      throw new Error(`Requirement '${reqName}' for task '${this.code}' is not valid or has already been supplied.`);
+      throw new Error(`Requirement '${reqName}' for task '${this.code}' is not valid.`);
     }
 
-    this.runStatus.pendingReqs.splice(reqIndex, 1);
     this.runStatus.solvedReqs.push(reqName, value);
   }
 
