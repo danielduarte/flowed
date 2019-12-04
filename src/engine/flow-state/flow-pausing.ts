@@ -19,4 +19,8 @@ export class FlowPausing extends FlowState {
       this.execPauseResolve();
     }
   }
+
+  protected postProcessFinished(error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
+    this.runStatus.state.paused(error);
+  }
 }

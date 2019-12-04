@@ -251,22 +251,16 @@ export abstract class FlowState implements IFlow {
         this.runStatus.id,
       );
 
+      const errorHandler = (error: Error) => {
+        this.processFinished(process, error, true);
+      };
+
       process
         .run()
-        .then(
-          () => {
-            this.runStatus.processManager.removeProcess(process);
-            this.processFinished(process);
-          },
-          (error: Error) => {
-            this.runStatus.processManager.removeProcess(process);
-            this.processFinished(process, error, true);
-          },
-        )
-        .catch((error: Error) => {
-          this.runStatus.processManager.removeProcess(process);
-          this.processFinished(process, error, true);
-        });
+        .then(() => {
+          this.processFinished(process, false, true);
+        }, errorHandler)
+        .catch(errorHandler);
 
       debug(`[${this.runStatus.id}]   ‣ Task '${task.getCode()}' started, params:`, task.getParams());
     }
@@ -282,6 +276,8 @@ export abstract class FlowState implements IFlow {
   }
 
   protected processFinished(process: TaskProcess, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
+    this.runStatus.processManager.removeProcess(process);
+
     const task = process.task;
     const taskCode = task.getCode();
     const taskSpec = task.getSpec();
@@ -303,32 +299,17 @@ export abstract class FlowState implements IFlow {
         this.runStatus.state.supplyResult(resultName, taskSpec.defaultResult);
       } else {
         debug(
-          `[${this.runStatus.id}] ⚠️ Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'`,
+          `[${
+            this.runStatus.id
+          }] ⚠️ Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'. Consider using the task field 'defaultResult' to provide values by default.`,
         );
       }
     }
 
-    if (this.runStatus.state.getStateCode() === FlowStateEnum.Running) {
-      const stopExecution = error && stopFlowExecutionOnError;
-      if (!stopExecution) {
-        this.startReadyTasks();
-      }
-
-      if (!this.runStatus.state.isRunning()) {
-        this.runStatus.state.finished(error);
-      }
-    }
-
-    if (this.runStatus.state.getStateCode() !== FlowStateEnum.Running) {
-      const currentState = this.runStatus.state.getStateCode();
-
-      if (currentState === FlowStateEnum.Pausing) {
-        this.runStatus.state.paused(error);
-      } else if (currentState === FlowStateEnum.Stopping) {
-        this.runStatus.state.stopped(error);
-      }
-    }
+    this.runStatus.state.postProcessFinished(error);
   }
+
+  protected postProcessFinished(error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {}
 
   protected createTransitionError(transition: string) {
     return new Error(`Cannot execute transition ${transition} in current state ${this.getStateCode()}.`);

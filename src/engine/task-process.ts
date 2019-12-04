@@ -22,14 +22,10 @@ export class TaskProcess {
       const onResolverSuccess = (resolverValue: GenericValueMap) => {
         const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId);
         this.task.runStatus.solvedResults = results;
-        // @todo uncomment this when ready
-        // this.manager.removeProcess(this);
         resolve(this.task.runStatus.solvedResults);
       };
 
       const onResolverError = (error: Error) => {
-        // @todo uncomment this when ready
-        // this.manager.removeProcess(this);
         reject(error);
       };
 
