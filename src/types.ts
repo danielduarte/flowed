@@ -44,7 +44,6 @@ export interface TaskMap {
 }
 
 export interface TaskRunStatus {
-
   solvedReqs: UserValueQueueManager;
 
   solvedResults: {

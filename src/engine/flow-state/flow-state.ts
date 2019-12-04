@@ -102,7 +102,7 @@ export abstract class FlowState implements IFlow {
   }
 
   public isRunning() {
-    return this.runStatus.processes.length > 0;
+    return this.runStatus.processManager.runningCount() > 0;
   }
 
   public setExpectedResults(expectedResults: string[] = []) {
@@ -132,6 +132,7 @@ export abstract class FlowState implements IFlow {
     this.runStatus.context = {
       $flowed: {
         getResolverByName: this.getResolverByName.bind(this),
+        processManager: this.runStatus.processManager,
       },
       ...context,
     };
@@ -241,8 +242,7 @@ export abstract class FlowState implements IFlow {
     for (const task of readyTasks) {
       const taskResolver = this.runStatus.state.getResolverForTask(task);
 
-      const process = new TaskProcess(
-        this.runStatus.nextProcessId++,
+      const process = this.runStatus.processManager.createProcess(
         task,
         taskResolver,
         this.runStatus.context,
@@ -251,19 +251,20 @@ export abstract class FlowState implements IFlow {
         this.runStatus.id,
       );
 
-      this.runStatus.processes.push(process);
-
       process
         .run()
         .then(
           () => {
+            this.runStatus.processManager.removeProcess(process);
             this.processFinished(process);
           },
           (error: Error) => {
+            this.runStatus.processManager.removeProcess(process);
             this.processFinished(process, error, true);
           },
         )
         .catch((error: Error) => {
+          this.runStatus.processManager.removeProcess(process);
           this.processFinished(process, error, true);
         });
 
@@ -294,10 +295,6 @@ export abstract class FlowState implements IFlow {
       debug(`[${this.runStatus.id}]   ✓ Finished task '${taskCode}', results:`, taskResults);
     }
 
-    // Remove the task from running tasks collection
-    const processIndex = this.runStatus.processes.findIndex(p => p.id === process.id);
-    this.runStatus.processes.splice(processIndex, 1);
-
     for (const resultName of taskProvisions) {
       if (taskResults.hasOwnProperty(resultName)) {
         this.runStatus.state.supplyResult(resultName, taskResults[resultName]);
@@ -322,7 +319,7 @@ export abstract class FlowState implements IFlow {
       }
     }
 
-    if (!this.runStatus.state.isRunning()) {
+    if (this.runStatus.state.getStateCode() !== FlowStateEnum.Running) {
       const currentState = this.runStatus.state.getStateCode();
 
       if (currentState === FlowStateEnum.Pausing) {

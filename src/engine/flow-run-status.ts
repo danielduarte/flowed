@@ -1,9 +1,9 @@
 import { GenericValueMap, TaskResolverMap, TaskRunStatus } from '../types';
 import { FlowStateEnum, TaskMap } from '../types';
 import { FlowFinished, FlowPaused, FlowPausing, FlowReady, FlowRunning, FlowState, FlowStopped, FlowStopping } from './flow-state';
+import { ProcessManager } from './process-manager';
 import { FlowConfigs, FlowSpec } from './specs';
 import { Task } from './task';
-import { TaskProcess } from './task-process';
 
 export class FlowRunStatus {
   /**
@@ -18,9 +18,7 @@ export class FlowRunStatus {
    */
   public id: number;
 
-  public nextProcessId: number;
-
-  public processes: TaskProcess[] = [];
+  public processManager: ProcessManager;
 
   public tasksReady: Task[] = [];
 
@@ -68,8 +66,8 @@ export class FlowRunStatus {
   public tasks!: TaskMap;
 
   public constructor(spec: FlowSpec, runStatus?: any) {
+    this.processManager = new ProcessManager();
     this.id = FlowRunStatus.nextId;
-    this.nextProcessId = 1;
     FlowRunStatus.nextId++; // @todo Check overflow
 
     this.states = {
@@ -133,8 +131,8 @@ export class FlowRunStatus {
 
   public fromSerializable(runState: SerializedFlowRunStatus) {
     this.id = runState.id;
-    this.nextProcessId = runState.nextProcessId;
-    this.processes = [];
+    this.processManager.nextProcessId = runState.nextProcessId;
+    this.processManager.processes = [];
     this.tasksReady = runState.tasksReady.map(taskCode => this.tasks[taskCode]);
 
     this.tasksByReq = {};
@@ -159,7 +157,7 @@ export class FlowRunStatus {
   public toSerializable(): SerializedFlowRunStatus {
     const serialized: SerializedFlowRunStatus = {
       id: this.id,
-      nextProcessId: this.nextProcessId,
+      nextProcessId: this.processManager.nextProcessId,
       tasksReady: this.tasksReady.map(task => task.getCode()),
       tasksByReq: {},
       taskProvisions: JSON.parse(JSON.stringify(this.taskProvisions)),

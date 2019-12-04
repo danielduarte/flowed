@@ -1,8 +1,10 @@
 import { GenericValueMap, TaskResolverClass } from '../types';
+import { ProcessManager } from './process-manager';
 import { Task } from './task';
 
 export class TaskProcess {
   constructor(
+    public manager: ProcessManager,
     public id: number,
     public task: Task, // @todo convert to protected?
     protected taskResolverConstructor: TaskResolverClass,
@@ -14,11 +16,29 @@ export class TaskProcess {
 
   public run(): Promise<GenericValueMap> {
     const resolver = new this.taskResolverConstructor();
-
     return new Promise((resolve, reject) => {
       const params = this.task.mapParamsForResolver(this.task.runStatus.solvedReqs.topAll(), this.automapParams, this.flowId);
 
-      const resolverPromise = resolver.exec(params, this.context, this.task);
+      const onResolverSuccess = (resolverValue: GenericValueMap) => {
+        const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId);
+        this.task.runStatus.solvedResults = results;
+        // @todo uncomment this when ready
+        // this.manager.removeProcess(this);
+        resolve(this.task.runStatus.solvedResults);
+      };
+
+      const onResolverError = (error: Error) => {
+        // @todo uncomment this when ready
+        // this.manager.removeProcess(this);
+        reject(error);
+      };
+
+      let resolverPromise;
+      try {
+        resolverPromise = resolver.exec(params, this.context, this.task);
+      } catch (error) {
+        onResolverError(error);
+      }
 
       if (
         typeof resolverPromise !== 'object' ||
@@ -32,17 +52,10 @@ export class TaskProcess {
 
       resolverPromise
         .then(
-          resolverValue => {
-            const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId);
-            this.task.runStatus.solvedResults = results;
-            resolve(this.task.runStatus.solvedResults);
-          },
-          (resolverError: Error) => {
-            // @todo Check if this is needed even having the .catch
-            reject(resolverError);
-          },
+          onResolverSuccess,
+          onResolverError, // @todo Check if this is needed even having the .catch
         )
-        .catch(reject);
+        .catch(onResolverError);
     });
   }
 }

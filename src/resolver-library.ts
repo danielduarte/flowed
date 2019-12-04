@@ -69,7 +69,16 @@ export class RepeaterResolver {
 
       // @todo add test with repeater task with taskContext
 
-      const process = new TaskProcess(0, task, resolver, context, !!params.resolverAutomapParams, !!params.resolverAutomapResults, params.flowId);
+      const process = new TaskProcess(
+        context.$flowed.processManager,
+        0,
+        task,
+        resolver,
+        context,
+        !!params.resolverAutomapParams,
+        !!params.resolverAutomapResults,
+        params.flowId,
+      );
 
       const result = process.run();
 
@@ -106,7 +115,16 @@ export class ArrayMapResolver {
 
       // @todo add test with loop task with context
 
-      const process = new TaskProcess(0, task, resolver, context, !!params.automapParams, !!params.automapResults, params.flowId);
+      const process = new TaskProcess(
+        context.$flowed.processManager,
+        0,
+        task,
+        resolver,
+        context,
+        !!params.automapParams,
+        !!params.automapResults,
+        params.flowId,
+      );
 
       const result = process.run();
 
