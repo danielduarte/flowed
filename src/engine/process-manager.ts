@@ -20,7 +20,8 @@ export class ProcessManager {
     automapResults: boolean,
     flowId: number,
   ) {
-    const process = new TaskProcess(this, this.nextProcessId++, task, taskResolverConstructor, context, automapParams, automapResults, flowId);
+    this.nextProcessId++;
+    const process = new TaskProcess(this, this.nextProcessId, task, taskResolverConstructor, context, automapParams, automapResults, flowId);
     this.processes.push(process);
 
     return process;

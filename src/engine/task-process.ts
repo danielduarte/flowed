@@ -36,11 +36,15 @@ export class TaskProcess {
       };
 
       let resolverPromise;
+
+      // @sonar start-ignore Ignore this block because try is required even when not await-ing for the promise
       try {
         resolverPromise = resolver.exec(this.params, this.context, this.task);
       } catch (error) {
+        // @todo Add test to get this error here with a sync resolver that throws error after returning the promise
         onResolverError(error);
       }
+      // @sonar end-ignore
 
       if (
         typeof resolverPromise !== 'object' ||
