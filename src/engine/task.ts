@@ -57,10 +57,6 @@ export class Task {
     return this.runStatus.solvedReqs.allHaveContent();
   }
 
-  public getParams(): { [name: string]: any } {
-    return this.runStatus.solvedReqs.topAll();
-  }
-
   public getResults(): { [name: string]: any } {
     return this.runStatus.solvedResults;
   }

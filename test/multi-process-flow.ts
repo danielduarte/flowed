@@ -57,4 +57,35 @@ describe('multi process flow', async () => {
       'Incoming message: Message number 3',
     ]);
   });
+
+  it('runs loop', async () => {
+    class Loop {
+      public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
+        if (context.counter > 0) {
+          return { result: context.counter-- };
+        }
+
+        return {};
+      }
+    }
+
+    await FlowManager.run(
+      {
+        tasks: {
+          loop5: {
+            requires: ['result'],
+            provides: ['result'],
+            resolver: {
+              name: 'loop',
+              results: { result: 'result' },
+            },
+          },
+        },
+      },
+      { result: true },
+      [],
+      { loop: Loop },
+      { counter: 5 },
+    );
+  });
 });

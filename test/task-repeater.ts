@@ -196,4 +196,29 @@ describe('the ResolverLibrary / task repeater', () => {
 
     expect(msg).to.be.eql('Intentional error in resolver');
   });
+
+  it('runs repeater resolver with missing inner resolver', async () => {
+    let msg = 'No error';
+
+    try {
+      await FlowManager.run(
+        flowSpec,
+        {
+          'task-spec': taskSpec,
+          'task-resolver': 'MissingResolver',
+          'task-params': { 'a-value': 'Hi sync!' },
+          count: 5,
+          parallel: true,
+        },
+        ['result-array'],
+        {
+          taskRepeater: ResolverLibrary.RepeaterResolver,
+        },
+      );
+    } catch (error) {
+      msg = error.message;
+    }
+
+    expect(msg).to.be.eql("Task resolver 'MissingResolver' for inner Repeater task has no definition.");
+  });
 });
