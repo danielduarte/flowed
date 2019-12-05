@@ -19,7 +19,7 @@ class DirectResolver {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export const example1: ExampleFunction = () => {
+export const syncAsync: ExampleFunction = () => {
   return FlowManager.run(
     {
       tasks: {

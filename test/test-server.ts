@@ -23,7 +23,7 @@ export default function createTestServer(responseContentType: string = 'applicat
     });
 
     request.on('end', () => {
-      const filepath = 'test/examples/example6.flowed.json';
+      const filepath = 'test/examples/from-file.flowed.json';
 
       fs.readFile(filepath, (error, data) => {
         if (error) {

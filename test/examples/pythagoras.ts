@@ -29,7 +29,7 @@ namespace MathFn {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export const example3: ExampleFunction = () => {
+export const pythagoras: ExampleFunction = () => {
   return FlowManager.run(
     {
       tasks: {

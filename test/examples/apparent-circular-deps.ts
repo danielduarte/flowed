@@ -9,7 +9,7 @@ class DummyResolver {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export const example5: ExampleFunction = () => {
+export const apparentCircularDeps: ExampleFunction = () => {
   return FlowManager.run(
     {
       tasks: {

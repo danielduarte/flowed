@@ -33,7 +33,7 @@ class SimpleMerge {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export const example4: ExampleFunction = () => {
+export const microservices: ExampleFunction = () => {
   return FlowManager.run(
     {
       tasks: {

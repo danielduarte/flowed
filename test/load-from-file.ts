@@ -20,7 +20,7 @@ class DirectResolver {
 describe('can run a flow', () => {
   it('from a JSON file', () => {
     return FlowManager.runFromFile(
-      'test/examples/example6.flowed.json',
+      'test/examples/from-file.flowed.json',
       {
         param1: 'PARAM1',
         param2: 'PARAM2',
@@ -57,7 +57,7 @@ describe('can run a flow', () => {
   });
 
   it('from an JSON file with invalid format and throw an error', async () => {
-    const filepath = 'test/examples/example6.flowed.json.invalid';
+    const filepath = 'test/examples/from-file.flowed.json.invalid';
 
     try {
       await FlowManager.runFromFile(

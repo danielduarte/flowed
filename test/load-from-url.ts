@@ -23,7 +23,7 @@ describe('can run a flow', function() {
 
   it('from a JSON got from an HTTPS URL', () => {
     return FlowManager.runFromUrl(
-      'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/example6.flowed.json',
+      'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/from-file.flowed.json',
       {
         param1: 'PARAM1',
         param2: 'PARAM2',
@@ -148,7 +148,7 @@ describe('can run a flow', function() {
   it('from a JSON got from a URL with invalid format and throw an error', async () => {
     try {
       await FlowManager.runFromUrl(
-        'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/example6.flowed.json.invalid',
+        'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/from-file.flowed.json.invalid',
         {
           param1: 'PARAM1',
           param2: 'PARAM2',
