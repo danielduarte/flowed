@@ -206,6 +206,7 @@ export abstract class FlowState implements IFlow {
     // Checks if the task result is required by other tasks.
     // If it is not, it is likely a flow output value.
     const suppliesSomeTask = this.runStatus.tasksByReq.hasOwnProperty(resultName);
+
     if (suppliesSomeTask) {
       const suppliedTasks = this.runStatus.tasksByReq[resultName];
       const suppliedTaskCodes = Object.keys(suppliedTasks);
@@ -213,11 +214,9 @@ export abstract class FlowState implements IFlow {
         const suppliedTask = suppliedTasks[taskCode];
 
         suppliedTask.supplyReq(resultName, result);
-        delete suppliedTasks[taskCode];
-        if (Object.keys(suppliedTasks).length === 0) {
-          delete this.runStatus.tasksByReq[resultName];
-        }
 
+        // @todo Possible optimization: supply all results first, then check ready tasks
+        // @todo This 'if' could actually be a 'while', in case more than one instance of the same task get ready
         if (suppliedTask.isReadyToRun()) {
           this.runStatus.tasksReady.push(suppliedTask);
         }
@@ -262,13 +261,14 @@ export abstract class FlowState implements IFlow {
         }, errorHandler)
         .catch(errorHandler);
 
-      debug(`[${this.runStatus.id}]   ‣ Task '${task.getCode()}' started, params:`, task.getParams());
+      debug(`[${this.runStatus.id}]   ‣ Task '${task.getCode()}' started, params:`, process.getParams());
     }
   }
 
   public setState(newState: FlowStateEnum) {
+    const prevState = this.runStatus.state.getStateCode();
     this.runStatus.state = this.getStateInstance(newState);
-    debug(`[${this.runStatus.id}]   🛈 Changed state to '${newState}'`);
+    debug(`[${this.runStatus.id}]   🛈 Changed flow state from '${prevState}' to '${newState}'`);
   }
 
   public getSerializableState() {

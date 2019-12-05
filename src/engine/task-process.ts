@@ -3,6 +3,8 @@ import { ProcessManager } from './process-manager';
 import { Task } from './task';
 
 export class TaskProcess {
+  protected params!: GenericValueMap;
+
   constructor(
     public manager: ProcessManager,
     public id: number,
@@ -14,11 +16,15 @@ export class TaskProcess {
     protected flowId: number,
   ) {}
 
-  public run(): Promise<GenericValueMap> {
-    const resolver = new this.taskResolverConstructor();
-    return new Promise((resolve, reject) => {
-      const params = this.task.mapParamsForResolver(this.task.runStatus.solvedReqs.topAll(), this.automapParams, this.flowId);
+  public getParams(): GenericValueMap {
+    return this.params;
+  }
 
+  public run(): Promise<GenericValueMap> {
+    this.params = this.task.mapParamsForResolver(this.task.runStatus.solvedReqs.popAll(), this.automapParams, this.flowId);
+    const resolver = new this.taskResolverConstructor();
+
+    return new Promise((resolve, reject) => {
       const onResolverSuccess = (resolverValue: GenericValueMap) => {
         const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId);
         this.task.runStatus.solvedResults = results;
@@ -31,7 +37,7 @@ export class TaskProcess {
 
       let resolverPromise;
       try {
-        resolverPromise = resolver.exec(params, this.context, this.task);
+        resolverPromise = resolver.exec(this.params, this.context, this.task);
       } catch (error) {
         onResolverError(error);
       }

@@ -169,19 +169,10 @@ describe('a flow state can be', () => {
       }
     }
 
-    const finishRestoredPromise = flowRestored.start(
-      {
-        initialStr: '',
-        text1,
-        text2,
-        text3,
-        text4,
-      },
-      ['result1', 'result2', 'result3', 'finalStr'],
-      {
-        append: AppendString2,
-      },
-    );
+    // Note that when restarting a serialized flow, params must NOT be provided.
+    const finishRestoredPromise = flowRestored.start({}, ['result1', 'result2', 'result3', 'finalStr'], {
+      append: AppendString2,
+    });
 
     const finalResultRestored = await finishRestoredPromise;
 

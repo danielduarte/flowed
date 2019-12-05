@@ -27,6 +27,7 @@ export class UserValueQueueManager {
     }, new Set<string>());
     return instance;
   }
+
   protected queues: UserValueQueueMap;
 
   // This field can be calculated from this.queues
@@ -66,8 +67,10 @@ export class UserValueQueueManager {
     this.validateAllNonEmpty();
 
     return this.queueNames.reduce((acc: UserValueMap, name: string) => {
-      this.nonEmptyQueues.delete(name);
       acc[name] = this.queues[name].shift();
+      if (this.queues[name].length === 0) {
+        this.nonEmptyQueues.delete(name);
+      }
       return acc;
     }, {});
   }
