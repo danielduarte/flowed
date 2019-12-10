@@ -1,5 +1,6 @@
 import { GenericValueMap, TaskResolverMap, TaskRunStatus } from '../types';
 import { FlowStateEnum, TaskMap } from '../types';
+import { Flow } from './flow';
 import { FlowFinished, FlowPaused, FlowPausing, FlowReady, FlowRunning, FlowState, FlowStopped, FlowStopping } from './flow-state';
 import { ProcessManager } from './process-manager';
 import { FlowConfigs, FlowSpec } from './specs';
@@ -11,6 +12,8 @@ export class FlowRunStatus {
    * @type {number}
    */
   public static nextId = 1;
+
+  public flow: Flow;
 
   /**
    * Flow instance id. Intended to be used for debugging.
@@ -39,12 +42,10 @@ export class FlowRunStatus {
   /**
    * Callbacks to be called over different task events.
    */
-  public pauseResolve!: (result: GenericValueMap) => void;
-  public pauseReject!: (error: Error) => void;
-  public stopResolve!: (result: GenericValueMap) => void;
-  public stopReject!: (error: Error) => void;
   public finishResolve!: (result: GenericValueMap) => void;
   public finishReject!: (error: Error) => void;
+
+  public finishPromise!: Promise<GenericValueMap>;
 
   public configs!: FlowConfigs; // @todo Check if this is needed
 
@@ -65,10 +66,11 @@ export class FlowRunStatus {
    */
   public tasks!: TaskMap;
 
-  public constructor(spec: FlowSpec, runStatus?: any) {
+  public constructor(flow: Flow, spec: FlowSpec, runStatus?: any) {
+    this.flow = flow;
     this.processManager = new ProcessManager();
     this.id = FlowRunStatus.nextId;
-    FlowRunStatus.nextId++; // @todo Check overflow
+    FlowRunStatus.nextId = (FlowRunStatus.nextId + 1) % Number.MAX_SAFE_INTEGER;
 
     this.states = {
       Ready: new FlowReady(this),

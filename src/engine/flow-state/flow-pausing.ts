@@ -13,10 +13,10 @@ export class FlowPausing extends FlowState {
 
     if (error) {
       debug(`[${this.runStatus.id}] ⏸ Flow paused with error.`);
-      this.execPauseReject(error as Error);
+      this.execFinishReject(error as Error);
     } else {
       debug(`[${this.runStatus.id}] ⏸ Flow paused.`);
-      this.execPauseResolve();
+      this.execFinishResolve();
     }
   }
 

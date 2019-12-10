@@ -24,17 +24,17 @@ export class FlowReady extends FlowState {
     this.setContext(context);
     this.supplyParameters(params);
 
+    this.createFinishPromise();
+
     // Run tasks
     this.startReadyTasks();
-
-    const finishPromise = this.createFinishPromise();
 
     // Notify flow finished when flow has no tasks
     if (Object.keys(this.getSpec().tasks || {}).length === 0) {
       this.runStatus.state.finished();
     }
 
-    return finishPromise;
+    return this.runStatus.finishPromise;
   }
 
   public getSerializableState() {

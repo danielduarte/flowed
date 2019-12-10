@@ -97,7 +97,6 @@ export class RepeaterResolver {
   }
 }
 
-// Do nothing and finish
 export class ArrayMapResolver {
   public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
     const resolver = context.$flowed.getResolverByName(params.resolver);
@@ -140,5 +139,17 @@ export class ArrayMapResolver {
     }
 
     return { results };
+  }
+}
+
+export class StopResolver {
+  public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
+    return { promise: context.$flowed.flow.stop() };
+  }
+}
+
+export class PauseResolver {
+  public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
+    return { promise: context.$flowed.flow.pause() };
   }
 }

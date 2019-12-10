@@ -13,10 +13,10 @@ export class FlowStopping extends FlowState {
 
     if (error) {
       debug(`[${this.runStatus.id}] ◼ Flow stopped with error.`);
-      this.execStopReject(error as Error);
+      this.execFinishReject(error as Error);
     } else {
       debug(`[${this.runStatus.id}] ◼ Flow stopped.`);
-      this.execStopResolve();
+      this.execFinishResolve();
     }
   }
 

@@ -55,7 +55,14 @@ describe('the flow', () => {
   };
 
   it('can be paused and resumed', async () => {
+    let success: (value?: unknown) => void;
+    const successPromise = new Promise(resolve => {
+      success = resolve;
+    });
+
     const flow = new Flow(flowSpec);
+
+    let finishPromise;
 
     const pauseFlow = async () => {
       debug('-- Pausing flow --');
@@ -66,7 +73,12 @@ describe('the flow', () => {
         result2: text1 + text2,
       });
       debug('-- Flow resumed --');
-      flow.resume();
+      finishPromise = flow.resume();
+
+      const finalResult = await finishPromise;
+      expect(finalResult.finalStr).to.equal(text1 + text2 + text3 + text4);
+
+      success();
     };
 
     class AppendString {
@@ -87,7 +99,7 @@ describe('the flow', () => {
       }
     }
 
-    const finishPromise = flow.start(
+    flow.start(
       {
         initialStr: '',
         text1,
@@ -101,8 +113,7 @@ describe('the flow', () => {
       },
     );
 
-    const finalResult = await finishPromise;
-    expect(finalResult.finalStr).to.equal(text1 + text2 + text3 + text4);
+    return successPromise;
   });
 
   it('can be paused with error', async () => {

@@ -4,7 +4,9 @@ import {
   ConditionalResolver,
   EchoResolver,
   NoopResolver,
+  PauseResolver,
   RepeaterResolver,
+  StopResolver,
   SubFlowResolver,
   ThrowErrorResolver,
   WaitResolver,
@@ -30,6 +32,8 @@ export abstract class FlowState implements IFlow {
     'flowed::SubFlow': SubFlowResolver,
     'flowed::Repeater': RepeaterResolver,
     'flowed::ArrayMap': ArrayMapResolver,
+    'flowed::Stop': StopResolver,
+    'flowed::Pause': PauseResolver,
   };
 
   protected runStatus: FlowRunStatus;
@@ -59,7 +63,7 @@ export abstract class FlowState implements IFlow {
     throw this.createTransitionError(FlowTransitionEnum.Paused);
   }
 
-  public resume() {
+  public resume(): Promise<GenericValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Resume);
   }
 
@@ -83,22 +87,6 @@ export abstract class FlowState implements IFlow {
 
   public execFinishReject(error: Error) {
     this.runStatus.finishReject(error);
-  }
-
-  public execPauseResolve() {
-    this.runStatus.pauseResolve(this.runStatus.results);
-  }
-
-  public execPauseReject(error: Error) {
-    this.runStatus.pauseReject(error);
-  }
-
-  public execStopResolve() {
-    this.runStatus.stopResolve(this.runStatus.results);
-  }
-
-  public execStopReject(error: Error) {
-    this.runStatus.stopReject(error);
   }
 
   public isRunning() {
@@ -133,6 +121,7 @@ export abstract class FlowState implements IFlow {
       $flowed: {
         getResolverByName: this.getResolverByName.bind(this),
         processManager: this.runStatus.processManager,
+        flow: this.runStatus.flow,
       },
       ...context,
     };
@@ -149,24 +138,12 @@ export abstract class FlowState implements IFlow {
   }
 
   public createFinishPromise(): Promise<GenericValueMap> {
-    return new Promise<GenericValueMap>((resolve, reject) => {
+    this.runStatus.finishPromise = new Promise<GenericValueMap>((resolve, reject) => {
       this.runStatus.finishResolve = resolve;
       this.runStatus.finishReject = reject;
     });
-  }
 
-  public createPausePromise(): Promise<GenericValueMap> {
-    return new Promise<GenericValueMap>((resolve, reject) => {
-      this.runStatus.pauseResolve = resolve;
-      this.runStatus.pauseReject = reject;
-    });
-  }
-
-  public createStopPromise(): Promise<GenericValueMap> {
-    return new Promise<GenericValueMap>((resolve, reject) => {
-      this.runStatus.stopResolve = resolve;
-      this.runStatus.stopReject = reject;
-    });
+    return this.runStatus.finishPromise;
   }
 
   public getResolverForTask(task: Task) {

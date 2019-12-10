@@ -12,6 +12,11 @@ describe('a flow state can be', () => {
   });
 
   it('serialized and recovered', async () => {
+    let success: (value?: unknown) => void;
+    const successPromise = new Promise(resolve => {
+      success = resolve;
+    });
+
     const testRunState = (f: Flow, msg: string) => {
       const state = f.getSerializableState();
       debug(msg, state);
@@ -81,7 +86,68 @@ describe('a flow state can be', () => {
         result2: text1 + text2,
       });
       debug('-- Flow resumed --');
-      flow.resume();
+      const finishPromise = flow.resume();
+
+      const finalResult = await finishPromise;
+
+      testRunState(flow, 'FINAL RUN STATE');
+
+      expect(finalResult.finalStr).to.equal(text1 + text2 + text3 + text4);
+      expect(flowTasksRan).to.be.eql(['task1', 'task2', 'task3', 'task4']);
+
+      // ------------------------------
+
+      const flowRestored = new Flow(spec, pausedState);
+      expect(flowRestored.getSerializableState()).to.be.deep.equal(pausedState);
+
+      const pauseFlow2 = async () => {
+        debug('-- Pausing flow --');
+        const partialResult2 = await flowRestored.pause();
+        debug('-- Flow paused --');
+
+        testRunState(flowRestored, 'PAUSED RUN STATE');
+
+        expect(partialResult2).to.deep.equal({
+          result1: text1,
+          result2: text1 + text2,
+        });
+        debug('-- Flow resumed --');
+        flowRestored.resume();
+      };
+
+      const restoredFlowTasksRan: string[] = [];
+
+      class AppendString2 {
+        public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
+          debug(`Starting to execute task ${task.getCode()}`);
+          return new Promise<GenericValueMap>(resolve => {
+            setTimeout(() => {
+              if (task.getCode() === 'task2') {
+                // noinspection JSIgnoredPromiseFromCall
+                pauseFlow2();
+              }
+
+              restoredFlowTasksRan.push(task.getCode());
+              resolve({
+                result: params.text1 + params.text2,
+              });
+            }, 100);
+          });
+        }
+      }
+
+      // Note that when restarting a serialized flow, params must NOT be provided.
+      const finishRestoredPromise = flowRestored.start({}, ['result1', 'result2', 'result3', 'finalStr'], {
+        append: AppendString2,
+      });
+
+      const finalResultRestored = await finishRestoredPromise;
+
+      expect(finalResult.finalStr).to.equal(finalResultRestored.finalStr);
+
+      expect(restoredFlowTasksRan).to.be.eql(['task3', 'task4']);
+
+      success();
     };
 
     const flowTasksRan: string[] = [];
@@ -107,7 +173,7 @@ describe('a flow state can be', () => {
 
     testRunState(flow, 'INITIAL RUN STATE');
 
-    const finishPromise = flow.start(
+    flow.start(
       {
         initialStr: '',
         text1,
@@ -121,63 +187,6 @@ describe('a flow state can be', () => {
       },
     );
 
-    const finalResult = await finishPromise;
-
-    testRunState(flow, 'FINAL RUN STATE');
-
-    expect(finalResult.finalStr).to.equal(text1 + text2 + text3 + text4);
-    expect(flowTasksRan).to.be.eql(['task1', 'task2', 'task3', 'task4']);
-
-    // ------------------------------
-
-    const flowRestored = new Flow(spec, pausedState);
-    expect(flowRestored.getSerializableState()).to.be.deep.equal(pausedState);
-
-    const pauseFlow2 = async () => {
-      debug('-- Pausing flow --');
-      const partialResult = await flowRestored.pause();
-      debug('-- Flow paused --');
-
-      testRunState(flowRestored, 'PAUSED RUN STATE');
-
-      expect(partialResult).to.deep.equal({
-        result1: text1,
-        result2: text1 + text2,
-      });
-      debug('-- Flow resumed --');
-      flowRestored.resume();
-    };
-
-    const restoredFlowTasksRan: string[] = [];
-
-    class AppendString2 {
-      public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-        debug(`Starting to execute task ${task.getCode()}`);
-        return new Promise<GenericValueMap>(resolve => {
-          setTimeout(() => {
-            if (task.getCode() === 'task2') {
-              // noinspection JSIgnoredPromiseFromCall
-              pauseFlow2();
-            }
-
-            restoredFlowTasksRan.push(task.getCode());
-            resolve({
-              result: params.text1 + params.text2,
-            });
-          }, 100);
-        });
-      }
-    }
-
-    // Note that when restarting a serialized flow, params must NOT be provided.
-    const finishRestoredPromise = flowRestored.start({}, ['result1', 'result2', 'result3', 'finalStr'], {
-      append: AppendString2,
-    });
-
-    const finalResultRestored = await finishRestoredPromise;
-
-    expect(finalResult.finalStr).to.equal(finalResultRestored.finalStr);
-
-    expect(restoredFlowTasksRan).to.be.eql(['task3', 'task4']);
+    return successPromise;
   });
 });

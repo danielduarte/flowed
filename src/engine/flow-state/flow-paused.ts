@@ -7,8 +7,10 @@ export class FlowPaused extends FlowState {
     return FlowStateEnum.Paused;
   }
 
-  public resume() {
+  public resume(): Promise<GenericValueMap> {
     this.setState(FlowStateEnum.Running);
+
+    this.createFinishPromise();
 
     // @todo Send resume signal to tasks, when it is implemented
     this.startReadyTasks();
@@ -16,6 +18,8 @@ export class FlowPaused extends FlowState {
     if (!this.runStatus.state.isRunning()) {
       this.runStatus.state.finished();
     }
+
+    return this.runStatus.finishPromise;
   }
 
   public stop(): Promise<GenericValueMap> {
