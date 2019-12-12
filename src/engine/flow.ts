@@ -41,8 +41,6 @@ export class Flow implements IFlow {
     this.runStatus.state.reset();
   }
 
-  // @todo Add a step() feature, for step-by-step execution
-
   public getSerializableState() {
     return this.runStatus.state.getSerializableState();
   }

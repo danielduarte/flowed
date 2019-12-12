@@ -30,7 +30,7 @@ export class Task {
   }
 
   public getResolverName() {
-    return this.spec.resolver.name;
+    return (this.spec.resolver || { name: 'flowed::Noop' }).name;
   }
 
   public getSerializableState() {
@@ -83,7 +83,7 @@ export class Task {
   public mapParamsForResolver(solvedReqs: GenericValueMap, automap: boolean, flowId: number) {
     const params: GenericValueMap = {};
 
-    let resolverParams = this.spec.resolver.params || {};
+    let resolverParams = (this.spec.resolver || { name: 'flowed::Noop' }).params || {};
 
     if (automap) {
       const requires = this.spec.requires || [];
@@ -138,7 +138,7 @@ export class Task {
 
     const results: GenericValueMap = {};
 
-    let resolverResults = this.spec.resolver.results || {};
+    let resolverResults = (this.spec.resolver || { name: 'flowed::Noop' }).results || {};
 
     if (automap) {
       const provides = this.spec.provides || [];

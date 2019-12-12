@@ -16,8 +16,7 @@ export interface TaskSpec {
 
   defaultResult?: any;
 
-  // @todo check if this could be optional
-  resolver: TaskResolverSpec;
+  resolver?: TaskResolverSpec;
 }
 
 export interface TaskResolverSpec {
