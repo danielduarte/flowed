@@ -1,6 +1,6 @@
 {
   "name": "flowed",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "A fast and reliable flow manager and task runner for Node.js",
   "keywords": [
     "flow",
@@ -46,7 +46,7 @@
   "dependencies": {
     "@types/debug": "^4.1.5",
     "debug": "^4.1.1",
-    "stjs": "0.0.5"
+    "flowed-st": "^1.0.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^0.1.3",

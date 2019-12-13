@@ -4,7 +4,7 @@ import { TaskSpec } from './specs';
 import { UserValueQueueManager } from './user-value-queue-manager';
 const debug = rawDebug('flowed:flow');
 // tslint:disable-next-line:no-var-requires
-const ST = require('stjs');
+const ST = require('flowed-st');
 
 export class Task {
   // @todo convert to protected
