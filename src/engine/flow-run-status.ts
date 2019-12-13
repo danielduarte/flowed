@@ -114,12 +114,12 @@ export class FlowRunStatus {
           this.tasksReady.push(task);
         }
 
-        const taskReqs = task.getSpec().requires || [];
+        const taskReqs = task.spec.requires || [];
         for (const req of taskReqs) {
           if (!this.tasksByReq.hasOwnProperty(req)) {
             this.tasksByReq[req] = {};
           }
-          this.tasksByReq[req][task.getCode()] = task;
+          this.tasksByReq[req][task.code] = task;
         }
       }
     }
@@ -160,7 +160,7 @@ export class FlowRunStatus {
     const serialized: SerializedFlowRunStatus = {
       id: this.id,
       nextProcessId: this.processManager.nextProcessId,
-      tasksReady: this.tasksReady.map(task => task.getCode()),
+      tasksReady: this.tasksReady.map(task => task.code),
       tasksByReq: {},
       taskProvisions: JSON.parse(JSON.stringify(this.taskProvisions)),
       expectedResults: JSON.parse(JSON.stringify(this.expectedResults)),

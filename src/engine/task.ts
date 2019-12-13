@@ -7,26 +7,10 @@ const debug = rawDebug('flowed:flow');
 const ST = require('flowed-st');
 
 export class Task {
-  // @todo convert to protected
   public runStatus!: TaskRunStatus;
 
-  protected code: string;
-
-  protected spec: TaskSpec;
-
-  public constructor(code: string, spec: TaskSpec) {
-    this.code = code;
-    this.spec = spec;
-
+  public constructor(public code: string, public spec: TaskSpec) {
     this.parseSpec();
-  }
-
-  public getCode() {
-    return this.code;
-  }
-
-  public getSpec() {
-    return this.spec;
   }
 
   public getResolverName() {
@@ -90,7 +74,7 @@ export class Task {
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with requires = []
       const automappedParams = requires.map(req => ({ [req]: req })).reduce((accum, peer) => Object.assign(accum, peer), {});
-      debug(`[${flowId}]   🛈 Automapped resolver params in task '${this.getCode()}':`, automappedParams);
+      debug(`[${flowId}]   🛈 Automapped resolver params in task '${this.code}':`, automappedParams);
       resolverParams = Object.assign(automappedParams, resolverParams);
     }
 
@@ -132,7 +116,9 @@ export class Task {
   public mapResultsFromResolver(solvedResults: GenericValueMap, automap: boolean, flowId: number) {
     if (typeof solvedResults !== 'object') {
       throw new Error(
-        `Expected resolver for task '${this.getCode()}' to return an object or Promise that resolves to object. Returned value is of type '${typeof solvedResults}'.`,
+        `Expected resolver for task '${
+          this.code
+        }' to return an object or Promise that resolves to object. Returned value is of type '${typeof solvedResults}'.`,
       );
     }
 
@@ -145,7 +131,7 @@ export class Task {
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with provides = []
       const automappedResults = provides.map(prov => ({ [prov]: prov })).reduce((accum, peer) => Object.assign(accum, peer), {});
-      debug(`[${flowId}]   🛈 Automapped resolver results in task '${this.getCode()}':`, automappedResults);
+      debug(`[${flowId}]   🛈 Automapped resolver results in task '${this.code}':`, automappedResults);
       resolverResults = Object.assign(automappedResults, resolverResults);
     }
 

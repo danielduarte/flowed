@@ -153,7 +153,7 @@ export abstract class FlowState implements IFlow {
 
     if (resolver === null) {
       throw new Error(
-        `Task resolver '${name}' for task '${task.getCode()}' has no definition. Defined custom resolvers are: [${Object.keys(
+        `Task resolver '${name}' for task '${task.code}' has no definition. Defined custom resolvers are: [${Object.keys(
           this.runStatus.resolvers,
         ).join(', ')}].`,
       );
@@ -238,7 +238,7 @@ export abstract class FlowState implements IFlow {
         }, errorHandler)
         .catch(errorHandler);
 
-      debug(`[${this.runStatus.id}]   ‣ Task '${task.getCode()}' started, params:`, process.getParams());
+      debug(`[${this.runStatus.id}]   ‣ Task '${task.code}' started, params:`, process.getParams());
     }
   }
 
@@ -256,8 +256,8 @@ export abstract class FlowState implements IFlow {
     this.runStatus.processManager.removeProcess(process);
 
     const task = process.task;
-    const taskCode = task.getCode();
-    const taskSpec = task.getSpec();
+    const taskCode = task.code;
+    const taskSpec = task.spec;
     const taskProvisions = taskSpec.provides || [];
     const taskResults = task.getResults();
     const hasDefaultResult = taskSpec.hasOwnProperty('defaultResult');

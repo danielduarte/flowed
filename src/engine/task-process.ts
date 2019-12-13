@@ -52,7 +52,9 @@ export class TaskProcess {
         resolverPromise.constructor.name !== 'Promise'
       ) {
         throw new Error(
-          `Expected resolver for task '${this.task.getCode()}' to return an object or Promise that resolves to object. Returned value is of type '${typeof resolverPromise}'.`,
+          `Expected resolver for task '${
+            this.task.code
+          }' to return an object or Promise that resolves to object. Returned value is of type '${typeof resolverPromise}'.`,
         );
       }
 

@@ -30,7 +30,6 @@ export class ConditionalResolver {
 // Wait for 'ms' milliseconds and finish
 export class WaitResolver {
   public async exec(params: GenericValueMap): Promise<GenericValueMap> {
-    // @todo add value as param to resolve after time is out
     return new Promise<GenericValueMap>(resolve => {
       setTimeout(() => {
         resolve({ result: params.result });

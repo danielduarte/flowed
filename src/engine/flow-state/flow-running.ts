@@ -12,14 +12,12 @@ export class FlowRunning extends FlowState {
   public pause(): Promise<GenericValueMap> {
     this.setState(FlowStateEnum.Pausing);
 
-    // @todo Send pause signal to tasks, when it is implemented
     return this.runStatus.finishPromise;
   }
 
   public stop(): Promise<GenericValueMap> {
     this.setState(FlowStateEnum.Stopping);
 
-    // @todo Send stop signal to tasks, when it is implemented
     return this.runStatus.finishPromise;
   }
 

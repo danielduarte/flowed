@@ -64,7 +64,7 @@ describe('the flow', () => {
       public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
         return new Promise<GenericValueMap>((resolve, reject) => {
           setTimeout(() => {
-            if (task.getCode() === 'task2' && !stoppedOnce) {
+            if (task.code === 'task2' && !stoppedOnce) {
               stoppedOnce = true;
               // noinspection JSIgnoredPromiseFromCall
               stopFlow();

@@ -83,10 +83,10 @@ describe('the flow', () => {
 
     class AppendString {
       public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-        debug(`Starting to execute task ${task.getCode()}`);
+        debug(`Starting to execute task ${task.code}`);
         return new Promise<GenericValueMap>(resolve => {
           setTimeout(() => {
-            if (task.getCode() === 'task2') {
+            if (task.code === 'task2') {
               // noinspection JSIgnoredPromiseFromCall
               pauseFlow();
             }

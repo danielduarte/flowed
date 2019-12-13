@@ -12,7 +12,6 @@ export class FlowPaused extends FlowState {
 
     this.createFinishPromise();
 
-    // @todo Send resume signal to tasks, when it is implemented
     this.startReadyTasks();
 
     if (!this.runStatus.state.isRunning()) {

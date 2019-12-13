@@ -119,15 +119,15 @@ describe('a flow state can be', () => {
 
       class AppendString2 {
         public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-          debug(`Starting to execute task ${task.getCode()}`);
+          debug(`Starting to execute task ${task.code}`);
           return new Promise<GenericValueMap>(resolve => {
             setTimeout(() => {
-              if (task.getCode() === 'task2') {
+              if (task.code === 'task2') {
                 // noinspection JSIgnoredPromiseFromCall
                 pauseFlow2();
               }
 
-              restoredFlowTasksRan.push(task.getCode());
+              restoredFlowTasksRan.push(task.code);
               resolve({
                 result: params.text1 + params.text2,
               });
@@ -154,15 +154,15 @@ describe('a flow state can be', () => {
 
     class AppendString {
       public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-        debug(`Starting to execute task ${task.getCode()}`);
+        debug(`Starting to execute task ${task.code}`);
         return new Promise<GenericValueMap>(resolve => {
           setTimeout(() => {
-            if (task.getCode() === 'task2') {
+            if (task.code === 'task2') {
               // noinspection JSIgnoredPromiseFromCall
               pauseFlow();
             }
 
-            flowTasksRan.push(task.getCode());
+            flowTasksRan.push(task.code);
             resolve({
               result: params.text1 + params.text2,
             });
