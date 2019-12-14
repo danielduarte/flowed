@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    falta version
+    "tasks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "requires": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provides": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "defaultResult": {},
+          "resolver": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "params": {
+                "type": "object"
+              },
+              "results": {
+                "type": "object"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "name"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "resolver"
+        ]
+      },
+      "required": []
+    },
+    "configs": {
+      "type": "object",
+      "properties": {
+        "throwErrorOnUnsolvableResult": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "required": [],
+  "definitions": {
+  }
+}
