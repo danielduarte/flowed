@@ -1,19 +1,19 @@
 // @todo Check if this could be the same as ValueMap
 import { AnyValue, ValueMap } from '../types';
 
-export type UserValueQueue = AnyValue[];
+export type ValueQueue = AnyValue[];
 
-export interface UserValueQueueMap {
-  [name: string]: UserValueQueue;
+export interface ValueQueueMap {
+  [name: string]: ValueQueue;
 }
 
-// Everything needed to create a UserValueQueueManager restoring a previous state
-export type SerializableUserValueQueueManager = UserValueQueueMap;
+// Everything needed to create a ValueQueueManager restoring a previous state
+export type SerializableValueQueueManager = ValueQueueMap;
 
-export class UserValueQueueManager {
-  public static fromSerializable(serializable: SerializableUserValueQueueManager): UserValueQueueManager {
+export class ValueQueueManager {
+  public static fromSerializable(serializable: SerializableValueQueueManager): ValueQueueManager {
     const queueNames = Object.keys(serializable);
-    const instance = new UserValueQueueManager(queueNames);
+    const instance = new ValueQueueManager(queueNames);
     instance.queues = serializable;
     instance.nonEmptyQueues = queueNames.reduce((acc, name) => {
       if (instance.queues[name].length > 0) {
@@ -24,7 +24,7 @@ export class UserValueQueueManager {
     return instance;
   }
 
-  protected queues: UserValueQueueMap;
+  protected queues: ValueQueueMap;
 
   // This field can be calculated from this.queues
   protected queueNames: string[]; // List of queue names
@@ -35,7 +35,7 @@ export class UserValueQueueManager {
   public constructor(queueNames: string[]) {
     this.nonEmptyQueues = new Set();
     this.queueNames = [...queueNames];
-    this.queues = queueNames.reduce((acc: UserValueQueueMap, name) => {
+    this.queues = queueNames.reduce((acc: ValueQueueMap, name) => {
       acc[name] = [];
       return acc;
     }, {});
@@ -81,7 +81,7 @@ export class UserValueQueueManager {
   }
 
   // For this to work, all user values must be serializable to JSON
-  public toSerializable(): SerializableUserValueQueueManager {
+  public toSerializable(): SerializableValueQueueManager {
     return JSON.parse(JSON.stringify(this.queues));
   }
 

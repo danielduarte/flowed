@@ -10,4 +10,4 @@
 /.nyc_output
 
 # Private files
-.coveralls.yml
+/.coveralls.yml

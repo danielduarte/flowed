@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { UserValueQueueManager } from '../src/engine/user-value-queue-manager';
+import { ValueQueueManager } from '../src/engine/value-queue-manager';
 
 describe('queue manager', () => {
-  const queueManager = new UserValueQueueManager(['a', 'b', 'c']);
+  const queueManager = new ValueQueueManager(['a', 'b', 'c']);
 
   it('can queue several values', () => {
     queueManager.push('a', 'a1');
@@ -108,7 +108,7 @@ describe('queue manager', () => {
     // Check serializing multiple times gives the same result
     expect(serialized).to.be.eql(serializedAgain);
 
-    const queueManagerClone = UserValueQueueManager.fromSerializable(JSON.parse(serialized));
+    const queueManagerClone = ValueQueueManager.fromSerializable(JSON.parse(serialized));
 
     // Check unserialized manager is equal to original
     expect(queueManagerClone).to.be.eql(queueManager);

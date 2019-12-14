@@ -1,7 +1,7 @@
 import { debug as rawDebug } from 'debug';
 import { TaskRunStatus, ValueMap } from '../types';
 import { TaskSpec } from './specs';
-import { UserValueQueueManager } from './user-value-queue-manager';
+import { ValueQueueManager } from './value-queue-manager';
 const debug = rawDebug('flowed:flow');
 // tslint:disable-next-line:no-var-requires
 const ST = require('flowed-st');
@@ -25,14 +25,14 @@ export class Task {
 
   public setSerializableState(runStatus: any) {
     this.runStatus = JSON.parse(JSON.stringify(runStatus));
-    this.runStatus.solvedReqs = UserValueQueueManager.fromSerializable(runStatus.solvedReqs);
+    this.runStatus.solvedReqs = ValueQueueManager.fromSerializable(runStatus.solvedReqs);
   }
 
   public resetRunStatus() {
     const reqs = [...(this.spec.requires || [])];
 
     this.runStatus = {
-      solvedReqs: new UserValueQueueManager(reqs),
+      solvedReqs: new ValueQueueManager(reqs),
       solvedResults: {},
     };
   }
