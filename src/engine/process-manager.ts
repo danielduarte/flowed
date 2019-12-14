@@ -1,4 +1,4 @@
-import { GenericValueMap, TaskResolverClass } from '../types';
+import { TaskResolverClass, ValueMap } from '../types';
 import { Task } from './task';
 import { TaskProcess } from './task-process';
 
@@ -15,7 +15,7 @@ export class ProcessManager {
   public createProcess(
     task: Task,
     taskResolverConstructor: TaskResolverClass,
-    context: GenericValueMap,
+    context: ValueMap,
     automapParams: boolean,
     automapResults: boolean,
     flowId: number,

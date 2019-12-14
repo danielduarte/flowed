@@ -1,15 +1,15 @@
 import { expect } from 'chai';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 
 describe('resolvers with automap', () => {
   class Concat3 {
-    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap): Promise<ValueMap> {
       return { x: (params.a || '1') + (params.b || '2') + (params.c || '3') };
     }
   }
 
   class Concat2 {
-    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap): Promise<ValueMap> {
       return { z: (params.x || '8') + (params.y || '9') };
     }
   }

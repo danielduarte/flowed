@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 
 class TimerResolver {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve({ a: 1 });
@@ -12,7 +12,7 @@ class TimerResolver {
 }
 
 class DirectResolver {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     return { b: 2 };
   }
 }

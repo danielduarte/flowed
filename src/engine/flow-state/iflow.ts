@@ -1,13 +1,13 @@
-import { FlowStateEnum, GenericValueMap, TaskResolverMap } from '../../types';
+import { FlowStateEnum, TaskResolverMap, ValueMap } from '../../types';
 
 export interface IFlow {
-  start(params: GenericValueMap, expectedResults: string[], resolvers: TaskResolverMap, context: GenericValueMap): Promise<GenericValueMap>;
+  start(params: ValueMap, expectedResults: string[], resolvers: TaskResolverMap, context: ValueMap): Promise<ValueMap>;
 
-  pause(): Promise<GenericValueMap>;
+  pause(): Promise<ValueMap>;
 
-  resume(): Promise<GenericValueMap>;
+  resume(): Promise<ValueMap>;
 
-  stop(): Promise<GenericValueMap>;
+  stop(): Promise<ValueMap>;
 
   reset(): void;
 

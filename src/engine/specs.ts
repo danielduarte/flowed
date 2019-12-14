@@ -1,8 +1,10 @@
 export interface FlowSpec {
   tasks?: TaskSpecMap;
 
-  // @todo Change for options or opts?
+  // @deprecated Use options instead
   configs?: FlowConfigs;
+
+  options?: FlowOptions;
 }
 
 export class TaskSpecMap {
@@ -35,7 +37,7 @@ export interface TaskResultsMap {
   [code: string]: any;
 }
 
-export interface FlowConfigs {
+export interface FlowOptions {
   // Defaults to false
   throwErrorOnUnsolvableResult?: boolean;
 
@@ -45,3 +47,6 @@ export interface FlowConfigs {
   // Defaults to false
   resolverAutomapResults?: boolean;
 }
+
+// @deprecated Use FlowOptions instead
+export type FlowConfigs = FlowOptions;

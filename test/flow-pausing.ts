@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
-import { GenericValueMap } from '../src';
+import { ValueMap } from '../src';
 import { Flow, Task } from '../src/engine';
 const debug = rawDebug('flowed:test');
 
@@ -82,9 +82,9 @@ describe('the flow', () => {
     };
 
     class AppendString {
-      public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
+      public async exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
         debug(`Starting to execute task ${task.code}`);
-        return new Promise<GenericValueMap>(resolve => {
+        return new Promise<ValueMap>(resolve => {
           setTimeout(() => {
             if (task.code === 'task2') {
               // noinspection JSIgnoredPromiseFromCall
@@ -125,8 +125,8 @@ describe('the flow', () => {
     });
 
     class AppendString {
-      public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-        return new Promise<GenericValueMap>((resolve, reject) => {
+      public async exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
+        return new Promise<ValueMap>((resolve, reject) => {
           flow
             .pause()
             .then(() => testPromiseReject(new Error('Expected pause to fail'))) // Important: The test promise is rejected if the pause succeeds (pause is expected to fail)

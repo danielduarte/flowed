@@ -1,26 +1,26 @@
 import { expect } from 'chai';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 
 class GetName {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     return { name: 'Daniel Duarte' };
   }
 }
 
 class GetAge {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     return { age: 38 };
   }
 }
 
 class GetCity {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     return { city: 'Tandil' };
   }
 }
 
 class Echo {
-  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+  public async exec(params: ValueMap): Promise<ValueMap> {
     return { out: params.in };
   }
 }

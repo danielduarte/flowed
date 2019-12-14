@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
-import { GenericValueMap } from '../src';
+import { ValueMap } from '../src';
 import { FlowManager } from '../src/engine';
 import * as ResolverLibrary from '../src/resolver-library';
 const debug = rawDebug('flowed:test');
@@ -39,14 +39,14 @@ describe('the ResolverLibrary / task repeater', () => {
   };
 
   class LogTextSampleResolver {
-    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap): Promise<ValueMap> {
       debug('This is a text:', params.someValue);
       return {};
     }
   }
 
   class DelayedLogTextSampleResolver {
-    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap): Promise<ValueMap> {
       const rnd = 'Run ID: ' + Math.ceil(Math.random() * 1000);
       debug('Starts', rnd);
 
@@ -54,19 +54,19 @@ describe('the ResolverLibrary / task repeater', () => {
         setTimeout(() => {
           debug('This is a delayed text:', params.someValue, rnd);
           resolve({});
-        }, Math.ceil(Math.random() * 100));
+        }, Math.ceil(Math.random() * 20));
       });
     }
   }
 
   class LogTextSampleResolverError {
-    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap): Promise<ValueMap> {
       throw new Error('Intentional error in resolver');
     }
   }
 
   class DelayedLogTextSampleResolverError {
-    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap): Promise<ValueMap> {
       return new Promise((resolve, reject) => {
         throw new Error('Intentional error in resolver');
       });

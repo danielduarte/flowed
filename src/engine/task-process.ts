@@ -1,31 +1,31 @@
-import { GenericValueMap, TaskResolverClass } from '../types';
+import { TaskResolverClass, ValueMap } from '../types';
 import { ProcessManager } from './process-manager';
 import { Task } from './task';
 
 export class TaskProcess {
-  protected params!: GenericValueMap;
+  protected params!: ValueMap;
 
   constructor(
     public manager: ProcessManager,
     public id: number,
     public task: Task, // @todo convert to protected?
     protected taskResolverConstructor: TaskResolverClass,
-    protected context: GenericValueMap,
+    protected context: ValueMap,
     protected automapParams: boolean,
     protected automapResults: boolean,
     protected flowId: number,
   ) {}
 
-  public getParams(): GenericValueMap {
+  public getParams(): ValueMap {
     return this.params;
   }
 
-  public run(): Promise<GenericValueMap> {
+  public run(): Promise<ValueMap> {
     this.params = this.task.mapParamsForResolver(this.task.runStatus.solvedReqs.popAll(), this.automapParams, this.flowId);
     const resolver = new this.taskResolverConstructor();
 
     return new Promise((resolve, reject) => {
-      const onResolverSuccess = (resolverValue: GenericValueMap) => {
+      const onResolverSuccess = (resolverValue: ValueMap) => {
         const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId);
         this.task.runStatus.solvedResults = results;
         resolve(this.task.runStatus.solvedResults);

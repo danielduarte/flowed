@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 const debug = rawDebug('flowed:test');
 
 describe('resolver loop', () => {
@@ -54,7 +54,7 @@ describe('resolver loop', () => {
   });
 
   class Concat {
-    public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
       debug('Started sub-task');
       return new Promise((resolve, reject) => {
         setImmediate(() => {

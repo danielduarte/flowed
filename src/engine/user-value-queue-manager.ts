@@ -1,11 +1,7 @@
-export type UserValue = any;
+// @todo Check if this could be the same as ValueMap
+import { AnyValue, ValueMap } from '../types';
 
-// @todo Check if this could be the same as GenericValueMap
-export interface UserValueMap {
-  [name: string]: UserValue;
-}
-
-export type UserValueQueue = UserValue[];
+export type UserValueQueue = AnyValue[];
 
 export interface UserValueQueueMap {
   [name: string]: UserValueQueue;
@@ -45,7 +41,7 @@ export class UserValueQueueManager {
     }, {});
   }
 
-  public push(queueName: string, value: UserValue) {
+  public push(queueName: string, value: AnyValue) {
     if (!this.queueNames.includes(queueName)) {
       throw new Error(`Queue name ${queueName} does not exist in queue manager. Existing queues are: [${this.queueNames.join(', ')}].`);
     }
@@ -63,10 +59,10 @@ export class UserValueQueueManager {
     }, []);
   }
 
-  public popAll(): UserValueMap {
+  public popAll(): ValueMap {
     this.validateAllNonEmpty();
 
-    return this.queueNames.reduce((acc: UserValueMap, name: string) => {
+    return this.queueNames.reduce((acc: ValueMap, name: string) => {
       acc[name] = this.queues[name].shift();
       if (this.queues[name].length === 0) {
         this.nonEmptyQueues.delete(name);
@@ -75,10 +71,10 @@ export class UserValueQueueManager {
     }, {});
   }
 
-  public topAll(): UserValueMap {
+  public topAll(): ValueMap {
     this.validateAllNonEmpty();
 
-    return this.queueNames.reduce((acc: UserValueMap, name: string) => {
+    return this.queueNames.reduce((acc: ValueMap, name: string) => {
       acc[name] = this.queues[name][0];
       return acc;
     }, {});

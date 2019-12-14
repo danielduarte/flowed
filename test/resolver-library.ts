@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { GenericValueMap, Task, WaitResolver } from '../src';
+import { Task, ValueMap, WaitResolver } from '../src';
 import { FlowManager } from '../src/engine';
 import * as ResolverLibrary from '../src/resolver-library';
 import { TaskResolver } from '../src/types';
@@ -40,7 +40,7 @@ describe('the ResolverLibrary', () => {
         },
       },
       {
-        time: 100,
+        time: 10,
         providedResultAfterTimeout: 'I am the correct result',
       },
       ['timeoutResult'],
@@ -101,13 +101,13 @@ describe('the ResolverLibrary', () => {
 
   it('runs conditional resolver', async () => {
     class TrueTask {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { msg: `This is the TRUE branch: ${params.text}` };
       }
     }
 
     class FalseTask {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { msg: `This is the FALSE branch: ${params.text}` };
       }
     }
@@ -174,13 +174,13 @@ describe('the ResolverLibrary', () => {
 
   it('runs conditional resolver with the same result name', async () => {
     class TrueTask {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { msg: `This is the TRUE branch: ${params.text}` };
       }
     }
 
     class FalseTask {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { msg: `This is the FALSE branch: ${params.text}` };
       }
     }
@@ -245,13 +245,13 @@ describe('the ResolverLibrary', () => {
 
   it('runs conditional resolver with missing conditional results', async () => {
     class TrueTask {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { msg: `This is the TRUE branch: ${params.text}` };
       }
     }
 
     class FalseTask {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { msg: `This is the FALSE branch: ${params.text}` };
       }
     }

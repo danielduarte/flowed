@@ -1,10 +1,10 @@
 import { expect } from 'chai';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 
 describe('resolvers with direct value', () => {
   it('run without error', async () => {
     class Sum {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { z: params.x + params.y };
       }
     }
@@ -39,7 +39,7 @@ describe('resolvers with direct value', () => {
 
   it('run without sharing values between tasks', async () => {
     class SumOrConcat {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { z: params.x + params.y };
       }
     }

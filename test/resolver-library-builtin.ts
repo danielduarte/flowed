@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { GenericValueMap } from '../src';
+import { ValueMap } from '../src';
 import { FlowManager } from '../src/engine';
 
 describe('the ResolverLibrary', () => {
@@ -31,7 +31,7 @@ describe('the ResolverLibrary', () => {
         },
       },
       {
-        time: 100,
+        time: 10,
         providedResultAfterTimeout: 'I am the correct result',
       },
       ['timeoutResult'],
@@ -82,13 +82,13 @@ describe('the ResolverLibrary', () => {
 
   it('runs conditional resolver without mapping', async () => {
     class TrueTask {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { msg: `This is the TRUE branch: ${params.text}` };
       }
     }
 
     class FalseTask {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { msg: `This is the FALSE branch: ${params.text}` };
       }
     }

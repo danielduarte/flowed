@@ -1,6 +1,6 @@
 import { debug as rawDebug } from 'debug';
 import { FlowState } from '.';
-import { GenericValueMap } from '../../types';
+import { ValueMap } from '../../types';
 import { FlowStateEnum } from '../../types';
 const debug = rawDebug('flowed:flow');
 
@@ -9,13 +9,13 @@ export class FlowRunning extends FlowState {
     return FlowStateEnum.Running;
   }
 
-  public pause(): Promise<GenericValueMap> {
+  public pause(): Promise<ValueMap> {
     this.setState(FlowStateEnum.Pausing);
 
     return this.runStatus.finishPromise;
   }
 
-  public stop(): Promise<GenericValueMap> {
+  public stop(): Promise<ValueMap> {
     this.setState(FlowStateEnum.Stopping);
 
     return this.runStatus.finishPromise;

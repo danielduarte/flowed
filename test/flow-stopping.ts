@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { GenericValueMap } from '../src';
+import { ValueMap } from '../src';
 import { Flow, Task } from '../src/engine';
 
 describe('the flow', () => {
@@ -61,8 +61,8 @@ describe('the flow', () => {
     });
 
     class AppendString {
-      public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-        return new Promise<GenericValueMap>((resolve, reject) => {
+      public async exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
+        return new Promise<ValueMap>((resolve, reject) => {
           setTimeout(() => {
             if (task.code === 'task2' && !stoppedOnce) {
               stoppedOnce = true;
@@ -73,7 +73,7 @@ describe('the flow', () => {
             resolve({
               result: params.text1 + params.text2,
             });
-          }, 100);
+          }, 10);
         });
       }
     }
@@ -132,8 +132,8 @@ describe('the flow', () => {
     });
 
     class AppendString {
-      public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-        return new Promise<GenericValueMap>((resolve, reject) => {
+      public async exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
+        return new Promise<ValueMap>((resolve, reject) => {
           flow
             .stop()
             .then(() => testPromiseReject(new Error('Expected stop to fail'))) // Important: The test promise is rejected if the stop succeeds (stop is expected to fail)

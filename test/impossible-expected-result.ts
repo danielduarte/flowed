@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 const debug = rawDebug('flowed:test');
 
 describe('flow with non solvable results', () => {
   it('throws an error (configurable)', async () => {
     class Echo {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         return { out1: params.in1, out2: params.in2 };
       }
     }

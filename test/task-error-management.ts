@@ -1,16 +1,16 @@
 import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 const debug = rawDebug('flowed:test');
 
 class AlwaysErrorThrown {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     throw new Error('This is an error in a task (using throw)');
   }
 }
 
 class AlwaysRejectPromise {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     return Promise.reject(new Error('This is an error in a task (using Promise.reject)'));
   }
 }

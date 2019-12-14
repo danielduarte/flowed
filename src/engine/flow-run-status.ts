@@ -1,10 +1,12 @@
-import { GenericValueMap, TaskResolverMap, TaskRunStatus } from '../types';
+import { debug as rawDebug } from 'debug';
+import { TaskResolverMap, TaskRunStatus, ValueMap } from '../types';
 import { FlowStateEnum, TaskMap } from '../types';
 import { Flow } from './flow';
 import { FlowFinished, FlowPaused, FlowPausing, FlowReady, FlowRunning, FlowState, FlowStopped, FlowStopping } from './flow-state';
 import { ProcessManager } from './process-manager';
-import { FlowConfigs, FlowSpec } from './specs';
+import { FlowOptions, FlowSpec } from './specs';
 import { Task } from './task';
+const debug = rawDebug('flowed:flow');
 
 export class FlowRunStatus {
   /**
@@ -35,19 +37,19 @@ export class FlowRunStatus {
 
   public expectedResults: string[] = [];
 
-  public results: GenericValueMap = {};
+  public results: ValueMap = {};
 
-  public context: GenericValueMap = {};
+  public context: ValueMap = {};
 
   /**
    * Callbacks to be called over different task events.
    */
-  public finishResolve!: (result: GenericValueMap) => void;
+  public finishResolve!: (result: ValueMap) => void;
   public finishReject!: (error: Error) => void;
 
-  public finishPromise!: Promise<GenericValueMap>;
+  public finishPromise!: Promise<ValueMap>;
 
-  public configs!: FlowConfigs; // @todo Check if this is needed
+  public options!: FlowOptions; // @todo Check if this is needed
 
   public states: { [stateKey: string]: FlowState };
 
@@ -101,7 +103,10 @@ export class FlowRunStatus {
     // To be used later to check if expectedResults can be fulfilled.
     this.taskProvisions = Array.from(new Set(provisions));
 
-    this.configs = this.spec.configs || {};
+    this.options = Object.assign({}, this.spec.configs || {}, this.spec.options || {});
+    if (this.spec.hasOwnProperty('configs')) {
+      debug("⚠️ DEPRECATED: 'configs' field in flow spec. Use 'options' instead.");
+    }
 
     this.tasksByReq = {};
     this.tasksReady = [];
@@ -149,7 +154,7 @@ export class FlowRunStatus {
     this.expectedResults = JSON.parse(JSON.stringify(runState.expectedResults));
     this.results = JSON.parse(JSON.stringify(runState.results));
     this.context = JSON.parse(JSON.stringify(runState.context)); // @todo add $flowed to context
-    this.configs = JSON.parse(JSON.stringify(runState.configs));
+    this.options = JSON.parse(JSON.stringify(runState.options));
 
     for (const [taskCode, taskStatus] of Object.entries(runState.taskStatuses)) {
       this.tasks[taskCode].setSerializableState(taskStatus);
@@ -166,7 +171,7 @@ export class FlowRunStatus {
       expectedResults: JSON.parse(JSON.stringify(this.expectedResults)),
       results: JSON.parse(JSON.stringify(this.results)),
       context: {},
-      configs: JSON.parse(JSON.stringify(this.configs)),
+      options: JSON.parse(JSON.stringify(this.options)),
       taskStatuses: {},
     };
 
@@ -193,7 +198,7 @@ export interface SerializedFlowRunStatus {
   tasksByReq: { [req: string]: string[] };
   taskProvisions: string[];
   expectedResults: string[];
-  configs: FlowConfigs;
+  options: FlowOptions;
   results: any; // Must be serializable
   context: any; // Must be serializable
   taskStatuses: { [taskCode: string]: TaskRunStatus }; // Must be serializable

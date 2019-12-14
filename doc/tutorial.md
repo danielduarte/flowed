@@ -157,12 +157,12 @@ In order to give the task parameters from the flow, we need to add a `params` pa
 
 ```JavaScript
 
-import { GenericValueMap } from 'flowed';
+import { ValueMap } from 'flowed';
 
 // ...
 
 class LoadAuthLocations {
-  public exec(params: GenericValueMap) {
+  public exec(params: ValueMap) {
     const locations = locationRepository.getAuthoriedForUser(params.userId);
     return locations;
   }
@@ -171,13 +171,13 @@ class LoadAuthLocations {
 
 Now take a look at the task "Get Session Info". It is supposed to provide two values, the `userId` and the `ip`.
 How would we `return` two values?
-Well, just like we did with the `params`, we actually return an object with the different results (a `GenericValueMap`).
+Well, just like we did with the `params`, we actually return an object with the different results (a `ValueMap`).
 
 Let's fix out class `LoadAuthLocations`:
 
 ```JavaScript
 class LoadAuthLocations {
-  public exec(params: GenericValueMap) {
+  public exec(params: ValueMap) {
     const locations = locationRepository.getAuthoriedForUser(params.userId);
     return { authorizedLocations: locations };
   }
@@ -320,7 +320,7 @@ Let's suppose our `locationRepository.getAuthoriedForUser` returns a Promise to 
 
 ```JavaScript
 class LoadAuthLocations {
-  public async exec(params: GenericValueMap) {
+  public async exec(params: ValueMap) {
     const locations = await locationRepository.getAuthoriedForUser(params.userId);
     return { authorizedLocations: locations };
   }

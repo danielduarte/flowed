@@ -11,7 +11,7 @@ import {
   ThrowErrorResolver,
   WaitResolver,
 } from '../../resolver-library';
-import { FlowStateEnum, FlowTransitionEnum, GenericValueMap, TaskResolverMap } from '../../types';
+import { FlowStateEnum, FlowTransitionEnum, TaskResolverMap, ValueMap } from '../../types';
 import { FlowRunStatus } from '../flow-run-status';
 import { Task } from '../task';
 import { TaskProcess } from '../task-process';
@@ -42,12 +42,7 @@ export abstract class FlowState implements IFlow {
     this.runStatus = runStatus;
   }
 
-  public start(
-    params: GenericValueMap = {},
-    expectedResults: string[] = [],
-    resolvers: TaskResolverMap = {},
-    context: GenericValueMap = {},
-  ): Promise<GenericValueMap> {
+  public start(params: ValueMap = {}, expectedResults: string[] = [], resolvers: TaskResolverMap = {}, context: ValueMap = {}): Promise<ValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Start);
   }
 
@@ -55,7 +50,7 @@ export abstract class FlowState implements IFlow {
     throw this.createTransitionError(FlowTransitionEnum.Finished);
   }
 
-  public pause(): Promise<GenericValueMap> {
+  public pause(): Promise<ValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Pause);
   }
 
@@ -63,11 +58,11 @@ export abstract class FlowState implements IFlow {
     throw this.createTransitionError(FlowTransitionEnum.Paused);
   }
 
-  public resume(): Promise<GenericValueMap> {
+  public resume(): Promise<ValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Resume);
   }
 
-  public stop(): Promise<GenericValueMap> {
+  public stop(): Promise<ValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Stop);
   }
 
@@ -98,7 +93,7 @@ export abstract class FlowState implements IFlow {
     const missingExpected = expectedResults.filter(r => !this.runStatus.taskProvisions.includes(r));
     if (missingExpected.length > 0) {
       const msg = `The results [${missingExpected.join(', ')}] are not provided by any task`;
-      if (this.runStatus.configs.throwErrorOnUnsolvableResult) {
+      if (this.runStatus.options.throwErrorOnUnsolvableResult) {
         throw new Error(msg);
       } else {
         debug(`Warning: ${msg}`);
@@ -116,7 +111,7 @@ export abstract class FlowState implements IFlow {
     this.runStatus.resolvers = resolvers;
   }
 
-  public setContext(context: GenericValueMap) {
+  public setContext(context: ValueMap) {
     this.runStatus.context = {
       $flowed: {
         getResolverByName: this.getResolverByName.bind(this),
@@ -127,7 +122,7 @@ export abstract class FlowState implements IFlow {
     };
   }
 
-  public supplyParameters(params: GenericValueMap) {
+  public supplyParameters(params: ValueMap) {
     for (const [paramCode, paramValue] of Object.entries(params)) {
       this.runStatus.state.supplyResult(paramCode, paramValue);
     }
@@ -137,8 +132,8 @@ export abstract class FlowState implements IFlow {
     return this.runStatus.spec;
   }
 
-  public createFinishPromise(): Promise<GenericValueMap> {
-    this.runStatus.finishPromise = new Promise<GenericValueMap>((resolve, reject) => {
+  public createFinishPromise(): Promise<ValueMap> {
+    this.runStatus.finishPromise = new Promise<ValueMap>((resolve, reject) => {
       this.runStatus.finishResolve = resolve;
       this.runStatus.finishReject = reject;
     });
@@ -222,8 +217,8 @@ export abstract class FlowState implements IFlow {
         task,
         taskResolver,
         this.runStatus.context,
-        !!this.runStatus.configs.resolverAutomapParams,
-        !!this.runStatus.configs.resolverAutomapResults,
+        !!this.runStatus.options.resolverAutomapParams,
+        !!this.runStatus.options.resolverAutomapResults,
         this.runStatus.id,
       );
 

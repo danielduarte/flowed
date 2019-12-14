@@ -1,5 +1,5 @@
 import { FlowState } from '.';
-import { GenericValueMap } from '../../types';
+import { ValueMap } from '../../types';
 import { FlowStateEnum } from '../../types';
 
 export class FlowPaused extends FlowState {
@@ -7,7 +7,7 @@ export class FlowPaused extends FlowState {
     return FlowStateEnum.Paused;
   }
 
-  public resume(): Promise<GenericValueMap> {
+  public resume(): Promise<ValueMap> {
     this.setState(FlowStateEnum.Running);
 
     this.createFinishPromise();
@@ -21,7 +21,7 @@ export class FlowPaused extends FlowState {
     return this.runStatus.finishPromise;
   }
 
-  public stop(): Promise<GenericValueMap> {
+  public stop(): Promise<ValueMap> {
     this.setState(FlowStateEnum.Stopping);
 
     return Promise.resolve(this.getResults());

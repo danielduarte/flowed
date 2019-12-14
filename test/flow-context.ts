@@ -1,10 +1,10 @@
 import { expect } from 'chai';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 
 describe('context for flows', () => {
   it('are used without error', async () => {
     class SampleWithContext {
-      public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
         return { result: context.prefix + params.text + context.suffix };
       }
     }

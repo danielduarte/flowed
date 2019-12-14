@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 
 describe('multi process flow', async () => {
   it('runs properly', async () => {
@@ -8,7 +8,7 @@ describe('multi process flow', async () => {
     const output: string[] = [];
 
     class ProvideMessage {
-      public async exec(): Promise<GenericValueMap> {
+      public async exec(): Promise<ValueMap> {
         return {
           message: `Message number ${msgCount++}`,
         };
@@ -16,7 +16,7 @@ describe('multi process flow', async () => {
     }
 
     class ConsoleLog {
-      public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap): Promise<ValueMap> {
         output.push('Incoming message: ' + params.text);
         return {};
       }
@@ -60,7 +60,7 @@ describe('multi process flow', async () => {
 
   it('runs loop', async () => {
     class Loop {
-      public async exec(params: GenericValueMap, context: GenericValueMap): Promise<GenericValueMap> {
+      public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
         if (context.counter > 0) {
           return { result: context.counter-- };
         }

@@ -1,10 +1,10 @@
-import { GenericValueMap } from '../../src';
+import { ValueMap } from '../../src';
 import { FlowManager } from '../../src/engine';
 import { ExampleFunction } from './types';
 
 namespace MathFn {
   export class Sqr {
-    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap): Promise<ValueMap> {
       return {
         result: params.x * params.x,
       };
@@ -12,7 +12,7 @@ namespace MathFn {
   }
 
   export class Sqrt {
-    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap): Promise<ValueMap> {
       return {
         result: Math.sqrt(params.x),
       };
@@ -20,7 +20,7 @@ namespace MathFn {
   }
 
   export class Sum {
-    public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+    public async exec(params: ValueMap): Promise<ValueMap> {
       return {
         result: params.x + params.y,
       };

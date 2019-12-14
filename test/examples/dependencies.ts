@@ -1,15 +1,15 @@
-import { GenericValueMap } from '../../src';
+import { ValueMap } from '../../src';
 import { FlowManager } from '../../src/engine';
 import { ExampleFunction } from './types';
 
 class DummyResolver {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     return {};
   }
 }
 
 // noinspection JSUnusedGlobalSymbols
-export const dependences: ExampleFunction = () => {
+export const dependencies: ExampleFunction = () => {
   return FlowManager.run(
     {
       tasks: {

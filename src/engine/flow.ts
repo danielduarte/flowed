@@ -1,4 +1,4 @@
-import { FlowStateEnum, GenericValueMap, TaskResolverMap } from '../types';
+import { FlowStateEnum, TaskResolverMap, ValueMap } from '../types';
 import { FlowRunStatus } from './flow-run-status';
 import { IFlow } from './flow-state/iflow';
 import { FlowSpec } from './specs';
@@ -14,24 +14,19 @@ export class Flow implements IFlow {
     return this.runStatus.state.getStateCode();
   }
 
-  public start(
-    params: GenericValueMap = {},
-    expectedResults: string[] = [],
-    resolvers: TaskResolverMap = {},
-    context: GenericValueMap = {},
-  ): Promise<GenericValueMap> {
+  public start(params: ValueMap = {}, expectedResults: string[] = [], resolvers: TaskResolverMap = {}, context: ValueMap = {}): Promise<ValueMap> {
     return this.runStatus.state.start(params, expectedResults, resolvers, context);
   }
 
-  public pause(): Promise<GenericValueMap> {
+  public pause(): Promise<ValueMap> {
     return this.runStatus.state.pause();
   }
 
-  public resume(): Promise<GenericValueMap> {
+  public resume(): Promise<ValueMap> {
     return this.runStatus.state.resume();
   }
 
-  public stop(): Promise<GenericValueMap> {
+  public stop(): Promise<ValueMap> {
     return this.runStatus.state.stop();
   }
 

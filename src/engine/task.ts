@@ -1,5 +1,5 @@
 import { debug as rawDebug } from 'debug';
-import { GenericValueMap, TaskRunStatus } from '../types';
+import { TaskRunStatus, ValueMap } from '../types';
 import { TaskSpec } from './specs';
 import { UserValueQueueManager } from './user-value-queue-manager';
 const debug = rawDebug('flowed:flow');
@@ -55,7 +55,7 @@ export class Task {
     this.runStatus.solvedReqs.push(reqName, value);
   }
 
-  public supplyReqs(reqsMap: GenericValueMap) {
+  public supplyReqs(reqsMap: ValueMap) {
     for (const reqName in reqsMap) {
       if (reqsMap.hasOwnProperty(reqName)) {
         this.supplyReq(reqName, reqsMap[reqName]);
@@ -64,8 +64,8 @@ export class Task {
   }
 
   // @todo convert to protected
-  public mapParamsForResolver(solvedReqs: GenericValueMap, automap: boolean, flowId: number) {
-    const params: GenericValueMap = {};
+  public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number) {
+    const params: ValueMap = {};
 
     let resolverParams = (this.spec.resolver || { name: 'flowed::Noop' }).params || {};
 
@@ -80,8 +80,8 @@ export class Task {
 
     let paramValue;
     for (const [resolverParamName, paramSolvingInfo] of Object.entries(resolverParams)) {
-      // Added to make sure default value is undefined
       // @todo Add test to check the case when a loop round does not set anything and make sure next value is undefined by default
+      // Added to make sure default value is undefined
       paramValue = undefined;
 
       // If it is string, it is a task param name
@@ -113,7 +113,7 @@ export class Task {
   }
 
   // @todo convert to protected
-  public mapResultsFromResolver(solvedResults: GenericValueMap, automap: boolean, flowId: number) {
+  public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number) {
     if (typeof solvedResults !== 'object') {
       throw new Error(
         `Expected resolver for task '${
@@ -122,7 +122,7 @@ export class Task {
       );
     }
 
-    const results: GenericValueMap = {};
+    const results: ValueMap = {};
 
     let resolverResults = (this.spec.resolver || { name: 'flowed::Noop' }).results || {};
 

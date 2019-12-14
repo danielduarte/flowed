@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { debug as rawDebug } from 'debug';
-import { Flow, GenericValueMap } from '../src';
+import { Flow, ValueMap } from '../src';
 import { Task } from '../src/engine';
 const debug = rawDebug('flowed:test');
 
@@ -118,9 +118,9 @@ describe('a flow state can be', () => {
       const restoredFlowTasksRan: string[] = [];
 
       class AppendString2 {
-        public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
+        public async exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
           debug(`Starting to execute task ${task.code}`);
-          return new Promise<GenericValueMap>(resolve => {
+          return new Promise<ValueMap>(resolve => {
             setTimeout(() => {
               if (task.code === 'task2') {
                 // noinspection JSIgnoredPromiseFromCall
@@ -131,7 +131,7 @@ describe('a flow state can be', () => {
               resolve({
                 result: params.text1 + params.text2,
               });
-            }, 100);
+            }, 10);
           });
         }
       }
@@ -153,9 +153,9 @@ describe('a flow state can be', () => {
     const flowTasksRan: string[] = [];
 
     class AppendString {
-      public async exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
+      public async exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
         debug(`Starting to execute task ${task.code}`);
-        return new Promise<GenericValueMap>(resolve => {
+        return new Promise<ValueMap>(resolve => {
           setTimeout(() => {
             if (task.code === 'task2') {
               // noinspection JSIgnoredPromiseFromCall
@@ -166,7 +166,7 @@ describe('a flow state can be', () => {
             resolve({
               result: params.text1 + params.text2,
             });
-          }, 100);
+          }, 10);
         });
       }
     }

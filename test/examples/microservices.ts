@@ -1,9 +1,9 @@
-import { GenericValueMap } from '../../src';
+import { ValueMap } from '../../src';
 import { FlowManager } from '../../src/engine';
 import { ExampleFunction } from './types';
 
 class CallMicroservice {
-  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+  public async exec(params: ValueMap): Promise<ValueMap> {
     let response;
     if (params.url === 'http://product') {
       response = {
@@ -25,7 +25,7 @@ class CallMicroservice {
 }
 
 class SimpleMerge {
-  public async exec(params: GenericValueMap): Promise<GenericValueMap> {
+  public async exec(params: ValueMap): Promise<ValueMap> {
     return {
       result: Object.assign({}, params.obj1, params.obj2),
     };

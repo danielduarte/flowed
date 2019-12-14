@@ -22,13 +22,18 @@ export enum FlowTransitionEnum {
   Stopped = 'Stopped',
 }
 
-export interface GenericValueMap {
-  [key: string]: any;
+export type AnyValue = any;
+
+export interface ValueMap {
+  [key: string]: AnyValue;
 }
+
+// @deprecated Use ValueMap instead
+export type GenericValueMap = ValueMap;
 
 export class TaskResolver {
   // noinspection JSUnusedLocalSymbols
-  public exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
+  public exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
     return Promise.resolve({});
   }
 }

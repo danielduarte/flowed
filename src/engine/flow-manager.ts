@@ -1,30 +1,30 @@
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import { GenericValueMap, TaskResolverMap } from '../types';
+import { TaskResolverMap, ValueMap } from '../types';
 import { Flow } from './flow';
 import { FlowSpec } from './specs';
 
 export class FlowManager {
   public static run(
     flowSpec: FlowSpec,
-    params: GenericValueMap = {},
+    params: ValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
-    context: GenericValueMap = {},
-  ): Promise<GenericValueMap> {
+    context: ValueMap = {},
+  ): Promise<ValueMap> {
     const flow = new Flow(flowSpec);
     return flow.start(params, expectedResults, resolvers, context);
   }
 
   public static runFromString(
     flowSpecJson: string,
-    params: GenericValueMap = {},
+    params: ValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
-    context: GenericValueMap = {},
-  ): Promise<GenericValueMap> {
-    return new Promise<GenericValueMap>((resolveFlow, reject) => {
+    context: ValueMap = {},
+  ): Promise<ValueMap> {
+    return new Promise<ValueMap>((resolveFlow, reject) => {
       try {
         const flowSpec = JSON.parse(flowSpecJson);
         FlowManager.run(flowSpec, params, expectedResults, resolvers, context).then(resolveFlow, reject);
@@ -36,12 +36,12 @@ export class FlowManager {
 
   public static runFromFile(
     flowSpecFilepath: string,
-    params: GenericValueMap = {},
+    params: ValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
-    context: GenericValueMap = {},
-  ): Promise<GenericValueMap> {
-    return new Promise<GenericValueMap>((resolveFlow, reject) => {
+    context: ValueMap = {},
+  ): Promise<ValueMap> {
+    return new Promise<ValueMap>((resolveFlow, reject) => {
       fs.readFile(flowSpecFilepath, 'utf8', (err, fileContents) => {
         if (err) {
           reject(err);
@@ -54,11 +54,11 @@ export class FlowManager {
 
   public static runFromUrl(
     flowSpecUrl: string,
-    params: GenericValueMap = {},
+    params: ValueMap = {},
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
-    context: GenericValueMap = {},
-  ): Promise<GenericValueMap> {
+    context: ValueMap = {},
+  ): Promise<ValueMap> {
     let client: any = null;
     if (flowSpecUrl.startsWith('http://')) {
       client = http;
@@ -77,7 +77,7 @@ export class FlowManager {
       );
     }
 
-    return new Promise<GenericValueMap>((resolveFlow, reject) => {
+    return new Promise<ValueMap>((resolveFlow, reject) => {
       client
         .get(flowSpecUrl, (res: any) => {
           const { statusCode } = res;

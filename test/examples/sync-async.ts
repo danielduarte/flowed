@@ -1,9 +1,9 @@
-import { GenericValueMap } from '../../src';
+import { ValueMap } from '../../src';
 import { FlowManager } from '../../src/engine';
 import { ExampleFunction } from './types';
 
 class TimerResolver {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve({ a: 1 });
@@ -13,7 +13,7 @@ class TimerResolver {
 }
 
 class DirectResolver {
-  public async exec(): Promise<GenericValueMap> {
+  public async exec(): Promise<ValueMap> {
     return { b: 2 };
   }
 }

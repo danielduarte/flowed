@@ -1,11 +1,11 @@
 import { expect } from 'chai';
-import { FlowManager, GenericValueMap } from '../src';
+import { FlowManager, ValueMap } from '../src';
 import { Task } from '../src/engine';
 
 describe('edge cases', () => {
   it('manually provide unexpected requirement to task must throw an error', async () => {
     class R {
-      public exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
+      public exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
         task.supplyReq('someReq', 'Same value');
         return Promise.resolve({});
       }
@@ -40,15 +40,15 @@ describe('edge cases', () => {
   it('resolver not returning object throws an expressive error', async () => {
     // Resolver returning a Promise that does not resolve to an object
     class R1 {
-      public exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-        return Promise.resolve((undefined as unknown) as GenericValueMap);
+      public exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
+        return Promise.resolve((undefined as unknown) as ValueMap);
       }
     }
 
     // Resolver returning undefined or equivalently, not returning at all
     class R2 {
-      public exec(params: GenericValueMap, context: GenericValueMap, task: Task): Promise<GenericValueMap> {
-        return (undefined as unknown) as Promise<GenericValueMap>;
+      public exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
+        return (undefined as unknown) as Promise<ValueMap>;
       }
     }
     const spec = {

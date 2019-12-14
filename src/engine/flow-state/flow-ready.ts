@@ -1,6 +1,6 @@
 import { debug as rawDebug } from 'debug';
 import { FlowState } from '.';
-import { GenericValueMap, TaskResolverMap } from '../../types';
+import { TaskResolverMap, ValueMap } from '../../types';
 import { FlowStateEnum } from '../../types';
 const debug = rawDebug('flowed:flow');
 
@@ -9,12 +9,7 @@ export class FlowReady extends FlowState {
     return FlowStateEnum.Ready;
   }
 
-  public start(
-    params: GenericValueMap = {},
-    expectedResults: string[] = [],
-    resolvers: TaskResolverMap = {},
-    context: GenericValueMap = {},
-  ): Promise<GenericValueMap> {
+  public start(params: ValueMap = {}, expectedResults: string[] = [], resolvers: TaskResolverMap = {}, context: ValueMap = {}): Promise<ValueMap> {
     debug(`[${this.runStatus.id}] ▶ Flow started with params:`, params);
 
     this.setState(FlowStateEnum.Running);
