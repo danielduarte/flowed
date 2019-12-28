@@ -34,6 +34,13 @@ describe('can run a flow', function() {
         timer: TimerResolver,
         direct: DirectResolver,
       },
+      {},
+    );
+  });
+
+  it('from a JSON got from an HTTPS URL defaulting arguments', () => {
+    return FlowManager.runFromUrl(
+      'https://raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/from-file-defaulting-arguments.flowed.json',
     );
   });
 

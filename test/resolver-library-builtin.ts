@@ -15,6 +15,17 @@ describe('the ResolverLibrary', () => {
     });
   });
 
+  it('runs implicit noop resolver (omitting resolver should default to flowed::Noop)', () => {
+    return FlowManager.run({
+      tasks: {
+        doNothing: {},
+      },
+      options: {
+        resolverAutomapParams: true,
+      },
+    });
+  });
+
   it('runs wait resolver without mapping', async () => {
     const result = await FlowManager.run(
       {

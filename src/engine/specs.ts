@@ -30,7 +30,15 @@ export interface TaskResolverSpec {
 }
 
 export interface TaskParamsMap {
-  [code: string]: any;
+  [code: string]: string | ResolverParamInfoValue | ResolverParamInfoTransform;
+}
+
+export interface ResolverParamInfoValue {
+  value: any;
+}
+
+export interface ResolverParamInfoTransform {
+  transform: any;
 }
 
 export interface TaskResultsMap {

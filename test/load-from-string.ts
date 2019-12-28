@@ -31,7 +31,12 @@ describe('can run a flow', () => {
         timer: TimerResolver,
         direct: DirectResolver,
       },
+      {},
     );
+  });
+
+  it('from a JSON string defaulting arguments', () => {
+    return FlowManager.runFromString('{ "tasks": {} }');
   });
 
   it('from an JSON string with invalid format and throw an error', async () => {

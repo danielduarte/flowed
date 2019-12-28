@@ -86,7 +86,7 @@ export class FlowRunStatus {
 
     this.state = this.states[FlowStateEnum.Ready];
 
-    this.initRunStatus(spec || {}, runStatus);
+    this.initRunStatus(spec, runStatus);
   }
 
   public initRunStatus(spec: FlowSpec, runState?: SerializedFlowRunStatus) {
@@ -110,22 +110,20 @@ export class FlowRunStatus {
 
     this.tasksByReq = {};
     this.tasksReady = [];
-    for (const taskCode in this.tasks) {
-      if (this.tasks.hasOwnProperty(taskCode)) {
-        const task = this.tasks[taskCode];
-        task.resetRunStatus();
 
-        if (task.isReadyToRun()) {
-          this.tasksReady.push(task);
-        }
+    for (const task of Object.values(this.tasks)) {
+      task.resetRunStatus();
 
-        const taskReqs = task.spec.requires || [];
-        for (const req of taskReqs) {
-          if (!this.tasksByReq.hasOwnProperty(req)) {
-            this.tasksByReq[req] = {};
-          }
-          this.tasksByReq[req][task.code] = task;
+      if (task.isReadyToRun()) {
+        this.tasksReady.push(task);
+      }
+
+      const taskReqs = task.spec.requires || [];
+      for (const req of taskReqs) {
+        if (!this.tasksByReq.hasOwnProperty(req)) {
+          this.tasksByReq[req] = {};
         }
+        this.tasksByReq[req][task.code] = task;
       }
     }
 

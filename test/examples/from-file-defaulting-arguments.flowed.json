@@ -1,0 +1,67 @@
+{
+  "tasks": {
+    "B": {
+      "requires": [],
+      "provides": ["b1"],
+      "resolver": {
+        "name": "flowed::Noop",
+        "params": {},
+        "results": { "a": "b1" }
+      }
+    },
+    "C": {
+      "requires": [],
+      "provides": ["c1", "c2"],
+      "resolver": {
+        "name": "flowed::Noop",
+        "params": {},
+        "results": {}
+      }
+    },
+    "A": {
+      "requires": ["b1", "c1", "c2"],
+      "provides": ["a4", "a5"],
+      "resolver": {
+        "name": "flowed::Noop",
+        "params": {},
+        "results": { "a": "a4" }
+      }
+    },
+    "D": {
+      "requires": ["a4", "a5"],
+      "provides": ["d3"],
+      "resolver": {
+        "name": "flowed::Noop",
+        "params": {},
+        "results": {}
+      }
+    },
+    "E": {
+      "requires": ["a5", "f1"],
+      "provides": ["e3"],
+      "resolver": {
+        "name": "flowed::Noop",
+        "params": {},
+        "results": {}
+      }
+    },
+    "F": {
+      "requires": [],
+      "provides": ["f1"],
+      "resolver": {
+        "name": "flowed::Noop",
+        "params": {},
+        "results": {}
+      }
+    },
+    "G": {
+      "requires": ["d3", "e3"],
+      "provides": ["g1", "g2", "g3"],
+      "resolver": {
+        "name": "flowed::Noop",
+        "params": {},
+        "results": {}
+      }
+    }
+  }
+}

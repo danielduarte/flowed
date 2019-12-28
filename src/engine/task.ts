@@ -1,6 +1,6 @@
 import { debug as rawDebug } from 'debug';
 import { TaskRunStatus, ValueMap } from '../types';
-import { TaskSpec } from './specs';
+import { ResolverParamInfoTransform, ResolverParamInfoValue, TaskSpec } from './specs';
 import { ValueQueueManager } from './value-queue-manager';
 const debug = rawDebug('flowed:flow');
 // tslint:disable-next-line:no-var-requires
@@ -56,10 +56,8 @@ export class Task {
   }
 
   public supplyReqs(reqsMap: ValueMap) {
-    for (const reqName in reqsMap) {
-      if (reqsMap.hasOwnProperty(reqName)) {
-        this.supplyReq(reqName, reqsMap[reqName]);
-      }
+    for (const [reqName, req] of Object.entries(reqsMap)) {
+      this.supplyReq(reqName, req);
     }
   }
 
@@ -91,15 +89,17 @@ export class Task {
       }
 
       // If it is an object, expect the format { [value: <some value>], [transform: <some template>] }
-      else if (typeof paramSolvingInfo === 'object' && paramSolvingInfo !== null) {
+      else {
+        // Implicit case: if (typeof paramSolvingInfo === 'object' && paramSolvingInfo !== null)
         // Direct value pre-processor
         if (paramSolvingInfo.hasOwnProperty('value')) {
-          paramValue = paramSolvingInfo.value;
+          paramValue = (paramSolvingInfo as ResolverParamInfoValue).value;
         }
 
         // Template transform pre-processor
-        else if (paramSolvingInfo.hasOwnProperty('transform')) {
-          const template = paramSolvingInfo.transform;
+        else {
+          // Implicit case: if (paramSolvingInfo.hasOwnProperty('transform'))
+          const template = (paramSolvingInfo as ResolverParamInfoTransform).transform;
           paramValue = ST.select(solvedReqs)
             .transformWith(template)
             .root();

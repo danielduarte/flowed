@@ -31,7 +31,12 @@ describe('can run a flow', () => {
         timer: TimerResolver,
         direct: DirectResolver,
       },
+      {},
     );
+  });
+
+  it('from a JSON file defaulting arguments', () => {
+    return FlowManager.runFromFile('test/examples/from-file-defaulting-arguments.flowed.json');
   });
 
   it('from a non existing JSON file and throw error', async () => {
