@@ -71,10 +71,10 @@ export class FlowManager {
       const matchResult = flowSpecUrl.match(/^([a-zA-Z]+):/);
       if (Array.isArray(matchResult) && matchResult.length === 2) {
         actualProtocol = matchResult[1];
+        return Promise.reject(new Error(`Protocol not supported: ${actualProtocol}. Supported protocols are: [http, https]`));
+      } else {
+        return Promise.reject(new Error(`Invalid URL: ${flowSpecUrl}`));
       }
-      return Promise.reject(
-        new Error(`Protocol not supported${actualProtocol ? `: ${actualProtocol}` : ''}. Supported protocols are: [http, https]`),
-      );
     }
 
     return new Promise<ValueMap>((resolveFlow, reject) => {

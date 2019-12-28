@@ -152,6 +152,29 @@ describe('can run a flow', function() {
     }
   });
 
+  it('from a JSON got from a URL with invalid URL and throw error', async () => {
+    const invalidUrl = 'https//raw.githubusercontent.com/daniel-duarte/flowed/master/test/examples/invented.flowed.json';
+    try {
+      await FlowManager.runFromUrl(
+        invalidUrl,
+        {
+          param1: 'PARAM1',
+          param2: 'PARAM2',
+          param3: 'PARAM3',
+        },
+        ['g1', 'g2'],
+        {
+          timer: TimerResolver,
+          direct: DirectResolver,
+        },
+      );
+
+      throw new Error('An error should have been thrown');
+    } catch (error) {
+      expect(error.message).to.be.eql(`Invalid URL: ${invalidUrl}`);
+    }
+  });
+
   it('from a JSON got from a URL with invalid format and throw an error', async () => {
     try {
       await FlowManager.runFromUrl(
