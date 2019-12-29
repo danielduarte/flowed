@@ -20,7 +20,7 @@ export class FlowStopping extends FlowState {
     }
   }
 
-  protected postProcessFinished(error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
+  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean) {
     this.runStatus.state.stopped(error);
   }
 }

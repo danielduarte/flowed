@@ -33,7 +33,7 @@ export class FlowRunning extends FlowState {
     }
   }
 
-  protected postProcessFinished(error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
+  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean) {
     const stopExecution = error && stopFlowExecutionOnError;
     if (!stopExecution) {
       this.runStatus.state.startReadyTasks();

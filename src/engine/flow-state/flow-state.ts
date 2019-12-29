@@ -42,7 +42,7 @@ export abstract class FlowState implements IFlow {
     this.runStatus = runStatus;
   }
 
-  public start(params: ValueMap = {}, expectedResults: string[] = [], resolvers: TaskResolverMap = {}, context: ValueMap = {}): Promise<ValueMap> {
+  public start(params: ValueMap, expectedResults: string[], resolvers: TaskResolverMap, context: ValueMap): Promise<ValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Start);
   }
 
@@ -88,7 +88,7 @@ export abstract class FlowState implements IFlow {
     return this.runStatus.processManager.runningCount() > 0;
   }
 
-  public setExpectedResults(expectedResults: string[] = []) {
+  public setExpectedResults(expectedResults: string[]) {
     // Check expected results that cannot be fulfilled
     const missingExpected = expectedResults.filter(r => !this.runStatus.taskProvisions.includes(r));
     if (missingExpected.length > 0) {
@@ -107,7 +107,7 @@ export abstract class FlowState implements IFlow {
     return this.runStatus.results;
   }
 
-  public setResolvers(resolvers: TaskResolverMap = {}) {
+  public setResolvers(resolvers: TaskResolverMap) {
     this.runStatus.resolvers = resolvers;
   }
 
@@ -247,7 +247,7 @@ export abstract class FlowState implements IFlow {
     throw this.createMethodError('getSerializableState');
   }
 
-  protected processFinished(process: TaskProcess, error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
+  protected processFinished(process: TaskProcess, error: Error | boolean, stopFlowExecutionOnError: boolean) {
     this.runStatus.processManager.removeProcess(process);
 
     const task = process.task;
@@ -278,10 +278,10 @@ export abstract class FlowState implements IFlow {
       }
     }
 
-    this.runStatus.state.postProcessFinished(error);
+    this.runStatus.state.postProcessFinished(error, stopFlowExecutionOnError);
   }
 
-  protected postProcessFinished(error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {}
+  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean) {}
 
   protected createTransitionError(transition: string) {
     return new Error(`Cannot execute transition ${transition} in current state ${this.getStateCode()}.`);

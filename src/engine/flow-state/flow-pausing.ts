@@ -8,7 +8,7 @@ export class FlowPausing extends FlowState {
     return FlowStateEnum.Pausing;
   }
 
-  public paused(error: Error | boolean = false) {
+  public paused(error: Error | boolean) {
     this.setState(FlowStateEnum.Paused);
 
     if (error) {
@@ -20,7 +20,7 @@ export class FlowPausing extends FlowState {
     }
   }
 
-  protected postProcessFinished(error: Error | boolean = false, stopFlowExecutionOnError: boolean = false) {
+  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean) {
     this.runStatus.state.paused(error);
   }
 }
