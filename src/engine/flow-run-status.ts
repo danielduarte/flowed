@@ -96,7 +96,7 @@ export class FlowRunStatus {
     const provisions: string[] = [];
 
     for (const [taskCode, taskSpec] of Object.entries(this.spec.tasks || {})) {
-      provisions.push.apply(provisions, taskSpec.provides || []);
+      provisions.push(...(taskSpec.provides || []));
       this.tasks[taskCode] = new Task(taskCode, taskSpec);
     }
 
