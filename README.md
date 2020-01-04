@@ -295,6 +295,20 @@ The dependency loops can be formed by any number of tasks, not only by the same 
 
 ### Library with reusable frequently used tasks
 
-For several common tasks, resolvers are provided in the bundle, so you don't have to worry about programming
-the same thing over and over again.
+For several common tasks, resolvers are provided in the bundle, so you don't have to worry about programming the same thing over and over again.
 You just have to take care of your custom code.
+
+For more information, please check the [Built-In resolver library documentation](./doc/resolver-library.md)
+
+Or go directly to  the desired resolver details:
+
+- [Noop](./doc/resolver-library.md#noop)
+- [Echo](./doc/resolver-library.md#echo)
+- [ThrowError](./doc/resolver-library.md#throwerror)
+- [Conditional](./doc/resolver-library.md#conditional)
+- [Wait](./doc/resolver-library.md#wait)
+- [SubFlow](./doc/resolver-library.md#subflow)
+- [Repeater](./doc/resolver-library.md#repeater)
+- [ArrayMap](./doc/resolver-library.md#arraymap)
+- [Stop](./doc/resolver-library.md#stop)
+- [Pause](./doc/resolver-library.md#pause)
