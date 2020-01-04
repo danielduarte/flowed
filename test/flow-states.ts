@@ -7,7 +7,8 @@ import { Flow } from '../src/engine';
 // Created this class to test protected and private methods in Flow
 class PublicFlow extends Flow {
   public finished(error: Error | boolean = false) {
-    if (error === false) { // This conditional makes possible to test default params in this.runStatus.state.finished
+    if (error === false) {
+      // This conditional makes possible to test default params in this.runStatus.state.finished
       this.runStatus.state.finished();
     } else {
       this.runStatus.state.finished(error);
@@ -15,7 +16,8 @@ class PublicFlow extends Flow {
   }
 
   public paused(error: Error | boolean = false) {
-    if (error === false) { // This conditional makes possible to test default params in this.runStatus.state.paused
+    if (error === false) {
+      // This conditional makes possible to test default params in this.runStatus.state.paused
       this.runStatus.state.paused();
     } else {
       this.runStatus.state.paused(error);
@@ -23,7 +25,8 @@ class PublicFlow extends Flow {
   }
 
   public stopped(error: Error | boolean = false) {
-    if (error === false) { // This conditional makes possible to test default params in this.runStatus.state.stopped
+    if (error === false) {
+      // This conditional makes possible to test default params in this.runStatus.state.stopped
       this.runStatus.state.stopped();
     } else {
       this.runStatus.state.stopped(error);

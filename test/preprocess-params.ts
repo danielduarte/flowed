@@ -50,7 +50,7 @@ describe('resolvers with params pre-processor', () => {
                 name: 'Echo',
                 params: {
                   in: {
-                    // @todo Add test to conbine 'transform' with 'value'
+                    // @todo Add test to combine 'transform' with 'value'
                     transform: {
                       nombre: '{{name}}',
                       edad: '{{age}}',

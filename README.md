@@ -31,6 +31,8 @@ npm i flowed
 - [Scoped visibility for tasks](#scoped-visibility-for-tasks)
 - [Run flows from string, object, file or URL](#run-flows-from-string-object-file-or-url)
 - [Pause/Resume and Stop/Reset functions](#pauseresume-and-stopreset-functions)
+- [Inline parameters transformation](#inline-parameters-transformation)
+- [Cyclic flows](#cyclic-flows)
 - [Library with reusable frequently used tasks](#library-with-reusable-frequently-used-tasks)
 
 
@@ -40,11 +42,75 @@ In order to run tasks in parallel, you don't have to do anything.
 Simply adding them to a flow, they will run in parallel, of course if they don't have dependence on each other.
 
 
+![Parallel Tasks](./doc/example-parallel.png)
+
+```JavaScript
+const flow = {
+  tasks: {
+    A: {
+      provides: ['resultA'],
+      resolver: {
+        name: 'flowed::Noop',
+      },
+    },
+    B: {
+      provides: ['resultB'],
+      resolver: {
+        name: 'flowed::Noop',
+      },
+    },
+    C: {
+      requires: ['resultA', 'resultB'],
+      resolver: {
+        name: 'flowed::Noop',
+      },
+    },
+  },
+}
+```
+
+```JavaScript
+FlowManager.run(flow);
+```
+
+
 ### Dependency management
 
 Only specifying dependent inputs and outputs the flow manages dependencies automatically, executing in the correct order,
 maximizing parallelism, and at the same time waiting for expected results when required.
 Note that you can specify dependence between tasks arbitrarily, not only when one of them needs results from the other.
+
+![Dependent Tasks](./doc/example-dependent.png)
+
+```JavaScript
+const flow = {
+  tasks: {
+    A: {
+      provides: ['resultA'],
+      resolver: {
+        name: 'flowed::Noop',
+      },
+    },
+    B: {
+      requires: ['resultA'],
+      provides: ['resultB'],
+      resolver: {
+        name: 'flowed::Noop',
+      },
+    },
+    C: {
+      requires: ['resultB'],
+      resolver: {
+        name: 'flowed::Noop',
+      },
+    },
+  },
+}
+```
+
+```JavaScript
+FlowManager.run(flow);
+```
 
 
 ### Asynchronous and synchronous tasks
@@ -100,82 +166,135 @@ Flow executions can be paused and resumed with task granularity.
 The same for stopping and resetting, that last being to set the flow up to start from the beginning. 
 
 
+### Inline parameters transformation
+
+Task parameters can be transformed before running each task using an inline template.
+
+In this example, given the current date `new Date()`, a simple flow is used to get a plane JavaScript object with day, month and year.
+
+The template embedded in the flow is:
+
+```JavaScript
+{
+  day: '{{date.getDay()}}',
+  month: '{{date.getMonth() + 1}}',
+  year: '{{date.getYear()}}'
+}
+```
+
+Where `date` is known by the template because it is in the `requires` list of the task `convertToObj`.
+
+```JavaScript
+const flow = {
+  tasks: {
+    getDate: {
+      provides: ['date'],
+      resolver: {
+        name: 'flowed::Echo',
+        params: { in: { value: new Date() } },
+        results: { out: 'date' },
+      }
+    },
+    convertToObj: {
+      requires: ['date'],
+      provides: ['result'],
+      resolver: {
+        name: 'flowed::Echo',
+        params: {
+          in: {
+            transform: {
+              day: '{{date.getDate()}}',
+              month: '{{date.getMonth() + 1}}',
+              year: '{{date.getFullYear()}}',
+            }
+          }
+        },
+        results: {out: 'result'},
+      }
+    }
+  },
+};
+```
+
+```JavaScript
+FlowManager.run(flow, {}, ['result']);
+```
+
+The result got today (01/03/2020) is `{ day: 3, month: 1, year: 2020 }`.
+
+In order to use the benefits of the template transformation I highly recommend to take a look at [the ST documentation](https://selecttransform.github.io/site/transform.html) and check the features and examples. 
+Also play with [this tool](https://selecttransform.github.io/playground) provided by [ST](https://selecttransform.github.io/site), and design your templates dynamically.
+
+
+### Cyclic flows
+
+Flows can have cyclic dependencies forming loops.
+In order to run these flows, external parameters must raise the first execution.
+
+Timer example:
+
+This resolver will check a context value to know if the clock must continue ticking or not.
+
+Also the current tick number is output to the console.
+
+```JavaScript
+class Print {
+  exec({ message }, context) {
+    return new Promise((resolve, reject) => {
+
+      let stop = false;
+      context.counter++;
+      if (context.counter === context.limit) {
+        stop = true;
+      }
+
+      setTimeout(() => {
+        console.log(message, context.counter);
+        resolve(stop ? {} : { continue: true });
+      }, 1000);
+    });
+  }
+}
+```
+
+And the flow execution:
+
+```JavaScript
+flowed.FlowManager.run({
+    tasks: {
+      tick: {
+        requires: ['continue'],
+        provides: ['continue'],
+        resolver: {
+          name: 'Print',
+          params: { message: { value: 'Tick' } },
+          results: { continue: 'continue' },
+        }
+      },
+    },
+  }, { continue: true }, [], { Print }, { counter: 0, limit: 5 },
+);
+```
+
+The expected console output is:
+
+```
+Tick 1
+Tick 2
+Tick 3
+Tick 4
+Tick 5
+```
+
+Note that the task requires and provides the same value `continue`.
+
+In order to solve the cyclic dependency and start running the flow, the first value for `continue` is provided in the parameters `{ continue: true }`. Otherwise, the flow would never start.
+
+The dependency loops can be formed by any number of tasks, not only by the same as in this simple example.
+
+
 ### Library with reusable frequently used tasks
 
 For several common tasks, resolvers are provided in the bundle, so you don't have to worry about programming
 the same thing over and over again.
 You just have to take care of your custom code.
-
-
-## Examples
-
-- [Parallel Tasks](#parallel-tasks)
-- [Dependent Tasks](#dependent-tasks)
-
-
-### Parallel Tasks
-
-![Parallel Tasks](./doc/example-parallel.png)
-
-```JavaScript
-const flow = {
-  tasks: {
-    A: {
-      provides: ['resultA'],
-      resolver: {
-        name: 'flowed::Noop',
-      },
-    },
-    B: {
-      provides: ['resultB'],
-      resolver: {
-        name: 'flowed::Noop',
-      },
-    },
-    C: {
-      requires: ['resultA', 'resultB'],
-      resolver: {
-        name: 'flowed::Noop',
-      },
-    },
-  },
-}
-```
-
-```JavaScript
-FlowManager.run(flow);
-```
-
-### Dependent Tasks
-
-![Dependent Tasks](./doc/example-dependent.png)
-
-```JavaScript
-const flow = {
-  tasks: {
-    A: {
-      provides: ['resultA'],
-      resolver: {
-        name: 'flowed::Noop',
-      },
-    },
-    B: {
-      requires: ['resultA'],
-      provides: ['resultB'],
-      resolver: {
-        name: 'flowed::Noop',
-      },
-    },
-    C: {
-      requires: ['resultB'],
-      resolver: {
-        name: 'flowed::Noop',
-      },
-    },
-  },
-}
-```
-
-```JavaScript
-FlowManager.run(flow);
-```
