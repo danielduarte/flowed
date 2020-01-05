@@ -95,15 +95,15 @@ export class FlowRunStatus {
 
     const provisions: string[] = [];
 
-    for (const [taskCode, taskSpec] of Object.entries(this.spec.tasks || {})) {
-      provisions.push(...(taskSpec.provides || []));
+    for (const [taskCode, taskSpec] of Object.entries(this.spec.tasks ?? {})) {
+      provisions.push(...(taskSpec.provides ?? []));
       this.tasks[taskCode] = new Task(taskCode, taskSpec);
     }
 
     // To be used later to check if expectedResults can be fulfilled.
     this.taskProvisions = Array.from(new Set(provisions));
 
-    this.options = Object.assign({}, this.spec.configs || {}, this.spec.options || {});
+    this.options = Object.assign({}, this.spec.configs ?? {}, this.spec.options ?? {});
     if (this.spec.hasOwnProperty('configs')) {
       this.flow.debug("⚠️ DEPRECATED: 'configs' field in flow spec. Use 'options' instead.");
     }
@@ -118,7 +118,7 @@ export class FlowRunStatus {
         this.tasksReady.push(task);
       }
 
-      const taskReqs = task.spec.requires || [];
+      const taskReqs = task.spec.requires ?? [];
       for (const req of taskReqs) {
         if (!this.tasksByReq.hasOwnProperty(req)) {
           this.tasksByReq[req] = {};

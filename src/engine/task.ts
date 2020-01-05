@@ -12,7 +12,7 @@ export class Task {
   }
 
   public getResolverName() {
-    return (this.spec.resolver || { name: 'flowed::Noop' }).name;
+    return (this.spec.resolver ?? { name: 'flowed::Noop' }).name;
   }
 
   public getSerializableState() {
@@ -27,7 +27,7 @@ export class Task {
   }
 
   public resetRunStatus() {
-    const reqs = [...(this.spec.requires || [])];
+    const reqs = [...(this.spec.requires ?? [])];
 
     this.runStatus = {
       solvedReqs: new ValueQueueManager(reqs),
@@ -44,7 +44,7 @@ export class Task {
   }
 
   public supplyReq(reqName: string, value: any) {
-    const reqIndex = (this.spec.requires || []).indexOf(reqName);
+    const reqIndex = (this.spec.requires ?? []).indexOf(reqName);
     if (reqIndex === -1) {
       // This can only happen if supplyReq is called manually by the user. The flow will never call with an invalid reqName.
       throw new Error(`Requirement '${reqName}' for task '${this.code}' is not valid.`);
@@ -63,10 +63,10 @@ export class Task {
   public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number, debug: any) {
     const params: ValueMap = {};
 
-    let resolverParams = (this.spec.resolver || { name: 'flowed::Noop' }).params || {};
+    let resolverParams = (this.spec.resolver ?? { name: 'flowed::Noop' }).params ?? {};
 
     if (automap) {
-      const requires = this.spec.requires || [];
+      const requires = this.spec.requires ?? [];
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with requires = []
       const automappedParams = requires.map(req => ({ [req]: req })).reduce((accum, peer) => Object.assign(accum, peer), {});
@@ -120,10 +120,10 @@ export class Task {
 
     const results: ValueMap = {};
 
-    let resolverResults = (this.spec.resolver || { name: 'flowed::Noop' }).results || {};
+    let resolverResults = (this.spec.resolver ?? { name: 'flowed::Noop' }).results ?? {};
 
     if (automap) {
-      const provides = this.spec.provides || [];
+      const provides = this.spec.provides ?? [];
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with provides = []
       const automappedResults = provides.map(prov => ({ [prov]: prov })).reduce((accum, peer) => Object.assign(accum, peer), {});

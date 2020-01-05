@@ -273,7 +273,7 @@ export abstract class FlowState implements IFlow {
     const task = process.task;
     const taskCode = task.code;
     const taskSpec = task.spec;
-    const taskProvisions = taskSpec.provides || [];
+    const taskProvisions = taskSpec.provides ?? [];
     const taskResults = task.getResults();
     const hasDefaultResult = taskSpec.hasOwnProperty('defaultResult');
 

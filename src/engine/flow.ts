@@ -8,7 +8,7 @@ export class Flow implements IFlow {
   protected runStatus!: FlowRunStatus;
 
   public constructor(spec?: FlowSpec, runState?: any) {
-    this.runStatus = new FlowRunStatus(this, spec || {}, runState);
+    this.runStatus = new FlowRunStatus(this, spec ?? {}, runState);
   }
 
   public getStateCode(): FlowStateEnum {
