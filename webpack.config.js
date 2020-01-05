@@ -5,7 +5,8 @@ module.exports = {
   entry: './dist/index.js',
   output: {
     filename: 'flowed.js',
-    path: path.resolve(__dirname, 'web')
+    path: path.resolve(__dirname, 'web'),
+    library: "Flowed",
   },
   node: {
     fs: 'empty'
