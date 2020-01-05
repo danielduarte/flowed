@@ -47,7 +47,7 @@ describe('resolver loop', () => {
         },
       },
     },
-    configs: {
+    options: {
       resolverAutomapParams: true,
       resolverAutomapResults: true,
     },

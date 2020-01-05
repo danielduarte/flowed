@@ -42,7 +42,7 @@ describe('multi process flow', async () => {
             resolver: { name: 'consoleLog', params: { text: 'message' } },
           },
         },
-        configs: {
+        options: {
           resolverAutomapResults: true,
         },
       },

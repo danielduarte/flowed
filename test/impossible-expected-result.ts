@@ -56,7 +56,7 @@ describe('flow with non solvable results', () => {
           },
         },
       },
-      configs: {
+      options: {
         throwErrorOnUnsolvableResult: true,
       },
     };
@@ -76,7 +76,7 @@ describe('flow with non solvable results', () => {
     expect(errorMsg).to.be.eql('The results [A, C, D] are not provided by any task');
 
     // Should NOT throw an error (turning of throwErrorOnUnsolvableResult)
-    flowSpec.configs.throwErrorOnUnsolvableResult = false;
+    flowSpec.options.throwErrorOnUnsolvableResult = false;
     errorMsg = 'No error';
     try {
       await FlowManager.run(flowSpec, {}, expected, {

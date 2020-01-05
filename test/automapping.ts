@@ -40,7 +40,7 @@ describe('resolvers with automap', () => {
             },
           },
         },
-        configs: {
+        options: {
           resolverAutomapParams: automapParams,
           resolverAutomapResults: automapResults,
         },

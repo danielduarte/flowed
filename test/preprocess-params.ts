@@ -61,7 +61,7 @@ describe('resolvers with params pre-processor', () => {
               },
             },
           },
-          configs: {
+          options: {
             resolverAutomapResults: true,
           },
         },
