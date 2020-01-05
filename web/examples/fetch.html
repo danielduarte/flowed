@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+    <title>Getting Started</title>
+</head>
+<body>
+    <script src="../flowed.js" charset="utf-8"></script>
+    <script>
+        localStorage.debug = 'flowed:*';
+
+        class Fetch {
+          async exec({ url }, context) {
+            const response = await fetch(url);
+            return { response: await response.json() };
+          }
+        }
+
+        Flowed.FlowManager.run({
+            tasks: {
+              getPosts: {
+                requires: ['userId'],
+                provides: ['posts'],
+                resolver: {
+                  name: 'Fetch',
+                  params: { url: { transform: 'https://jsonplaceholder.typicode.com/users/{{userId}}/posts' } },
+                  results: { response: 'posts' },
+                }
+              },
+              getComments: {
+                requires: ['userId'],
+                provides: ['todos'],
+                resolver: {
+                  name: 'Fetch',
+                  params: { url: { transform: 'https://jsonplaceholder.typicode.com/users/{{userId}}/todos' } },
+                  results: { response: 'todos' },
+                }
+              },
+              getAlbums: {
+                requires: ['userId'],
+                provides: ['albums'],
+                resolver: {
+                  name: 'Fetch',
+                  params: { url: { transform: 'https://jsonplaceholder.typicode.com/users/{{userId}}/albums' } },
+                  results: { response: 'albums' },
+                }
+              },
+              getUserInfo: {
+                requires: ['posts', 'todos', 'albums'],
+                provides: ['userInfo'],
+                resolver: {
+                  name: 'flowed::Echo',
+                  params: {
+                    in: {
+                      transform: {
+                        posts: '{{posts}}',
+                        todos: '{{todos}}',
+                        albums: '{{albums}}',
+                      }
+                    },
+                  },
+                  results: {
+                    out: 'userInfo',
+                  },
+                },
+              }
+            },
+          }, { userId: 1 }, ['userInfo'], { Fetch }, {},
+        );
+    </script>
+
+
+</body>
+</html>

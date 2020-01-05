@@ -18,7 +18,6 @@
   "license": "MIT",
   "homepage": "https://daniel-duarte.github.io/flowed",
   "repository": "github:daniel-duarte/flowed",
-  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "build:watch": "npm run build -- --watch",
@@ -29,9 +28,10 @@
     "posttest": "npm run lint",
     "lint": "tslint -p tsconfig.json -t verbose && tslint -p tsconfig.test.json -t verbose",
     "format": "tslint -p tsconfig.json -t verbose --fix && tslint -p tsconfig.test.json -t verbose --fix && prettier --write \"src/**/*.ts\" \"src/**/*.js\" && prettier --write \"test/**/*.ts\" \"test/**/*.js\"",
-    "release:prepare": "./ops/updateSonarProps.sh && rm -rf ./dist ./node_modules package-lock.json && npm install && npm-consider install --test && npm run format && npm run build && npm test && git status",
+    "release:prepare": "./ops/updateSonarProps.sh && rm -rf ./dist ./node_modules package-lock.json && npm install && npm-consider install --test && npm run format && npm run build && npm run bundle && npm test && git status",
     "prebundle": "npm run build",
-    "bundle": "webpack"
+    "bundle": "webpack",
+    "postbundle": "mkdir -p dist/lib && cp web/flowed.js dist/lib/flowed.js"
   },
   "config": {
     "maxPackagesNumber": 600,
@@ -42,6 +42,8 @@
       "uncategorized"
     ]
   },
+  "main": "dist/index.js",
+  "browser": "dist/lib/flowed.js",
   "files": [
     "dist"
   ],
@@ -70,8 +72,21 @@
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
     "all": true,
+    "exclude": [
+      "test",
+      "coverage",
+      "dist",
+      "*.js",
+      "web/flowed.js"
+    ],
+    "check-coverage": true,
+    "skip-full": true,
     "reporter": [
       "text"
-    ]
+    ],
+    "branches": 70,
+    "functions": 50,
+    "lines": 85,
+    "statements": 85
   }
 }

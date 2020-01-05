@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: './dist/index.js',
   output: {
     filename: 'flowed.js',

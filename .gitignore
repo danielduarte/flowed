@@ -3,12 +3,14 @@
 
 # Node.js files
 /node_modules/
-/dist/
 
-# Generated files
+# Build generated files
+/dist/
 /tsconfig.tsbuildinfo
+
+# Test generated files
 /.nyc_output
-/web/flowed.js
+/coverage/
 
 # Private files
 /.coveralls.yml
