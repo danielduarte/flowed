@@ -8,66 +8,38 @@
     <script>
         localStorage.debug = 'flowed:*';
 
-        class Fetch {
-          async exec({ url }, context) {
-            const response = await fetch(url);
-            return { response: await response.json() };
+        class Print {
+          exec({ message }, context) {
+            return new Promise((resolve, reject) => {
+
+              let stop = false;
+              context.counter++;
+              if (context.counter === context.limit) {
+                stop = true;
+              }
+
+              setTimeout(() => {
+                console.log(message, context.counter);
+                resolve(stop ? {} : { continue: true });
+              }, 1000);
+            });
           }
         }
 
         Flowed.FlowManager.run({
             tasks: {
-              getPosts: {
-                requires: ['userId'],
-                provides: ['posts'],
+              tick: {
+                requires: ['continue'],
+                provides: ['continue'],
                 resolver: {
-                  name: 'Fetch',
-                  params: { url: { transform: 'https://jsonplaceholder.typicode.com/users/{{userId}}/posts' } },
-                  results: { response: 'posts' },
+                  name: 'Print',
+                  params: { message: { value: 'Tick' } },
+                  results: { continue: 'continue' },
                 }
               },
-              getTodos: {
-                requires: ['userId'],
-                provides: ['todos'],
-                resolver: {
-                  name: 'Fetch',
-                  params: { url: { transform: 'https://jsonplaceholder.typicode.com/users/{{userId}}/todos' } },
-                  results: { response: 'todos' },
-                }
-              },
-              getAlbums: {
-                requires: ['userId'],
-                provides: ['albums'],
-                resolver: {
-                  name: 'Fetch',
-                  params: { url: { transform: 'https://jsonplaceholder.typicode.com/users/{{userId}}/albums' } },
-                  results: { response: 'albums' },
-                }
-              },
-              getUserInfo: {
-                requires: ['posts', 'todos', 'albums'],
-                provides: ['userInfo'],
-                resolver: {
-                  name: 'flowed::Echo',
-                  params: {
-                    in: {
-                      transform: {
-                        posts: '{{posts}}',
-                        todos: '{{todos}}',
-                        albums: '{{albums}}',
-                      }
-                    },
-                  },
-                  results: {
-                    out: 'userInfo',
-                  },
-                },
-              }
             },
-          }, { userId: 1 }, ['userInfo'], { Fetch }, {},
+          }, { continue: true }, [], { Print }, { counter: 0, limit: 5 },
         );
     </script>
-
-
 </body>
 </html>

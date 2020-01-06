@@ -26,7 +26,7 @@
                   results: { response: 'posts' },
                 }
               },
-              getComments: {
+              getTodos: {
                 requires: ['userId'],
                 provides: ['todos'],
                 resolver: {
@@ -67,7 +67,5 @@
           }, { userId: 1 }, ['userInfo'], { Fetch }, {},
         );
     </script>
-
-
 </body>
 </html>
