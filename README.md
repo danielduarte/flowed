@@ -14,6 +14,19 @@ A fast and reliable flow manager and task runner for *Node.js*.
 npm i flowed
 ```
 
+## Browser
+
+From public CDN
+
+```HTML
+<script src="https://cdn.jsdelivr.net/npm/flowed@latest/dist/lib/flowed.js" charset="utf-8"></script>
+```
+
+From Node.js package
+
+```HTML
+<script src="./dist/lib/flowed.js" charset="utf-8"></script>
+```
 
 ## Getting Started
 
