@@ -16,13 +16,15 @@ npm i flowed
 
 ## Browser
 
-From public CDN
+**From public CDN**
 
 ```HTML
 <script src="https://cdn.jsdelivr.net/npm/flowed@latest/dist/lib/flowed.js" charset="utf-8"></script>
 ```
 
-From Node.js package
+Or change `latest` in the URL for any available version.
+
+**From Node.js package**
 
 ```HTML
 <script src="./dist/lib/flowed.js" charset="utf-8"></script>
@@ -189,9 +191,9 @@ The template embedded in the flow is:
 
 ```JavaScript
 {
-  day: '{{date.getDay()}}',
+  day: '{{date.getDate()}}',
   month: '{{date.getMonth() + 1}}',
-  year: '{{date.getYear()}}'
+  year: '{{date.getFullYear()}}'
 }
 ```
 
