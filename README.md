@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/daniel-duarte/flowed/badge.svg?branch=master)](https://coveralls.io/github/daniel-duarte/flowed?branch=master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-duarte_flowed&metric=alert_status)](https://sonarcloud.io/dashboard?id=daniel-duarte_flowed)
 
-A fast and reliable flow manager and task runner for *Node.js*.
+A fast and reliable flow manager and task runner for *Node.js* and *web browsers*.
 
 ## Installation
 
@@ -24,7 +24,7 @@ npm i flowed
 
 Or change `latest` in the URL for any available version.
 
-**From Node.js package**
+**From package**
 
 ```HTML
 <script src="./dist/lib/flowed.js" charset="utf-8"></script>
@@ -189,6 +189,7 @@ In this example, given the current date `new Date()`, a simple flow is used to g
 
 The template embedded in the flow is:
 
+<!--- {% raw %} -->
 ```JavaScript
 {
   day: '{{date.getDate()}}',
@@ -196,9 +197,11 @@ The template embedded in the flow is:
   year: '{{date.getFullYear()}}'
 }
 ```
+<!--- {% endraw %} -->
 
 Where `date` is known by the template because it is in the `requires` list of the task `convertToObj`.
 
+<!--- {% raw %} -->
 ```JavaScript
 const flow = {
   tasks: {
@@ -224,12 +227,13 @@ const flow = {
             }
           }
         },
-        results: {out: 'result'},
+        results: { out: 'result' },
       }
     }
   },
 };
 ```
+<!--- {% endraw %} -->
 
 ```JavaScript
 FlowManager.run(flow, {}, ['result']);
