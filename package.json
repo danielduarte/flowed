@@ -1,6 +1,6 @@
 {
   "name": "flowed",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "A fast and reliable flow manager and task runner for Node.js and web browsers",
   "keywords": [
     "flow",
@@ -34,7 +34,7 @@
     "postbundle": "mkdir -p dist/lib && cp web/flowed.js dist/lib/flowed.js"
   },
   "config": {
-    "maxPackagesNumber": 600,
+    "maxPackagesNumber": 610,
     "maxSizeBites": 52428800,
     "allowedLicenseTypes": [
       "permissive",
@@ -50,7 +50,7 @@
   "dependencies": {
     "@types/debug": "^4.1.5",
     "debug": "^4.1.1",
-    "flowed-st": "^1.0.0"
+    "flowed-st": "^1.0.1"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.0",
@@ -59,11 +59,11 @@
     "@types/node": "^13.1.1",
     "chai": "^4.2.0",
     "coveralls": "^3.0.9",
-    "mocha": "^6.2.1",
+    "mocha": "^7.0.1",
     "nyc": "^15.0.0",
     "prettier": "^1.19.1",
     "ts-node": "^8.5.4",
-    "tslint": "^5.20.1",
+    "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.4",
     "webpack": "^4.39.3",
