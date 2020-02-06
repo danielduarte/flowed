@@ -233,14 +233,14 @@ export abstract class FlowState implements IFlow {
         }, errorHandler)
         .catch(errorHandler);
 
-      debug(`[${this.runStatus.id}]   ‣ Task '${task.code}' started, params:`, process.getParams());
+      debug(`[${this.runStatus.id}]   ‣ Task '${task.code}' started, params: %O`, process.getParams());
     }
   }
 
   public setState(newState: FlowStateEnum) {
     const prevState = this.runStatus.state.getStateCode();
     this.runStatus.state = this.getStateInstance(newState);
-    debug(`[${this.runStatus.id}]   🛈 Changed flow state from '${prevState}' to '${newState}'`);
+    debug(`[${this.runStatus.id}]   ⓘ Changed flow state from '${prevState}' to '${newState}'`);
   }
 
   public getSerializableState() {
@@ -258,9 +258,9 @@ export abstract class FlowState implements IFlow {
     const hasDefaultResult = taskSpec.hasOwnProperty('defaultResult');
 
     if (error) {
-      debug(`[${this.runStatus.id}]   ✗ Error in task '${taskCode}', results:`, taskResults);
+      debug(`[${this.runStatus.id}]   ✗ Error in task '${taskCode}', results: %O`, taskResults);
     } else {
-      debug(`[${this.runStatus.id}]   ✓ Finished task '${taskCode}', results:`, taskResults);
+      debug(`[${this.runStatus.id}]   ✓ Finished task '${taskCode}', results: %O`, taskResults);
     }
 
     for (const resultName of taskProvisions) {

@@ -72,7 +72,7 @@ export class Task {
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with requires = []
       const automappedParams = requires.map(req => ({ [req]: req })).reduce((accum, peer) => Object.assign(accum, peer), {});
-      debug(`[${flowId}]   🛈 Automapped resolver params in task '${this.code}':`, automappedParams);
+      debug(`[${flowId}]   ⓘ Auto-mapped resolver params in task '${this.code}': %O`, automappedParams);
       resolverParams = Object.assign(automappedParams, resolverParams);
     }
 
@@ -131,7 +131,7 @@ export class Task {
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with provides = []
       const automappedResults = provides.map(prov => ({ [prov]: prov })).reduce((accum, peer) => Object.assign(accum, peer), {});
-      debug(`[${flowId}]   🛈 Automapped resolver results in task '${this.code}':`, automappedResults);
+      debug(`[${flowId}]   ⓘ Auto-mapped resolver results in task '${this.code}': %O`, automappedResults);
       resolverResults = Object.assign(automappedResults, resolverResults);
     }
 

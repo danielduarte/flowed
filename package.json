@@ -1,6 +1,6 @@
 {
   "name": "flowed",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "A fast and reliable flow manager and task runner for Node.js and web browsers",
   "keywords": [
     "flow",
@@ -55,7 +55,7 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.0",
     "@types/chai": "^4.2.6",
-    "@types/mocha": "^5.2.7",
+    "@types/mocha": "^7.0.1",
     "@types/node": "^13.1.1",
     "chai": "^4.2.0",
     "coveralls": "^3.0.9",
