@@ -48,26 +48,26 @@
     "dist"
   ],
   "dependencies": {
-    "@types/debug": "^4.1.5",
     "debug": "^4.1.1",
     "flowed-st": "^1.0.2"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.0",
-    "@types/chai": "^4.2.6",
-    "@types/mocha": "^7.0.1",
-    "@types/node": "^13.1.1",
+    "@types/chai": "^4.2.11",
+    "@types/debug": "^4.1.5",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.11.1",
     "chai": "^4.2.0",
-    "coveralls": "^3.0.9",
-    "mocha": "^7.0.1",
-    "nyc": "^15.0.0",
+    "coveralls": "^3.0.11",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.1",
     "prettier": "^1.19.1",
-    "ts-node": "^8.5.4",
-    "tslint": "^6.0.0",
+    "ts-node": "^8.8.2",
+    "tslint": "^6.1.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.4",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8"
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",

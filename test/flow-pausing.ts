@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../src/debug';
 import { ValueMap } from '../src';
 import { Flow, Task } from '../src/engine';
-const debug = rawDebug('flowed:test');
+const debug = rawDebug('test');
 
 describe('the flow', () => {
   const text1 = '(text1)';

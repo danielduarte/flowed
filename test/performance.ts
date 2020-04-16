@@ -1,8 +1,8 @@
 // @todo create performance test suite and remove this one
 
-// import { debug as rawDebug } from 'debug';
+// import rawDebug from '../src/debug';
 // import * as Examples from './examples/index';
-// const debug = rawDebug('flowed:test');
+// const debug = rawDebug('test');
 //
 // const times = 100000;
 // const maxTime = '2s'; // @todo Put back to 2s when created performance test suite

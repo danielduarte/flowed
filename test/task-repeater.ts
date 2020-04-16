@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../src/debug';
 import { ValueMap } from '../src';
 import { FlowManager } from '../src/engine';
 import * as ResolverLibrary from '../src/resolver-library';
-const debug = rawDebug('flowed:test');
+const debug = rawDebug('test');
 
 describe('the ResolverLibrary / task repeater', () => {
   const taskSpec = {

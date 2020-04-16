@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../src/debug';
 import { Flow, ValueMap } from '../src';
 import { Task } from '../src/engine';
-const debug = rawDebug('flowed:test');
+const debug = rawDebug('test');
 
 describe('a flow state can be', () => {
   it('serialized without error', async () => {

@@ -1,7 +1,7 @@
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../src/debug';
 import * as fs from 'fs';
 import * as http from 'http';
-const debug = rawDebug('flowed:test');
+const debug = rawDebug('test');
 
 export default function createTestServer(responseContentType: string = 'application/json') {
   let serverClosing = false;

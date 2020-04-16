@@ -1,8 +1,8 @@
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../debug';
 import { TaskRunStatus, ValueMap } from '../types';
 import { ResolverParamInfoTransform, ResolverParamInfoValue, TaskSpec } from './specs';
 import { ValueQueueManager } from './value-queue-manager';
-const debug = rawDebug('flowed:flow');
+const debug = rawDebug('flow');
 // tslint:disable-next-line:no-var-requires
 const ST = require('flowed-st');
 

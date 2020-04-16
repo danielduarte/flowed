@@ -1,7 +1,7 @@
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../src/debug';
 import * as Examples from './examples/index';
 import { ExampleMap } from './examples/types';
-const debug = rawDebug('flowed:test');
+const debug = rawDebug('test');
 
 describe('the example', function() {
   this.timeout('2.5s');

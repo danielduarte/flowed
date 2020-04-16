@@ -1,4 +1,4 @@
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../debug';
 import { TaskResolverMap, TaskRunStatus, ValueMap } from '../types';
 import { FlowStateEnum, TaskMap } from '../types';
 import { Flow } from './flow';
@@ -6,7 +6,7 @@ import { FlowFinished, FlowPaused, FlowPausing, FlowReady, FlowRunning, FlowStat
 import { ProcessManager } from './process-manager';
 import { FlowOptions, FlowSpec } from './specs';
 import { Task } from './task';
-const debug = rawDebug('flowed:flow');
+const debug = rawDebug('flow');
 
 export class FlowRunStatus {
   /**

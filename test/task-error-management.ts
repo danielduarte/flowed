@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../src/debug';
 import { FlowManager, ValueMap } from '../src';
-const debug = rawDebug('flowed:test');
+const debug = rawDebug('test');
 
 class AlwaysErrorThrown {
   public async exec(): Promise<ValueMap> {

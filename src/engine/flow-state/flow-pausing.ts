@@ -1,7 +1,7 @@
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../../debug';
 import { FlowStateEnum } from '../../types';
 import { FlowState } from './flow-state';
-const debug = rawDebug('flowed:flow');
+const debug = rawDebug('flow');
 
 export class FlowPausing extends FlowState {
   public getStateCode(): FlowStateEnum {

@@ -1,4 +1,4 @@
-import { debug as rawDebug } from 'debug';
+import rawDebug from '../../debug';
 import {
   ArrayMapResolver,
   ConditionalResolver,
@@ -16,7 +16,7 @@ import { FlowRunStatus } from '../flow-run-status';
 import { Task } from '../task';
 import { TaskProcess } from '../task-process';
 import { IFlow } from './iflow';
-const debug = rawDebug('flowed:flow');
+const debug = rawDebug('flow');
 
 export abstract class FlowState implements IFlow {
   /**
