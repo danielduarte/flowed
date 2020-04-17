@@ -34,7 +34,7 @@
     "postbundle": "mkdir -p dist/lib && cp web/flowed.js dist/lib/flowed.js"
   },
   "config": {
-    "maxPackagesNumber": 610,
+    "maxPackagesNumber": 620,
     "maxSizeBites": 52428800,
     "allowedLicenseTypes": [
       "permissive",
