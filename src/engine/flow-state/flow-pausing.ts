@@ -1,7 +1,5 @@
-import rawDebug from '../../debug';
 import { FlowStateEnum } from '../../types';
 import { FlowState } from './flow-state';
-const debug = rawDebug('flow');
 
 export class FlowPausing extends FlowState {
   public getStateCode(): FlowStateEnum {
@@ -12,10 +10,10 @@ export class FlowPausing extends FlowState {
     this.setState(FlowStateEnum.Paused);
 
     if (error) {
-      debug(`[${this.runStatus.id}] ⏸ Flow paused with error.`);
+      this.debug(`[${this.runStatus.id}] ⏸ Flow paused with error.`);
       this.execFinishReject(error as Error);
     } else {
-      debug(`[${this.runStatus.id}] ⏸ Flow paused.`);
+      this.debug(`[${this.runStatus.id}] ⏸ Flow paused.`);
       this.execFinishResolve();
     }
   }

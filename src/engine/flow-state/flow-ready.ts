@@ -1,16 +1,21 @@
-import rawDebug from '../../debug';
 import { FlowState } from '.';
 import { TaskResolverMap, ValueMap } from '../../types';
 import { FlowStateEnum } from '../../types';
-const debug = rawDebug('flow');
 
 export class FlowReady extends FlowState {
   public getStateCode(): FlowStateEnum {
     return FlowStateEnum.Ready;
   }
 
-  public start(params: ValueMap, expectedResults: string[], resolvers: TaskResolverMap, context: ValueMap): Promise<ValueMap> {
-    debug(`[${this.runStatus.id}] ▶ Flow started with params: %O`, params);
+  public start(
+    params: ValueMap,
+    expectedResults: string[],
+    resolvers: TaskResolverMap,
+    context: ValueMap,
+    options: ValueMap = {},
+  ): Promise<ValueMap> {
+    this.setRunOptions(options);
+    this.debug(`[${this.runStatus.id}] ▶ Flow started with params: %O`, params);
 
     this.setState(FlowStateEnum.Running);
 

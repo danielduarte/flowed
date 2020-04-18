@@ -14,6 +14,7 @@ export class TaskProcess {
     protected automapParams: boolean,
     protected automapResults: boolean,
     protected flowId: number,
+    protected debug: any,
   ) {}
 
   public getParams(): ValueMap {
@@ -21,12 +22,12 @@ export class TaskProcess {
   }
 
   public run(): Promise<ValueMap> {
-    this.params = this.task.mapParamsForResolver(this.task.runStatus.solvedReqs.popAll(), this.automapParams, this.flowId);
+    this.params = this.task.mapParamsForResolver(this.task.runStatus.solvedReqs.popAll(), this.automapParams, this.flowId, this.debug);
     const resolver = new this.taskResolverConstructor();
 
     return new Promise((resolve, reject) => {
       const onResolverSuccess = (resolverValue: ValueMap) => {
-        const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId);
+        const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId, this.debug);
         this.task.runStatus.solvedResults = results;
         resolve(this.task.runStatus.solvedResults);
       };
@@ -39,7 +40,7 @@ export class TaskProcess {
 
       // @sonar start-ignore Ignore this block because try is required even when not await-ing for the promise
       try {
-        resolverPromise = resolver.exec(this.params, this.context, this.task);
+        resolverPromise = resolver.exec(this.params, this.context, this.task, this.debug);
       } catch (error) {
         // @todo Add test to get this error here with a sync resolver that throws error after returning the promise
         onResolverError(error);

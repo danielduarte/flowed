@@ -1,6 +1,6 @@
 {
   "name": "flowed",
-  "version": "1.8.3",
+  "version": "1.9.0",
   "description": "A fast and reliable flow manager and task runner for Node.js and web browsers",
   "keywords": [
     "flow",
@@ -27,7 +27,7 @@
     "coverage:send": "nyc report --reporter=text-lcov | coveralls",
     "posttest": "npm run lint",
     "lint": "tslint -p tsconfig.json -t verbose && tslint -p tsconfig.test.json -t verbose",
-    "format": "tslint -p tsconfig.json -t verbose --fix && tslint -p tsconfig.test.json -t verbose --fix && prettier --write \"src/**/*.ts\" \"src/**/*.js\" && prettier --write \"test/**/*.ts\" \"test/**/*.js\"",
+    "format": "tslint -p tsconfig.json -t verbose --fix && tslint -p tsconfig.test.json -t verbose --fix && prettier --write \"src/**/*.ts\" && prettier --write \"test/**/*.ts\"",
     "release:prepare": "./ops/updateSonarProps.sh && rm -rf ./dist ./node_modules package-lock.json && npm install && npm-consider install --test && npm run format && npm run build && npm run bundle && npm test && git status",
     "prebundle": "npm run build",
     "bundle": "webpack",
@@ -52,16 +52,16 @@
     "flowed-st": "^1.0.2"
   },
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "^1.0.0",
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/chai": "^4.2.11",
     "@types/debug": "^4.1.5",
     "@types/mocha": "^7.0.2",
-    "@types/node": "^13.11.1",
+    "@types/node": "^13.13.0",
     "chai": "^4.2.0",
     "coveralls": "^3.0.11",
     "mocha": "^7.1.1",
     "nyc": "^15.0.1",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.4",
     "ts-node": "^8.8.2",
     "tslint": "^6.1.1",
     "tslint-config-prettier": "^1.18.0",

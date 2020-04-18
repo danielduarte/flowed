@@ -1,8 +1,6 @@
-import rawDebug from '../debug';
 import { TaskRunStatus, ValueMap } from '../types';
 import { ResolverParamInfoTransform, ResolverParamInfoValue, TaskSpec } from './specs';
 import { ValueQueueManager } from './value-queue-manager';
-const debug = rawDebug('flow');
 // tslint:disable-next-line:no-var-requires
 const ST = require('flowed-st');
 
@@ -62,7 +60,7 @@ export class Task {
   }
 
   // @todo convert to protected
-  public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number) {
+  public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number, debug: any) {
     const params: ValueMap = {};
 
     let resolverParams = (this.spec.resolver || { name: 'flowed::Noop' }).params || {};
@@ -100,9 +98,7 @@ export class Task {
         else {
           // Implicit case: if (paramSolvingInfo.hasOwnProperty('transform'))
           const template = (paramSolvingInfo as ResolverParamInfoTransform).transform;
-          paramValue = ST.select(solvedReqs)
-            .transformWith(template)
-            .root();
+          paramValue = ST.select(solvedReqs).transformWith(template).root();
         }
       }
 
@@ -113,7 +109,7 @@ export class Task {
   }
 
   // @todo convert to protected
-  public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number) {
+  public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number, debug: any) {
     if (typeof solvedResults !== 'object') {
       throw new Error(
         `Expected resolver for task '${

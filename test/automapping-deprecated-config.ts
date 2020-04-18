@@ -56,6 +56,8 @@ describe('resolvers with automap', () => {
         concat3: Concat3,
         concat2: Concat2,
       },
+      {},
+      { debugKey: 'automapping' },
     );
   };
 

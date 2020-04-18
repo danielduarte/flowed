@@ -2,6 +2,7 @@ import { FlowStateEnum, TaskResolverMap, ValueMap } from '../types';
 import { FlowRunStatus } from './flow-run-status';
 import { IFlow } from './flow-state/iflow';
 import { FlowSpec } from './specs';
+import rawDebug from '../debug';
 
 export class Flow implements IFlow {
   protected runStatus!: FlowRunStatus;
@@ -14,8 +15,14 @@ export class Flow implements IFlow {
     return this.runStatus.state.getStateCode();
   }
 
-  public start(params: ValueMap = {}, expectedResults: string[] = [], resolvers: TaskResolverMap = {}, context: ValueMap = {}): Promise<ValueMap> {
-    return this.runStatus.state.start(params, expectedResults, resolvers, context);
+  public start(
+    params: ValueMap = {},
+    expectedResults: string[] = [],
+    resolvers: TaskResolverMap = {},
+    context: ValueMap = {},
+    options: ValueMap = {},
+  ): Promise<ValueMap> {
+    return this.runStatus.state.start(params, expectedResults, resolvers, context, options);
   }
 
   public pause(): Promise<ValueMap> {
@@ -36,5 +43,9 @@ export class Flow implements IFlow {
 
   public getSerializableState() {
     return this.runStatus.state.getSerializableState();
+  }
+
+  public debug(...args: any[]): any {
+    return this && this.runStatus ? this.runStatus.state.debug(...args) : rawDebug('init')(...args);
   }
 }

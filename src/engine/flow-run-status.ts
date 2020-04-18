@@ -1,4 +1,3 @@
-import rawDebug from '../debug';
 import { TaskResolverMap, TaskRunStatus, ValueMap } from '../types';
 import { FlowStateEnum, TaskMap } from '../types';
 import { Flow } from './flow';
@@ -6,7 +5,6 @@ import { FlowFinished, FlowPaused, FlowPausing, FlowReady, FlowRunning, FlowStat
 import { ProcessManager } from './process-manager';
 import { FlowOptions, FlowSpec } from './specs';
 import { Task } from './task';
-const debug = rawDebug('flow');
 
 export class FlowRunStatus {
   /**
@@ -40,6 +38,8 @@ export class FlowRunStatus {
   public results: ValueMap = {};
 
   public context: ValueMap = {};
+
+  public runOptions: ValueMap = {};
 
   /**
    * Callbacks to be called over different task events.
@@ -105,7 +105,7 @@ export class FlowRunStatus {
 
     this.options = Object.assign({}, this.spec.configs || {}, this.spec.options || {});
     if (this.spec.hasOwnProperty('configs')) {
-      debug("⚠️ DEPRECATED: 'configs' field in flow spec. Use 'options' instead.");
+      this.flow.debug("⚠️ DEPRECATED: 'configs' field in flow spec. Use 'options' instead.");
     }
 
     this.tasksByReq = {};

@@ -12,9 +12,10 @@ export class FlowManager {
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
     context: ValueMap = {},
+    options: ValueMap = {},
   ): Promise<ValueMap> {
     const flow = new Flow(flowSpec);
-    return flow.start(params, expectedResults, resolvers, context);
+    return flow.start(params, expectedResults, resolvers, context, options);
   }
 
   public static runFromString(
@@ -23,11 +24,12 @@ export class FlowManager {
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
     context: ValueMap = {},
+    options: ValueMap = {},
   ): Promise<ValueMap> {
     return new Promise<ValueMap>((resolveFlow, reject) => {
       try {
         const flowSpec = JSON.parse(flowSpecJson);
-        FlowManager.run(flowSpec, params, expectedResults, resolvers, context).then(resolveFlow, reject);
+        FlowManager.run(flowSpec, params, expectedResults, resolvers, context, options).then(resolveFlow, reject);
       } catch (error) {
         reject(error);
       }
@@ -40,13 +42,14 @@ export class FlowManager {
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
     context: ValueMap = {},
+    options: ValueMap = {},
   ): Promise<ValueMap> {
     return new Promise<ValueMap>((resolveFlow, reject) => {
       fs.readFile(flowSpecFilepath, 'utf8', (err, fileContents) => {
         if (err) {
           reject(err);
         } else {
-          FlowManager.runFromString(fileContents, params, expectedResults, resolvers, context).then(resolveFlow, reject);
+          FlowManager.runFromString(fileContents, params, expectedResults, resolvers, context, options).then(resolveFlow, reject);
         }
       });
     });
@@ -58,6 +61,7 @@ export class FlowManager {
     expectedResults: string[] = [],
     resolvers: TaskResolverMap = {},
     context: ValueMap = {},
+    options: ValueMap = {},
   ): Promise<ValueMap> {
     let client: any = null;
     if (flowSpecUrl.startsWith('http://')) {
@@ -99,7 +103,7 @@ export class FlowManager {
               rawData += chunk;
             });
             res.on('end', () => {
-              FlowManager.runFromString(rawData, params, expectedResults, resolvers, context).then(resolveFlow, reject);
+              FlowManager.runFromString(rawData, params, expectedResults, resolvers, context, options).then(resolveFlow, reject);
             });
           }
         })

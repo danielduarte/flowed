@@ -52,31 +52,32 @@ export class SubFlowResolver {
 // Run a task multiple times and finishes returning an array with all results.
 // If one execution fails, the repeater resolver ends with an exception (this is valid for both parallel and not parallel modes).
 export class RepeaterResolver {
-  public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
+  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: any): Promise<ValueMap> {
     const resolver = context.$flowed.getResolverByName(params.resolver);
     if (resolver === null) {
       throw new Error(`Task resolver '${params.resolver}' for inner Repeater task has no definition.`);
     }
 
-    const task = new Task('task-repeat-model', params.taskSpec);
+    const innerTask = new Task('task-repeat-model', params.taskSpec);
 
     const resultPromises = [];
     let results = [];
     for (let i = 0; i < params.count; i++) {
-      task.resetRunStatus();
-      task.supplyReqs(params.taskParams);
+      innerTask.resetRunStatus();
+      innerTask.supplyReqs(params.taskParams);
 
       // @todo add test with repeater task with taskContext
 
       const process = new TaskProcess(
         context.$flowed.processManager,
         0,
-        task,
+        innerTask,
         resolver,
         context,
         !!params.resolverAutomapParams,
         !!params.resolverAutomapResults,
         params.flowId,
+        debug,
       );
 
       const result = process.run();
@@ -97,31 +98,32 @@ export class RepeaterResolver {
 }
 
 export class ArrayMapResolver {
-  public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
+  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: any): Promise<ValueMap> {
     const resolver = context.$flowed.getResolverByName(params.resolver);
     if (resolver === null) {
       throw new Error(`Task resolver '${params.resolver}' for inner ArrayMap task has no definition.`);
     }
 
-    const task = new Task('task-loop-model', params.spec);
+    const innerTask = new Task('task-loop-model', params.spec);
 
     const resultPromises = [];
     let results = [];
     for (const taskParams of params.params) {
-      task.resetRunStatus();
-      task.supplyReqs(taskParams);
+      innerTask.resetRunStatus();
+      innerTask.supplyReqs(taskParams);
 
       // @todo add test with loop task with context
 
       const process = new TaskProcess(
         context.$flowed.processManager,
         0,
-        task,
+        innerTask,
         resolver,
         context,
         !!params.automapParams,
         !!params.automapResults,
         params.flowId,
+        debug,
       );
 
       const result = process.run();

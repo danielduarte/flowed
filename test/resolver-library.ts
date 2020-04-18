@@ -3,6 +3,8 @@ import { Task, ValueMap, WaitResolver } from '../src';
 import { FlowManager } from '../src/engine';
 import * as ResolverLibrary from '../src/resolver-library';
 import { TaskResolver } from '../src/types';
+import rawDebug from '../src/debug';
+const debug = rawDebug('test');
 
 describe('the ResolverLibrary', () => {
   it('runs noop resolver', () => {
@@ -420,6 +422,6 @@ describe('the ResolverLibrary', () => {
 
   it('can create base resolver task', async () => {
     const resolver = new TaskResolver();
-    await resolver.exec({}, {}, new Task('t1', { resolver: { name: 'r1' } }));
+    await resolver.exec({}, {}, new Task('t1', { resolver: { name: 'r1' } }), debug);
   });
 });

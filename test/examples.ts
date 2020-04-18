@@ -3,7 +3,7 @@ import * as Examples from './examples/index';
 import { ExampleMap } from './examples/types';
 const debug = rawDebug('test');
 
-describe('the example', function() {
+describe('the example', function () {
   this.timeout('2.5s');
 
   Object.keys(Examples).forEach(exampleName => {

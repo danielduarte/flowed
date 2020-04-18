@@ -1,8 +1,6 @@
-import rawDebug from '../../debug';
 import { FlowState } from '.';
 import { ValueMap } from '../../types';
 import { FlowStateEnum } from '../../types';
-const debug = rawDebug('flow');
 
 export class FlowRunning extends FlowState {
   public getStateCode(): FlowStateEnum {
@@ -25,10 +23,10 @@ export class FlowRunning extends FlowState {
     this.setState(FlowStateEnum.Finished);
 
     if (error) {
-      debug(`[${this.runStatus.id}] ✘ Flow finished with error. Results: %O`, this.getResults());
+      this.debug(`[${this.runStatus.id}] ✘ Flow finished with error. Results: %O`, this.getResults());
       this.execFinishReject(error as Error);
     } else {
-      debug(`[${this.runStatus.id}] ✔ Flow finished with results: %O`, this.getResults());
+      this.debug(`[${this.runStatus.id}] ✔ Flow finished with results: %O`, this.getResults());
       this.execFinishResolve();
     }
   }

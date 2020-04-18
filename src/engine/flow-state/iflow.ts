@@ -12,4 +12,6 @@ export interface IFlow {
   reset(): void;
 
   getStateCode(): FlowStateEnum;
+
+  debug(...args: any[]): any;
 }

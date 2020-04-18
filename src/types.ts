@@ -33,7 +33,7 @@ export type GenericValueMap = ValueMap;
 
 export class TaskResolver {
   // noinspection JSUnusedLocalSymbols
-  public exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
+  public exec(params: ValueMap, context: ValueMap, task: Task, debug: any): Promise<ValueMap> {
     return Promise.resolve({});
   }
 }

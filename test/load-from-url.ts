@@ -18,7 +18,7 @@ class DirectResolver {
   }
 }
 
-describe('can run a flow', function() {
+describe('can run a flow', function () {
   this.timeout(4000);
 
   it('from a JSON got from an HTTPS URL', () => {

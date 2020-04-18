@@ -16,7 +16,6 @@ import { FlowRunStatus } from '../flow-run-status';
 import { Task } from '../task';
 import { TaskProcess } from '../task-process';
 import { IFlow } from './iflow';
-const debug = rawDebug('flow');
 
 export abstract class FlowState implements IFlow {
   /**
@@ -42,7 +41,13 @@ export abstract class FlowState implements IFlow {
     this.runStatus = runStatus;
   }
 
-  public start(params: ValueMap, expectedResults: string[], resolvers: TaskResolverMap, context: ValueMap): Promise<ValueMap> {
+  public start(
+    params: ValueMap,
+    expectedResults: string[],
+    resolvers: TaskResolverMap,
+    context: ValueMap,
+    options: ValueMap = {},
+  ): Promise<ValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Start);
   }
 
@@ -96,7 +101,7 @@ export abstract class FlowState implements IFlow {
       if (this.runStatus.options.throwErrorOnUnsolvableResult) {
         throw new Error(msg);
       } else {
-        debug(`Warning: ${msg}`);
+        this.debug(`Warning: ${msg}`);
       }
     }
 
@@ -120,6 +125,13 @@ export abstract class FlowState implements IFlow {
       },
       ...context,
     };
+  }
+
+  public setRunOptions(options: ValueMap) {
+    const defaultRunOptions = {
+      debugKey: 'flow',
+    };
+    this.runStatus.runOptions = Object.assign(defaultRunOptions, options);
   }
 
   public supplyParameters(params: ValueMap) {
@@ -220,6 +232,7 @@ export abstract class FlowState implements IFlow {
         !!this.runStatus.options.resolverAutomapParams,
         !!this.runStatus.options.resolverAutomapResults,
         this.runStatus.id,
+        this.debug,
       );
 
       const errorHandler = (error: Error) => {
@@ -233,14 +246,14 @@ export abstract class FlowState implements IFlow {
         }, errorHandler)
         .catch(errorHandler);
 
-      debug(`[${this.runStatus.id}]   ‣ Task '${task.code}' started, params: %O`, process.getParams());
+      this.debug(`[${this.runStatus.id}]   ‣ Task '${task.code}' started, params: %O`, process.getParams());
     }
   }
 
   public setState(newState: FlowStateEnum) {
     const prevState = this.runStatus.state.getStateCode();
     this.runStatus.state = this.getStateInstance(newState);
-    debug(`[${this.runStatus.id}]   ⓘ Changed flow state from '${prevState}' to '${newState}'`);
+    this.debug(`[${this.runStatus.id}]   ⓘ Changed flow state from '${prevState}' to '${newState}'`);
   }
 
   public getSerializableState() {
@@ -258,9 +271,9 @@ export abstract class FlowState implements IFlow {
     const hasDefaultResult = taskSpec.hasOwnProperty('defaultResult');
 
     if (error) {
-      debug(`[${this.runStatus.id}]   ✗ Error in task '${taskCode}', results: %O`, taskResults);
+      this.debug(`[${this.runStatus.id}]   ✗ Error in task '${taskCode}', results: %O`, taskResults);
     } else {
-      debug(`[${this.runStatus.id}]   ✓ Finished task '${taskCode}', results: %O`, taskResults);
+      this.debug(`[${this.runStatus.id}]   ✓ Finished task '${taskCode}', results: %O`, taskResults);
     }
 
     for (const resultName of taskProvisions) {
@@ -270,7 +283,7 @@ export abstract class FlowState implements IFlow {
         // @todo add defaultResult to repeater task
         this.runStatus.state.supplyResult(resultName, taskSpec.defaultResult);
       } else {
-        debug(
+        this.debug(
           `[${
             this.runStatus.id
           }] ⚠️ Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'. Consider using the task field 'defaultResult' to provide values by default.`,
@@ -289,5 +302,9 @@ export abstract class FlowState implements IFlow {
 
   protected createMethodError(method: string) {
     return new Error(`Cannot execute method ${method} in current state ${this.getStateCode()}.`);
+  }
+
+  public debug(...args: any[]): any {
+    return rawDebug(this && this.runStatus ? this.runStatus.runOptions.debugKey : 'init')(...args);
   }
 }
