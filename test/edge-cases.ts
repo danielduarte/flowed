@@ -36,7 +36,7 @@ describe('edge cases', () => {
 
   // Added to improve error messaging when resolvers does not return as expected.
   // This would be an error in the developing of the resolver, but this improvement helps the developer to find out which is the error.
-  // Related issue https://github.com/daniel-duarte/flowed/issues/19
+  // Related issue https://github.com/danielduarte/flowed/issues/19
   it('resolver not returning object throws an expressive error', async () => {
     // Resolver returning a Promise that does not resolve to an object
     class R1 {

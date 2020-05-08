@@ -21,6 +21,6 @@ after_success:
 
 addons:
   sonarcloud:
-    organization: "daniel-duarte"
+    organization: "danielduarte"
     token:
       secure: $SONAR_TOKEN

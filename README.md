@@ -1,10 +1,10 @@
 # flowed
-[![License](https://img.shields.io/npm/l/flowed?color=%23007ec6)](https://github.com/daniel-duarte/flowed/blob/master/LICENSE)
+[![License](https://img.shields.io/npm/l/flowed?color=%23007ec6)](https://github.com/danielduarte/flowed/blob/master/LICENSE)
 [![NPM Package Version](https://img.shields.io/npm/v/flowed)](https://www.npmjs.com/package/flowed)
-[![Build Status](https://travis-ci.org/daniel-duarte/flowed.svg?branch=master)](https://travis-ci.org/daniel-duarte/flowed)
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B13599%2Fgithub.com%2Fdaniel-duarte%2Fflowed.svg?type=shield)](https://app.fossa.com/reports/4c6d7507-f3be-4d2a-a8ee-9fb8b2418116)
-[![Coverage Status](https://coveralls.io/repos/github/daniel-duarte/flowed/badge.svg?branch=master)](https://coveralls.io/github/daniel-duarte/flowed?branch=master)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-duarte_flowed&metric=alert_status)](https://sonarcloud.io/dashboard?id=daniel-duarte_flowed)
+[![Build Status](https://travis-ci.org/danielduarte/flowed.svg?branch=master)](https://travis-ci.org/danielduarte/flowed)
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B13599%2Fgithub.com%2Fdanielduarte%2Fflowed.svg?type=shield)](https://app.fossa.com/reports/4c6d7507-f3be-4d2a-a8ee-9fb8b2418116)
+[![Coverage Status](https://coveralls.io/repos/github/danielduarte/flowed/badge.svg?branch=master)](https://coveralls.io/github/danielduarte/flowed?branch=master)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=danielduarte_flowed&metric=alert_status)](https://sonarcloud.io/dashboard?id=danielduarte_flowed)
 
 A fast and reliable flow manager and task runner for *Node.js* and *web browsers*.
 
@@ -33,7 +33,7 @@ Or change `latest` in the URL for any available version.
 ## Getting Started
 
 - [Tutorial](./doc/tutorial.md)
-- [Code examples](https://github.com/daniel-duarte/flowed/tree/master/test/examples)
+- [Code examples](https://github.com/danielduarte/flowed/tree/master/test/examples)
 
 
 ## Main Features

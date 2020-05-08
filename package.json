@@ -1,6 +1,6 @@
 {
   "name": "flowed",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "A fast and reliable flow manager and task runner for Node.js and web browsers",
   "keywords": [
     "flow",
@@ -14,10 +14,10 @@
     "flow-engine",
     "flow-execution"
   ],
-  "author": "Daniel Duarte <danieldd.ar@gmail.com> (https://github.com/daniel-duarte)",
+  "author": "Daniel Duarte <danieldd.ar@gmail.com> (https://github.com/danielduarte)",
   "license": "MIT",
-  "homepage": "https://daniel-duarte.github.io/flowed",
-  "repository": "github:daniel-duarte/flowed",
+  "homepage": "https://danielduarte.github.io/flowed",
+  "repository": "github:danielduarte/flowed",
   "scripts": {
     "build": "tsc",
     "build:watch": "npm run build -- --watch",
