@@ -12,7 +12,9 @@
     "task-runner",
     "flowengine",
     "flow-engine",
-    "flow-execution"
+    "flow-execution",
+    "orchestration",
+    "microservices"
   ],
   "author": "Daniel Duarte <danieldd.ar@gmail.com> (https://github.com/danielduarte)",
   "license": "MIT",
@@ -28,7 +30,8 @@
     "posttest": "npm run lint",
     "lint": "tslint -p tsconfig.json -t verbose && tslint -p tsconfig.test.json -t verbose",
     "format": "tslint -p tsconfig.json -t verbose --fix && tslint -p tsconfig.test.json -t verbose --fix && prettier --write \"src/**/*.ts\" && prettier --write \"test/**/*.ts\"",
-    "release:prepare": "./ops/updateSonarProps.sh && rm -rf ./dist ./node_modules package-lock.json && npm install && npm-consider install --test && npm run format && npm run build && npm run bundle && npm test && git status",
+    "release:prepare": "./ops/updateSonarProps.sh && rm -rf ./dist ./node_modules package-lock.json && npm install && npm run format && npm run build && npm run bundle && npm test && git status",
+    "test:size": "npm-consider install --test",
     "prebundle": "npm run build",
     "bundle": "webpack",
     "postbundle": "mkdir -p dist/lib && cp web/flowed.js dist/lib/flowed.js"
@@ -49,25 +52,25 @@
   ],
   "dependencies": {
     "debug": "^4.1.1",
-    "flowed-st": "^1.0.2"
+    "flowed-st": "^1.0.3"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@types/chai": "^4.2.11",
+    "@types/chai": "^4.2.12",
     "@types/debug": "^4.1.5",
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^14.0.5",
+    "@types/mocha": "^8.0.0",
+    "@types/node": "^14.0.26",
     "chai": "^4.2.0",
     "coveralls": "^3.1.0",
-    "mocha": "^7.1.2",
-    "nyc": "^15.0.1",
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
     "prettier": "^2.0.5",
-    "ts-node": "^8.10.1",
+    "ts-node": "^8.10.2",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.9.3",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.0",
+    "webpack-cli": "^3.3.12"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
