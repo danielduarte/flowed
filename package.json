@@ -1,6 +1,6 @@
 {
   "name": "flowed",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "description": "A fast and reliable flow manager and task runner for Node.js and web browsers",
   "keywords": [
     "flow",
