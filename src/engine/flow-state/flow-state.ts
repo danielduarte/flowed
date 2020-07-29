@@ -16,6 +16,7 @@ import { FlowRunStatus } from '../flow-run-status';
 import { Task } from '../task';
 import { TaskProcess } from '../task-process';
 import { IFlow } from './iflow';
+import { FlowManager } from '../flow-manager';
 
 export abstract class FlowState implements IFlow {
   /**
@@ -170,14 +171,20 @@ export abstract class FlowState implements IFlow {
   }
 
   public getResolverByName(name: string) {
-    // Look for custom resolvers
+    // Lookup for custom resolvers
     const resolvers = this.runStatus.resolvers;
     const hasCustomResolver = resolvers.hasOwnProperty(name);
     if (hasCustomResolver) {
       return resolvers[name];
     }
 
-    // Look for built-in resolvers
+    // Lookup for plugin resolvers
+    const hasPluginResolver = FlowManager.plugins.resolvers.hasOwnProperty(name);
+    if (hasPluginResolver) {
+      return FlowManager.plugins.resolvers[name];
+    }
+
+    // Lookup for built-in resolvers
     const hasBuiltInResolver = FlowState.builtInResolvers.hasOwnProperty(name);
     if (hasBuiltInResolver) {
       return FlowState.builtInResolvers[name];

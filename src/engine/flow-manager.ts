@@ -1,11 +1,17 @@
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import { TaskResolverMap, ValueMap } from '../types';
+import { TaskResolverClass, TaskResolverMap, ValueMap } from '../types';
 import { Flow } from './flow';
 import { FlowSpec } from './specs';
 
 export class FlowManager {
+  public static plugins: {
+    resolvers: TaskResolverMap;
+  } = {
+    resolvers: {},
+  };
+
   public static run(
     flowSpec: FlowSpec,
     params: ValueMap = {},
@@ -111,5 +117,14 @@ export class FlowManager {
           reject(error);
         });
     });
+  }
+
+  public static installPlugin(plugin: any) {
+    // Installing plugin resolvers
+    if (plugin.resolverLibrary) {
+      for (const [name, resolver] of Object.entries(plugin.resolverLibrary)) {
+        this.plugins.resolvers[name] = resolver as TaskResolverClass;
+      }
+    }
   }
 }
