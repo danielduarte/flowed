@@ -11,10 +11,10 @@ export interface ValueQueueMap {
 export type SerializableValueQueueManager = ValueQueueMap;
 
 export class ValueQueueManager {
-  public static fromSerializable(serializable: SerializableValueQueueManager): ValueQueueManager {
+  public static fromSerializable(serializable: ValueQueueManager): ValueQueueManager {
     const queueNames = Object.keys(serializable);
     const instance = new ValueQueueManager(queueNames);
-    instance.queues = serializable;
+    instance.queues = (serializable as unknown) as ValueQueueMap;
     instance.nonEmptyQueues = queueNames.reduce((acc, name) => {
       if (instance.queues[name].length > 0) {
         acc.add(name);
@@ -41,7 +41,7 @@ export class ValueQueueManager {
     }, {});
   }
 
-  public push(queueName: string, value: AnyValue) {
+  public push(queueName: string, value: AnyValue): void {
     if (!this.queueNames.includes(queueName)) {
       throw new Error(`Queue name ${queueName} does not exist in queue manager. Existing queues are: [${this.queueNames.join(', ')}].`);
     }
@@ -50,7 +50,7 @@ export class ValueQueueManager {
     this.queues[queueName].push(value);
   }
 
-  public getEmptyQueueNames() {
+  public getEmptyQueueNames(): string[] {
     return this.queueNames.reduce((acc: string[], name: string) => {
       if (this.queues[name].length === 0) {
         acc.push(name);
@@ -85,13 +85,13 @@ export class ValueQueueManager {
     return JSON.parse(JSON.stringify(this.queues));
   }
 
-  public validateAllNonEmpty() {
+  public validateAllNonEmpty(): void {
     if (!this.allHaveContent()) {
       throw new Error(`Some of the queues are empty: [${this.getEmptyQueueNames().join(', ')}].`);
     }
   }
 
-  public allHaveContent() {
+  public allHaveContent(): boolean {
     return this.nonEmptyQueues.size === this.queueNames.length;
   }
 }

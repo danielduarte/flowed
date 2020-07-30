@@ -68,7 +68,7 @@ export class FlowRunStatus {
    */
   public tasks!: TaskMap;
 
-  public constructor(flow: Flow, spec: FlowSpec, runStatus?: any) {
+  public constructor(flow: Flow, spec: FlowSpec, runStatus?: SerializedFlowRunStatus) {
     this.flow = flow;
     this.processManager = new ProcessManager();
     this.id = FlowRunStatus.nextId;
@@ -89,7 +89,7 @@ export class FlowRunStatus {
     this.initRunStatus(spec, runStatus);
   }
 
-  public initRunStatus(spec: FlowSpec, runState?: SerializedFlowRunStatus) {
+  public initRunStatus(spec: FlowSpec, runState?: SerializedFlowRunStatus): void {
     this.spec = spec;
     this.tasks = {};
 
@@ -104,7 +104,7 @@ export class FlowRunStatus {
     this.taskProvisions = Array.from(new Set(provisions));
 
     this.options = Object.assign({}, this.spec.configs ?? {}, this.spec.options ?? {});
-    if (this.spec.hasOwnProperty('configs')) {
+    if (Object.prototype.hasOwnProperty.call(this.spec, 'configs')) {
       this.flow.debug("⚠️ DEPRECATED: 'configs' field in flow spec. Use 'options' instead.");
     }
 
@@ -120,7 +120,7 @@ export class FlowRunStatus {
 
       const taskReqs = task.spec.requires ?? [];
       for (const req of taskReqs) {
-        if (!this.tasksByReq.hasOwnProperty(req)) {
+        if (typeof this.tasksByReq[req] === 'undefined') {
           this.tasksByReq[req] = {};
         }
         this.tasksByReq[req][task.code] = task;
@@ -134,7 +134,7 @@ export class FlowRunStatus {
     }
   }
 
-  public fromSerializable(runState: SerializedFlowRunStatus) {
+  public fromSerializable(runState: SerializedFlowRunStatus): void {
     this.id = runState.id;
     this.processManager.nextProcessId = runState.nextProcessId;
     this.processManager.processes = [];
@@ -197,7 +197,7 @@ export interface SerializedFlowRunStatus {
   taskProvisions: string[];
   expectedResults: string[];
   options: FlowOptions;
-  results: any; // Must be serializable
-  context: any; // Must be serializable
+  results: ValueMap; // Must be serializable
+  context: ValueMap; // Must be serializable
   taskStatuses: { [taskCode: string]: TaskRunStatus }; // Must be serializable
 }

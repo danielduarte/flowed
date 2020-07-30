@@ -1,3 +1,5 @@
+import { AnyValue, TransformTemplate } from '../types';
+
 export interface FlowSpec {
   tasks?: TaskSpecMap;
 
@@ -16,7 +18,7 @@ export interface TaskSpec {
 
   provides?: string[];
 
-  defaultResult?: any;
+  defaultResult?: AnyValue;
 
   resolver?: TaskResolverSpec;
 }
@@ -34,15 +36,15 @@ export interface TaskParamsMap {
 }
 
 export interface ResolverParamInfoValue {
-  value: any;
+  value: AnyValue;
 }
 
 export interface ResolverParamInfoTransform {
-  transform: any;
+  transform: TransformTemplate;
 }
 
 export interface TaskResultsMap {
-  [code: string]: any;
+  [code: string]: AnyValue;
 }
 
 export interface FlowOptions {

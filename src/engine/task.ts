@@ -1,6 +1,9 @@
 import { TaskRunStatus, ValueMap } from '../types';
 import { ResolverParamInfoTransform, ResolverParamInfoValue, TaskSpec } from './specs';
 import { ValueQueueManager } from './value-queue-manager';
+import { AnyValue } from '../types';
+import { Debugger } from 'debug';
+import { SerializedFlowRunStatus } from './flow-run-status';
 // tslint:disable-next-line:no-var-requires
 const ST = require('flowed-st');
 
@@ -11,22 +14,22 @@ export class Task {
     this.parseSpec();
   }
 
-  public getResolverName() {
+  public getResolverName(): string {
     return (this.spec.resolver ?? { name: 'flowed::Noop' }).name;
   }
 
-  public getSerializableState() {
+  public getSerializableState(): SerializedFlowRunStatus {
     const result = JSON.parse(JSON.stringify(this.runStatus));
     result.solvedReqs = this.runStatus.solvedReqs.toSerializable();
     return result;
   }
 
-  public setSerializableState(runStatus: any) {
+  public setSerializableState(runStatus: TaskRunStatus): void {
     this.runStatus = JSON.parse(JSON.stringify(runStatus));
     this.runStatus.solvedReqs = ValueQueueManager.fromSerializable(runStatus.solvedReqs);
   }
 
-  public resetRunStatus() {
+  public resetRunStatus(): void {
     const reqs = [...(this.spec.requires ?? [])];
 
     this.runStatus = {
@@ -35,15 +38,15 @@ export class Task {
     };
   }
 
-  public isReadyToRun() {
+  public isReadyToRun(): boolean {
     return this.runStatus.solvedReqs.allHaveContent();
   }
 
-  public getResults(): { [name: string]: any } {
+  public getResults(): ValueMap {
     return this.runStatus.solvedResults;
   }
 
-  public supplyReq(reqName: string, value: any) {
+  public supplyReq(reqName: string, value: AnyValue): void {
     const reqIndex = (this.spec.requires ?? []).indexOf(reqName);
     if (reqIndex === -1) {
       // This can only happen if supplyReq is called manually by the user. The flow will never call with an invalid reqName.
@@ -53,14 +56,14 @@ export class Task {
     this.runStatus.solvedReqs.push(reqName, value);
   }
 
-  public supplyReqs(reqsMap: ValueMap) {
+  public supplyReqs(reqsMap: ValueMap): void {
     for (const [reqName, req] of Object.entries(reqsMap)) {
       this.supplyReq(reqName, req);
     }
   }
 
   // @todo convert to protected
-  public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number, debug: any) {
+  public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number, debug: Debugger): ValueMap {
     const params: ValueMap = {};
 
     let resolverParams = (this.spec.resolver ?? { name: 'flowed::Noop' }).params ?? {};
@@ -90,7 +93,7 @@ export class Task {
       else {
         // Implicit case: if (typeof paramSolvingInfo === 'object' && paramSolvingInfo !== null)
         // Direct value pre-processor
-        if (paramSolvingInfo.hasOwnProperty('value')) {
+        if (Object.prototype.hasOwnProperty.call(paramSolvingInfo, 'value')) {
           paramValue = (paramSolvingInfo as ResolverParamInfoValue).value;
         }
 
@@ -109,7 +112,7 @@ export class Task {
   }
 
   // @todo convert to protected
-  public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number, debug: any) {
+  public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number, debug: Debugger): ValueMap {
     if (typeof solvedResults !== 'object') {
       throw new Error(
         `Expected resolver for task '${
@@ -132,7 +135,7 @@ export class Task {
     }
 
     for (const [resolverResultName, taskResultName] of Object.entries(resolverResults)) {
-      if (solvedResults.hasOwnProperty(resolverResultName)) {
+      if (Object.prototype.hasOwnProperty.call(solvedResults, resolverResultName)) {
         results[taskResultName] = solvedResults[resolverResultName];
       }
     }
@@ -140,7 +143,7 @@ export class Task {
     return results;
   }
 
-  protected parseSpec() {
+  protected parseSpec(): void {
     this.resetRunStatus();
   }
 }

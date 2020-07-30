@@ -1,6 +1,7 @@
 import { FlowState } from '.';
 import { ValueMap } from '../../types';
 import { FlowStateEnum } from '../../types';
+import { SerializedFlowRunStatus } from '../flow-run-status';
 
 export class FlowPaused extends FlowState {
   public getStateCode(): FlowStateEnum {
@@ -27,7 +28,7 @@ export class FlowPaused extends FlowState {
     return Promise.resolve(this.getResults());
   }
 
-  public getSerializableState() {
+  public getSerializableState(): SerializedFlowRunStatus {
     return this.runStatus.toSerializable();
   }
 }

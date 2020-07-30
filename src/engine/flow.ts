@@ -1,5 +1,5 @@
-import { FlowStateEnum, TaskResolverMap, ValueMap } from '../types';
-import { FlowRunStatus } from './flow-run-status';
+import { AnyValue, FlowStateEnum, TaskResolverMap, ValueMap } from '../types';
+import { FlowRunStatus, SerializedFlowRunStatus } from './flow-run-status';
 import { IFlow } from './flow-state/iflow';
 import { FlowSpec } from './specs';
 import rawDebug from '../debug';
@@ -7,7 +7,7 @@ import rawDebug from '../debug';
 export class Flow implements IFlow {
   protected runStatus!: FlowRunStatus;
 
-  public constructor(spec?: FlowSpec, runState?: any) {
+  public constructor(spec?: FlowSpec, runState?: SerializedFlowRunStatus) {
     this.runStatus = new FlowRunStatus(this, spec ?? {}, runState);
   }
 
@@ -37,15 +37,15 @@ export class Flow implements IFlow {
     return this.runStatus.state.stop();
   }
 
-  public reset() {
+  public reset(): void {
     this.runStatus.state.reset();
   }
 
-  public getSerializableState() {
+  public getSerializableState(): SerializedFlowRunStatus {
     return this.runStatus.state.getSerializableState();
   }
 
-  public debug(...args: any[]): any {
-    return this && this.runStatus ? this.runStatus.state.debug(...args) : rawDebug('init')(...args);
+  public debug(formatter: string, ...args: AnyValue[]): void {
+    this && this.runStatus ? this.runStatus.state.debug(formatter, ...args) : rawDebug('init')(formatter, ...args);
   }
 }

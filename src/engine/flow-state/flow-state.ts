@@ -11,12 +11,14 @@ import {
   ThrowErrorResolver,
   WaitResolver,
 } from '../../resolver-library';
-import { FlowStateEnum, FlowTransitionEnum, TaskResolverMap, ValueMap } from '../../types';
-import { FlowRunStatus } from '../flow-run-status';
+import { AnyValue, FlowStateEnum, FlowTransitionEnum, TaskResolverClass, TaskResolverMap, ValueMap } from '../../types';
+import { FlowRunStatus, SerializedFlowRunStatus } from '../flow-run-status';
 import { Task } from '../task';
 import { TaskProcess } from '../task-process';
 import { IFlow } from './iflow';
 import { FlowManager } from '../flow-manager';
+import { Debugger } from 'debug';
+import { FlowSpec } from '../specs';
 
 export abstract class FlowState implements IFlow {
   /**
@@ -47,12 +49,13 @@ export abstract class FlowState implements IFlow {
     expectedResults: string[],
     resolvers: TaskResolverMap,
     context: ValueMap,
-    options: ValueMap = {},
+    options: ValueMap = {}, // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<ValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Start);
   }
 
-  public finished(error: Error | boolean = false) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public finished(error: Error | boolean = false): void {
     throw this.createTransitionError(FlowTransitionEnum.Finished);
   }
 
@@ -60,7 +63,8 @@ export abstract class FlowState implements IFlow {
     throw this.createTransitionError(FlowTransitionEnum.Pause);
   }
 
-  public paused(error: Error | boolean = false) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public paused(error: Error | boolean = false): void {
     throw this.createTransitionError(FlowTransitionEnum.Paused);
   }
 
@@ -72,29 +76,30 @@ export abstract class FlowState implements IFlow {
     throw this.createTransitionError(FlowTransitionEnum.Stop);
   }
 
-  public stopped(error: Error | boolean = false) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public stopped(error: Error | boolean = false): void {
     throw this.createTransitionError(FlowTransitionEnum.Stopped);
   }
 
-  public reset() {
+  public reset(): void {
     throw this.createTransitionError(FlowTransitionEnum.Reset);
   }
 
   public abstract getStateCode(): FlowStateEnum;
 
-  public execFinishResolve() {
+  public execFinishResolve(): void {
     this.runStatus.finishResolve(this.runStatus.results);
   }
 
-  public execFinishReject(error: Error) {
+  public execFinishReject(error: Error): void {
     this.runStatus.finishReject(error);
   }
 
-  public isRunning() {
+  public isRunning(): boolean {
     return this.runStatus.processManager.runningCount() > 0;
   }
 
-  public setExpectedResults(expectedResults: string[]) {
+  public setExpectedResults(expectedResults: string[]): void {
     // Check expected results that cannot be fulfilled
     const missingExpected = expectedResults.filter(r => !this.runStatus.taskProvisions.includes(r));
     if (missingExpected.length > 0) {
@@ -109,15 +114,15 @@ export abstract class FlowState implements IFlow {
     this.runStatus.expectedResults = [...expectedResults];
   }
 
-  public getResults() {
+  public getResults(): ValueMap {
     return this.runStatus.results;
   }
 
-  public setResolvers(resolvers: TaskResolverMap) {
+  public setResolvers(resolvers: TaskResolverMap): void {
     this.runStatus.resolvers = resolvers;
   }
 
-  public setContext(context: ValueMap) {
+  public setContext(context: ValueMap): void {
     this.runStatus.context = {
       $flowed: {
         getResolverByName: this.getResolverByName.bind(this),
@@ -128,20 +133,20 @@ export abstract class FlowState implements IFlow {
     };
   }
 
-  public setRunOptions(options: ValueMap) {
+  public setRunOptions(options: ValueMap): void {
     const defaultRunOptions = {
       debugKey: 'flow',
     };
     this.runStatus.runOptions = Object.assign(defaultRunOptions, options);
   }
 
-  public supplyParameters(params: ValueMap) {
+  public supplyParameters(params: ValueMap): void {
     for (const [paramCode, paramValue] of Object.entries(params)) {
       this.runStatus.state.supplyResult(paramCode, paramValue);
     }
   }
 
-  public getSpec() {
+  public getSpec(): FlowSpec {
     return this.runStatus.spec;
   }
 
@@ -154,7 +159,7 @@ export abstract class FlowState implements IFlow {
     return this.runStatus.finishPromise;
   }
 
-  public getResolverForTask(task: Task) {
+  public getResolverForTask(task: Task): TaskResolverClass {
     const name = task.getResolverName();
 
     const resolver = this.getResolverByName(name);
@@ -170,22 +175,22 @@ export abstract class FlowState implements IFlow {
     return resolver;
   }
 
-  public getResolverByName(name: string) {
+  public getResolverByName(name: string): TaskResolverClass | null {
     // Lookup for custom resolvers
     const resolvers = this.runStatus.resolvers;
-    const hasCustomResolver = resolvers.hasOwnProperty(name);
+    const hasCustomResolver = typeof resolvers[name] !== 'undefined';
     if (hasCustomResolver) {
       return resolvers[name];
     }
 
     // Lookup for plugin resolvers
-    const hasPluginResolver = FlowManager.plugins.resolvers.hasOwnProperty(name);
+    const hasPluginResolver = typeof FlowManager.plugins.resolvers[name] !== 'undefined';
     if (hasPluginResolver) {
       return FlowManager.plugins.resolvers[name];
     }
 
     // Lookup for built-in resolvers
-    const hasBuiltInResolver = FlowState.builtInResolvers.hasOwnProperty(name);
+    const hasBuiltInResolver = typeof FlowState.builtInResolvers[name] !== 'undefined';
     if (hasBuiltInResolver) {
       return FlowState.builtInResolvers[name];
     }
@@ -193,10 +198,10 @@ export abstract class FlowState implements IFlow {
     return null;
   }
 
-  public supplyResult(resultName: string, result: any) {
+  public supplyResult(resultName: string, result: AnyValue): void {
     // Checks if the task result is required by other tasks.
     // If it is not, it is likely a flow output value.
-    const suppliesSomeTask = this.runStatus.tasksByReq.hasOwnProperty(resultName);
+    const suppliesSomeTask = typeof this.runStatus.tasksByReq[resultName] !== 'undefined';
 
     if (suppliesSomeTask) {
       const suppliedTasks = this.runStatus.tasksByReq[resultName];
@@ -221,11 +226,11 @@ export abstract class FlowState implements IFlow {
     }
   }
 
-  public getStateInstance(state: FlowStateEnum) {
+  public getStateInstance(state: FlowStateEnum): FlowState {
     return this.runStatus.states[state];
   }
 
-  public startReadyTasks() {
+  public startReadyTasks(): void {
     const readyTasks = this.runStatus.tasksReady;
     this.runStatus.tasksReady = [];
 
@@ -239,10 +244,10 @@ export abstract class FlowState implements IFlow {
         !!this.runStatus.options.resolverAutomapParams,
         !!this.runStatus.options.resolverAutomapResults,
         this.runStatus.id,
-        this.debug,
+        this.debug as Debugger,
       );
 
-      const errorHandler = (error: Error) => {
+      const errorHandler = (error: Error): void => {
         this.processFinished(process, error, true);
       };
 
@@ -257,17 +262,17 @@ export abstract class FlowState implements IFlow {
     }
   }
 
-  public setState(newState: FlowStateEnum) {
+  public setState(newState: FlowStateEnum): void {
     const prevState = this.runStatus.state.getStateCode();
     this.runStatus.state = this.getStateInstance(newState);
     this.debug(`[${this.runStatus.id}]   ⓘ Changed flow state from '${prevState}' to '${newState}'`);
   }
 
-  public getSerializableState() {
+  public getSerializableState(): SerializedFlowRunStatus {
     throw this.createMethodError('getSerializableState');
   }
 
-  protected processFinished(process: TaskProcess, error: Error | boolean, stopFlowExecutionOnError: boolean) {
+  protected processFinished(process: TaskProcess, error: Error | boolean, stopFlowExecutionOnError: boolean): void {
     this.runStatus.processManager.removeProcess(process);
 
     const task = process.task;
@@ -275,7 +280,7 @@ export abstract class FlowState implements IFlow {
     const taskSpec = task.spec;
     const taskProvisions = taskSpec.provides ?? [];
     const taskResults = task.getResults();
-    const hasDefaultResult = taskSpec.hasOwnProperty('defaultResult');
+    const hasDefaultResult = Object.prototype.hasOwnProperty.call(taskSpec, 'defaultResult');
 
     if (error) {
       this.debug(`[${this.runStatus.id}]   ✗ Error in task '${taskCode}', results: %O`, taskResults);
@@ -284,7 +289,7 @@ export abstract class FlowState implements IFlow {
     }
 
     for (const resultName of taskProvisions) {
-      if (taskResults.hasOwnProperty(resultName)) {
+      if (Object.prototype.hasOwnProperty.call(taskResults, resultName)) {
         this.runStatus.state.supplyResult(resultName, taskResults[resultName]);
       } else if (hasDefaultResult) {
         // @todo add defaultResult to repeater task
@@ -301,17 +306,19 @@ export abstract class FlowState implements IFlow {
     this.runStatus.state.postProcessFinished(error, stopFlowExecutionOnError);
   }
 
-  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean): void {}
 
-  protected createTransitionError(transition: string) {
+  protected createTransitionError(transition: string): Error {
     return new Error(`Cannot execute transition ${transition} in current state ${this.getStateCode()}.`);
   }
 
-  protected createMethodError(method: string) {
+  protected createMethodError(method: string): Error {
     return new Error(`Cannot execute method ${method} in current state ${this.getStateCode()}.`);
   }
 
-  public debug(...args: any[]): any {
-    return rawDebug(this && this.runStatus ? this.runStatus.runOptions.debugKey : 'init')(...args);
+  public debug(formatter: string, ...args: AnyValue[]): void {
+    const scope = this && this.runStatus ? this.runStatus.runOptions.debugKey : 'init';
+    rawDebug(scope)(formatter, ...args);
   }
 }

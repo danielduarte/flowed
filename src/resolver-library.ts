@@ -1,6 +1,7 @@
 import { FlowManager, Task } from './engine';
 import { TaskProcess } from './engine/task-process';
 import { ValueMap } from './types';
+import { Debugger } from 'debug';
 
 // Do nothing and finish
 export class NoopResolver {
@@ -52,7 +53,7 @@ export class SubFlowResolver {
 // Run a task multiple times and finishes returning an array with all results.
 // If one execution fails, the repeater resolver ends with an exception (this is valid for both parallel and not parallel modes).
 export class RepeaterResolver {
-  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: any): Promise<ValueMap> {
+  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger): Promise<ValueMap> {
     const resolver = context.$flowed.getResolverByName(params.resolver);
     if (resolver === null) {
       throw new Error(`Task resolver '${params.resolver}' for inner Repeater task has no definition.`);
@@ -98,7 +99,7 @@ export class RepeaterResolver {
 }
 
 export class ArrayMapResolver {
-  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: any): Promise<ValueMap> {
+  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger): Promise<ValueMap> {
     const resolver = context.$flowed.getResolverByName(params.resolver);
     if (resolver === null) {
       throw new Error(`Task resolver '${params.resolver}' for inner ArrayMap task has no definition.`);

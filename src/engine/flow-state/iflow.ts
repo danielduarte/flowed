@@ -1,4 +1,4 @@
-import { FlowStateEnum, TaskResolverMap, ValueMap } from '../../types';
+import { AnyValue, FlowStateEnum, TaskResolverMap, ValueMap } from '../../types';
 
 export interface IFlow {
   start(params: ValueMap, expectedResults: string[], resolvers: TaskResolverMap, context: ValueMap): Promise<ValueMap>;
@@ -13,5 +13,5 @@ export interface IFlow {
 
   getStateCode(): FlowStateEnum;
 
-  debug(...args: any[]): any;
+  debug(formatter: string, ...args: AnyValue[]): void;
 }

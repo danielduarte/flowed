@@ -6,7 +6,7 @@ export class FlowStopping extends FlowState {
     return FlowStateEnum.Stopping;
   }
 
-  public stopped(error: Error | boolean = false) {
+  public stopped(error: Error | boolean = false): void {
     this.setState(FlowStateEnum.Stopped);
 
     if (error) {
@@ -18,7 +18,8 @@ export class FlowStopping extends FlowState {
     }
   }
 
-  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean): void {
     this.runStatus.state.stopped(error);
   }
 }

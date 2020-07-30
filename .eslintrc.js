@@ -14,8 +14,8 @@ module.exports = {
     'prettier/@typescript-eslint',
   ],
   rules: {
-    '@typescript-eslint/no-explicit-any': [
-      'error', {fixToUnknown: false},
-    ],
+    '@typescript-eslint/no-var-requires': 0,
+    '@typescript-eslint/interface-name-prefix': 0,
+    '@typescript-eslint/no-empty-function': 0,
   },
 };

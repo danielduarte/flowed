@@ -1,5 +1,6 @@
 import { Task } from './engine';
 import { ValueQueueManager } from './engine/value-queue-manager';
+import { Debugger } from 'debug';
 
 export enum FlowStateEnum {
   Ready = 'Ready',
@@ -22,7 +23,11 @@ export enum FlowTransitionEnum {
   Stopped = 'Stopped',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyValue = any;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TransformTemplate = any;
 
 export interface ValueMap {
   [key: string]: AnyValue;
@@ -31,9 +36,13 @@ export interface ValueMap {
 // @deprecated Use ValueMap instead
 export type GenericValueMap = ValueMap;
 
-export class TaskResolver {
-  // noinspection JSUnusedLocalSymbols
-  public exec(params: ValueMap, context: ValueMap, task: Task, debug: any): Promise<ValueMap> {
+export interface ITaskResolver {
+  exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger): Promise<ValueMap>;
+}
+
+export class TaskResolver implements ITaskResolver {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger): Promise<ValueMap> {
     return Promise.resolve({});
   }
 }
@@ -50,8 +59,9 @@ export interface TaskMap {
 
 export interface TaskRunStatus {
   solvedReqs: ValueQueueManager;
+  solvedResults: ValueMap;
+}
 
-  solvedResults: {
-    [name: string]: any;
-  };
+export interface FlowedPlugin {
+  resolverLibrary: TaskResolverMap;
 }

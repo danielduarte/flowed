@@ -1,8 +1,8 @@
-import debug from 'debug';
+import debug, { Debugger } from 'debug';
 
-const debugs: { [key: string]: any } = {};
+const debugs: { [key: string]: Debugger } = {};
 
-export default (scope: string) => {
+export default (scope: string): Debugger => {
   let d = debugs[scope];
 
   if (typeof d === 'undefined') {

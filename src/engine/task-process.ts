@@ -1,6 +1,7 @@
 import { TaskResolverClass, ValueMap } from '../types';
 import { ProcessManager } from './process-manager';
 import { Task } from './task';
+import { Debugger } from 'debug';
 
 export class TaskProcess {
   protected params!: ValueMap;
@@ -14,7 +15,7 @@ export class TaskProcess {
     protected automapParams: boolean,
     protected automapResults: boolean,
     protected flowId: number,
-    protected debug: any,
+    protected debug: Debugger,
   ) {}
 
   public getParams(): ValueMap {
@@ -26,13 +27,13 @@ export class TaskProcess {
     const resolver = new this.taskResolverConstructor();
 
     return new Promise((resolve, reject) => {
-      const onResolverSuccess = (resolverValue: ValueMap) => {
+      const onResolverSuccess = (resolverValue: ValueMap): void => {
         const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId, this.debug);
         this.task.runStatus.solvedResults = results;
         resolve(this.task.runStatus.solvedResults);
       };
 
-      const onResolverError = (error: Error) => {
+      const onResolverError = (error: Error): void => {
         reject(error);
       };
 

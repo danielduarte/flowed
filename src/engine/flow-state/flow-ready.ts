@@ -1,6 +1,7 @@
 import { FlowState } from '.';
 import { TaskResolverMap, ValueMap } from '../../types';
 import { FlowStateEnum } from '../../types';
+import { SerializedFlowRunStatus } from '../flow-run-status';
 
 export class FlowReady extends FlowState {
   public getStateCode(): FlowStateEnum {
@@ -37,7 +38,7 @@ export class FlowReady extends FlowState {
     return this.runStatus.finishPromise;
   }
 
-  public getSerializableState() {
+  public getSerializableState(): SerializedFlowRunStatus {
     return this.runStatus.toSerializable();
   }
 }

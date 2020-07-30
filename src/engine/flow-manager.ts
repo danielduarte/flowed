@@ -1,9 +1,10 @@
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import { TaskResolverClass, TaskResolverMap, ValueMap } from '../types';
+import { TaskResolverMap, ValueMap, FlowedPlugin } from '../types';
 import { Flow } from './flow';
 import { FlowSpec } from './specs';
+import { IncomingMessage } from 'http';
 
 export class FlowManager {
   public static plugins: {
@@ -69,7 +70,7 @@ export class FlowManager {
     context: ValueMap = {},
     options: ValueMap = {},
   ): Promise<ValueMap> {
-    let client: any = null;
+    let client: typeof import('http') | typeof import('https') | null = null;
     if (flowSpecUrl.startsWith('http://')) {
       client = http;
     } else if (flowSpecUrl.startsWith('https://')) {
@@ -88,8 +89,8 @@ export class FlowManager {
     }
 
     return new Promise<ValueMap>((resolveFlow, reject) => {
-      client
-        .get(flowSpecUrl, (res: any) => {
+      (client || https)
+        .get(flowSpecUrl, (res: IncomingMessage) => {
           const { statusCode } = res;
           const contentType = res.headers['content-type'] || 'application/json';
 
@@ -105,7 +106,7 @@ export class FlowManager {
           } else {
             res.setEncoding('utf8');
             let rawData = '';
-            res.on('data', (chunk: any) => {
+            res.on('data', (chunk: string) => {
               rawData += chunk;
             });
             res.on('end', () => {
@@ -119,11 +120,11 @@ export class FlowManager {
     });
   }
 
-  public static installPlugin(plugin: any) {
+  public static installPlugin(plugin: FlowedPlugin): void {
     // Installing plugin resolvers
     if (plugin.resolverLibrary) {
       for (const [name, resolver] of Object.entries(plugin.resolverLibrary)) {
-        this.plugins.resolvers[name] = resolver as TaskResolverClass;
+        this.plugins.resolvers[name] = resolver;
       }
     }
   }

@@ -19,7 +19,7 @@ export class FlowRunning extends FlowState {
     return this.runStatus.finishPromise;
   }
 
-  public finished(error: Error | boolean = false) {
+  public finished(error: Error | boolean = false): void {
     this.setState(FlowStateEnum.Finished);
 
     if (error) {
@@ -31,7 +31,7 @@ export class FlowRunning extends FlowState {
     }
   }
 
-  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean) {
+  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean): void {
     const stopExecution = error && stopFlowExecutionOnError;
     if (!stopExecution) {
       this.runStatus.state.startReadyTasks();
