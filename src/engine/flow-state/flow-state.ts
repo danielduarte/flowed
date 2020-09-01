@@ -318,7 +318,7 @@ export abstract class FlowState implements IFlow {
   }
 
   public debug(formatter: string, ...args: AnyValue[]): void {
-    const scope = this && this.runStatus ? this.runStatus.runOptions.debugKey : 'init';
+    const scope = this && this.runStatus && typeof this.runStatus.runOptions.debugKey === 'string' ? this.runStatus.runOptions.debugKey : 'init';
     rawDebug(scope)(formatter, ...args);
   }
 }

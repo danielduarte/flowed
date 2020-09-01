@@ -39,6 +39,7 @@ export class FlowRunStatus {
 
   public context: ValueMap = {};
 
+  // Stores the options passed from the outside on each particular run
   public runOptions: ValueMap = {};
 
   /**
@@ -49,7 +50,8 @@ export class FlowRunStatus {
 
   public finishPromise!: Promise<ValueMap>;
 
-  public options!: FlowOptions; // @todo Check if this is needed
+  // Stores the flow option passed as a part of the spec in the field "options"
+  public options!: FlowOptions;
 
   public states: { [stateKey: string]: FlowState };
 
