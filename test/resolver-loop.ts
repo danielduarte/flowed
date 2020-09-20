@@ -1,163 +1,179 @@
 import { expect } from 'chai';
-import rawDebug from '../src/debug';
 import { FlowManager, ValueMap } from '../src';
-const debug = rawDebug('test');
 
 describe('resolver loop', () => {
-  const getFlowSpec = (runInParallel: boolean) => ({
-    tasks: {
-      concatArray: {
-        requires: ['parameters'],
-        provides: ['preResults'],
-        resolver: {
-          name: 'flowed::ArrayMap',
-          params: {
-            flowId: { value: '1.1' },
-            parallel: { value: runInParallel },
-            params: 'parameters',
-            spec: {
-              value: {
-                requires: ['x', 'y'],
-                provides: ['result'],
-                resolver: {
-                  name: 'customResolver', // @todo Use this value instead of the parameter "resolver"
-                },
-              },
-            },
-            resolver: { value: 'resConcat' },
-            automapParams: { value: true },
-            automapResults: { value: true },
-          },
-          results: {
-            results: 'preResults',
-          },
-        },
-      },
-      postProcess: {
-        requires: ['preResults'],
-        provides: ['results'],
-        resolver: {
-          name: 'flowed::Echo',
-          params: {
-            in: { transform: { '{{#each preResults}}': '{{result}}' } },
-          },
-          results: {
-            out: 'results',
-          },
-        },
-      },
-    },
-    options: {
-      resolverAutomapParams: true,
-      resolverAutomapResults: true,
-    },
-  });
+  const products = [
+    { id: 1, name: 'prod 1', sku: 'p1' },
+    { id: 2, name: 'prod 2', sku: 'p2' },
+    { id: 3, name: 'prod 3', sku: 'p3' },
+    { id: 4, name: 'prod 4', sku: 'p4' },
+  ];
 
-  class Concat {
-    public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
-      debug('Started sub-task');
-      return new Promise((resolve, reject) => {
-        setImmediate(() => {
-          debug('Finished sub-task');
-          resolve({ result: params.x + context.separator + params.y });
-        });
+  const prices = [
+    { id: 1, value: 111 },
+    { id: 2, value: 222 },
+    { id: 3, value: 333 },
+    { id: 4, value: 444 },
+  ];
+
+  const productsWithPrice = [
+    { id: 1, name: 'prod 1', sku: 'p1', value: 111 },
+    { id: 2, name: 'prod 2', sku: 'p2', value: 222 },
+    { id: 3, name: 'prod 3', sku: 'p3', value: 333 },
+    { id: 4, name: 'prod 4', sku: 'p4', value: 444 },
+  ];
+
+  class CallApiProd {
+    exec(params: ValueMap) {
+      return Promise.resolve({
+        body: products[params.pathParams.id - 1],
       });
     }
   }
 
-  it('run without error in sequence', async () => {
-    // @todo Add test to check if flow finishes even when there are not ran tasks (put a non satisfied requirements in a task)
-
-    const results = (
-      await FlowManager.run(
-        getFlowSpec(false),
-        {
-          parameters: [
-            { x: 'x1', y: 'y1' },
-            { x: 'x2', y: 'y2' },
-            { x: 'x3', y: 'y3' },
-            { x: 'x4', y: 'y4' },
-          ],
-        },
-        ['results'],
-        { resConcat: Concat },
-        { separator: '-' },
-      )
-    ).results;
-
-    expect(results).to.be.eql(['x1-y1', 'x2-y2', 'x3-y3', 'x4-y4']);
-  });
-
-  it('run without error in parallel', async () => {
-    // @todo Add test to check if flow finishes even when there are not ran tasks (put a non satisfied requirements in a task)
-
-    const results = (
-      await FlowManager.run(
-        getFlowSpec(true),
-        {
-          parameters: [
-            { x: 'x1', y: 'y1' },
-            { x: 'x2', y: 'y2' },
-            { x: 'x3', y: 'y3' },
-            { x: 'x4', y: 'y4' },
-          ],
-        },
-        ['results'],
-        { resConcat: Concat },
-        { separator: '-' },
-      )
-    ).results;
-
-    expect(results).to.be.eql(['x1-y1', 'x2-y2', 'x3-y3', 'x4-y4']);
-  });
-
-  it('run with error (incorrect resolver mapping) in sequence', async () => {
-    let errorMsg = 'No error';
-
-    try {
-      await FlowManager.run(
-        getFlowSpec(false),
-        {
-          parameters: [
-            { x: 'x1', y: 'y1' },
-            { x: 'x2', y: 'y2' },
-            { x: 'x3', y: 'y3' },
-            { x: 'x4', y: 'y4' },
-          ],
-        },
-        ['results'],
-        { resConcatIncorrectName: Concat },
-        { separator: '-' },
-      );
-    } catch (error) {
-      errorMsg = error.message;
+  class CallApiPrice {
+    exec(params: ValueMap) {
+      return Promise.resolve({
+        body: prices[params.pathParams.id - 1],
+      });
     }
+  }
 
-    expect(errorMsg).to.be.eql("Task resolver 'resConcat' for inner ArrayMap task has no definition.");
+  it('run loop resolver with single subtask', async () => {
+    const flow = {
+      tasks: {
+        subflow: {
+          requires: ['productIds'],
+          provides: ['products'],
+          resolver: {
+            name: 'flowed::Loop',
+            params: {
+              inCollection: 'productIds',
+              inItemName: { value: 'prodId' },
+              outItemName: { value: 'product' },
+              subtask: {
+                value: {
+                  requires: ['prodId'],
+                  provides: ['product'],
+                  resolver: {
+                    name: 'CallApiProd',
+                    params: {
+                      pathParams: { transform: { id: '{{prodId}}' } },
+                      path: '/products/{id}',
+                      method: 'get',
+                      serverUrl: 'http://localhost:3003',
+                    },
+                    results: {
+                      body: 'product',
+                    },
+                  },
+                },
+              },
+            },
+            results: {
+              outCollection: 'products',
+            },
+          },
+        },
+      },
+    };
+
+    const result = await FlowManager.run(flow, { productIds: [1, 2, 3, 4] }, ['products'], { CallApiProd });
+
+    expect(result).to.be.eql({ products });
   });
 
-  it('run with error (incorrect resolver mapping) in parallel', async () => {
-    let errorMsg = 'No error';
-
-    try {
-      await FlowManager.run(
-        getFlowSpec(true),
-        {
-          parameters: [
-            { x: 'x1', y: 'y1' },
-            { x: 'x2', y: 'y2' },
-            { x: 'x3', y: 'y3' },
-            { x: 'x4', y: 'y4' },
-          ],
+  it('run loop resolver with subflow', async () => {
+    const flow = {
+      tasks: {
+        subflow: {
+          requires: ['productIds'],
+          provides: ['products'],
+          resolver: {
+            name: 'flowed::Loop',
+            params: {
+              inCollection: 'productIds',
+              inItemName: { value: 'prodId' },
+              outItemName: { value: 'innerResults' },
+              subtask: {
+                value: {
+                  requires: ['prodId'],
+                  provides: ['product'],
+                  resolver: {
+                    name: 'flowed::SubFlow',
+                    params: {
+                      flowSpec: {
+                        value: {
+                          tasks: {
+                            getProdInfo: {
+                              requires: ['prodId'],
+                              provides: ['prodInfo'],
+                              resolver: {
+                                name: 'CallApiProd',
+                                params: {
+                                  pathParams: { transform: { id: '{{prodId}}' } },
+                                  path: '/products/{id}',
+                                  method: 'get',
+                                  serverUrl: 'http://localhost:3003',
+                                },
+                                results: {
+                                  body: 'prodInfo',
+                                },
+                              },
+                            },
+                            getProdPrice: {
+                              requires: ['prodId'],
+                              provides: ['prodPrice'],
+                              resolver: {
+                                name: 'CallApiPrice',
+                                params: {
+                                  pathParams: { transform: { id: '{{prodId}}' } },
+                                  path: '/prices/{id}',
+                                  method: 'get',
+                                  serverUrl: 'http://localhost:3003',
+                                },
+                                results: {
+                                  body: 'prodPrice',
+                                },
+                              },
+                            },
+                            merge: {
+                              requires: ['prodInfo', 'prodPrice'],
+                              provides: ['product'],
+                              resolver: {
+                                name: 'flowed::Echo',
+                                params: {
+                                  in: { transform: '{{ Object.assign({}, prodInfo, prodPrice) }}' },
+                                },
+                                results: {
+                                  out: 'product',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      flowParams: { transform: { prodId: '{{prodId}}' } },
+                      flowExpectedResults: { value: ['product'] },
+                      uniqueResult: { value: 'product' },
+                    },
+                    results: {
+                      flowResult: 'innerResults',
+                    },
+                  },
+                },
+              },
+            },
+            results: {
+              outCollection: 'products',
+            },
+          },
         },
-        ['results'],
-        { resConcatIncorrectName: Concat },
-        { separator: '-' },
-      );
-    } catch (error) {
-      errorMsg = error.message;
-    }
+      },
+    };
 
-    expect(errorMsg).to.be.eql("Task resolver 'resConcat' for inner ArrayMap task has no definition.");
+    const result = await FlowManager.run(flow, { productIds: [1, 2, 3, 4] }, ['products'], { CallApiProd, CallApiPrice });
+
+    expect(result).to.be.eql({ products: productsWithPrice });
   });
 });

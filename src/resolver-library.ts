@@ -43,8 +43,20 @@ export class WaitResolver {
 export class SubFlowResolver {
   public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
     // @todo add test with subflow task with flowContext
+    // @todo document $flowed
 
-    const flowResult = await FlowManager.run(params.flowSpec, params.flowParams, params.flowExpectedResults, params.flowResolvers, context);
+    // If no resolvers specified as parameter, inherit from global scope
+    let flowResolvers = params.flowResolvers;
+    if (typeof flowResolvers === 'undefined') {
+      flowResolvers = context.$flowed.getResolvers();
+    }
+
+    let flowResult = await FlowManager.run(params.flowSpec, params.flowParams, params.flowExpectedResults, flowResolvers, context);
+
+    // @todo document param uniqueResult
+    if (typeof params.uniqueResult === 'string') {
+      flowResult = flowResult[params.uniqueResult];
+    }
 
     return { flowResult };
   }
@@ -141,6 +153,58 @@ export class ArrayMapResolver {
     }
 
     return { results };
+  }
+}
+
+// @todo document Loop resolver
+export class LoopResolver {
+  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger): Promise<ValueMap> {
+    const resolverName = params.subtask.resolver.name;
+    const resolver = context.$flowed.getResolverByName(resolverName);
+    if (resolver === null) {
+      throw new Error(`Task resolver '${resolverName}' for inner ArrayMap task has no definition.`);
+    }
+
+    const innerTask = new Task('task-loop-model', params.subtask);
+
+    const resultPromises = [];
+    let outCollection = [];
+    for (const item of params.inCollection) {
+      const taskParams = { [params.inItemName]: item };
+
+      innerTask.resetRunStatus();
+      innerTask.supplyReqs(taskParams);
+
+      // @todo add test with loop task with context
+
+      const process = new TaskProcess(
+        context.$flowed.processManager,
+        0,
+        innerTask,
+        resolver,
+        context,
+        !!params.automapParams,
+        !!params.automapResults,
+        params.flowId,
+        debug,
+      );
+
+      const itemResultPromise = process.run();
+
+      if (params.parallel) {
+        resultPromises.push(itemResultPromise);
+      } else {
+        const itemResult = await itemResultPromise;
+        outCollection.push(itemResult[params.outItemName]); // If rejected, exception is not thrown here, it is delegated
+      }
+    }
+
+    if (params.parallel) {
+      const outCollectionResults = await Promise.all(resultPromises); // If rejected, exception is not thrown here, it is delegated
+      outCollection = outCollectionResults.map(itemResult => itemResult[params.outItemName]);
+    }
+
+    return { outCollection };
   }
 }
 

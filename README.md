@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/danielduarte/flowed/badge.svg?branch=master)](https://coveralls.io/github/danielduarte/flowed?branch=master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=danielduarte_flowed&metric=alert_status)](https://sonarcloud.io/dashboard?id=danielduarte_flowed)
 
-A fast and reliable flow engine for orchestration and more uses in *Node.js*, *Deno* and the browser
+A fast and reliable flow engine for orchestration and more uses in *Node.js*, *Deno* and the browser.
 
 ## Installation
 

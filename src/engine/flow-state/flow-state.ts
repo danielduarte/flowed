@@ -1,5 +1,6 @@
 import rawDebug from '../../debug';
 import {
+  LoopResolver,
   ArrayMapResolver,
   ConditionalResolver,
   EchoResolver,
@@ -33,6 +34,7 @@ export abstract class FlowState implements IFlow {
     'flowed::Wait': WaitResolver,
     'flowed::SubFlow': SubFlowResolver,
     'flowed::Repeater': RepeaterResolver,
+    'flowed::Loop': LoopResolver,
     'flowed::ArrayMap': ArrayMapResolver,
     'flowed::Stop': StopResolver,
     'flowed::Pause': PauseResolver,
@@ -126,6 +128,7 @@ export abstract class FlowState implements IFlow {
     this.runStatus.context = {
       $flowed: {
         getResolverByName: this.getResolverByName.bind(this),
+        getResolvers: this.getResolvers.bind(this),
         processManager: this.runStatus.processManager,
         flow: this.runStatus.flow,
       },
@@ -196,6 +199,18 @@ export abstract class FlowState implements IFlow {
     }
 
     return null;
+  }
+
+  public getResolvers(): TaskResolverMap {
+    const customResolvers = this.runStatus.resolvers;
+    const pluginResolvers = FlowManager.plugins.resolvers;
+    const builtInResolver = FlowState.builtInResolvers;
+
+    return {
+      ...builtInResolver,
+      ...pluginResolvers,
+      ...customResolvers,
+    };
   }
 
   public supplyResult(resultName: string, result: AnyValue): void {

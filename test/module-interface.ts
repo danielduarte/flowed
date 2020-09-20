@@ -48,6 +48,7 @@ describe('the module interface', () => {
       TaskSpecMap: ['constructor'],
 
       // Concrete resolvers
+      LoopResolver: ['constructor', 'exec'],
       ArrayMapResolver: ['constructor', 'exec'],
       ConditionalResolver: ['constructor', 'exec'],
       EchoResolver: ['constructor', 'exec'],
