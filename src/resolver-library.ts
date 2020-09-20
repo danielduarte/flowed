@@ -68,7 +68,7 @@ export class RepeaterResolver {
   public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger): Promise<ValueMap> {
     const resolver = context.$flowed.getResolverByName(params.resolver);
     if (resolver === null) {
-      throw new Error(`Task resolver '${params.resolver}' for inner Repeater task has no definition.`);
+      throw new Error(`Task resolver '${params.resolver}' for inner flowed::Repeater task has no definition.`);
     }
 
     const innerTask = new Task('task-repeat-model', params.taskSpec);
@@ -114,7 +114,7 @@ export class ArrayMapResolver {
   public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger): Promise<ValueMap> {
     const resolver = context.$flowed.getResolverByName(params.resolver);
     if (resolver === null) {
-      throw new Error(`Task resolver '${params.resolver}' for inner ArrayMap task has no definition.`);
+      throw new Error(`Task resolver '${params.resolver}' for inner flowed::ArrayMap task has no definition.`);
     }
 
     const innerTask = new Task('task-loop-model', params.spec);
@@ -162,7 +162,7 @@ export class LoopResolver {
     const resolverName = params.subtask.resolver.name;
     const resolver = context.$flowed.getResolverByName(resolverName);
     if (resolver === null) {
-      throw new Error(`Task resolver '${resolverName}' for inner ArrayMap task has no definition.`);
+      throw new Error(`Task resolver '${resolverName}' for inner flowed::Loop task has no definition.`);
     }
 
     const innerTask = new Task('task-loop-model', params.subtask);

@@ -133,7 +133,7 @@ describe('resolver arraymap', () => {
       errorMsg = error.message;
     }
 
-    expect(errorMsg).to.be.eql("Task resolver 'resConcat' for inner ArrayMap task has no definition.");
+    expect(errorMsg).to.be.eql("Task resolver 'resConcat' for inner flowed::ArrayMap task has no definition.");
   });
 
   it('run with error (incorrect resolver mapping) in parallel', async () => {
@@ -158,6 +158,6 @@ describe('resolver arraymap', () => {
       errorMsg = error.message;
     }
 
-    expect(errorMsg).to.be.eql("Task resolver 'resConcat' for inner ArrayMap task has no definition.");
+    expect(errorMsg).to.be.eql("Task resolver 'resConcat' for inner flowed::ArrayMap task has no definition.");
   });
 });

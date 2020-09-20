@@ -219,6 +219,6 @@ describe('the ResolverLibrary / task repeater', () => {
       msg = error.message;
     }
 
-    expect(msg).to.be.eql("Task resolver 'MissingResolver' for inner Repeater task has no definition.");
+    expect(msg).to.be.eql("Task resolver 'MissingResolver' for inner flowed::Repeater task has no definition.");
   });
 });
