@@ -30,8 +30,10 @@ export class FlowReady extends FlowState {
     // Run tasks
     this.startReadyTasks();
 
-    // Notify flow finished when flow has no tasks
-    if (Object.keys(this.getSpec().tasks || {}).length === 0) {
+    // Notify 'flow finished' in advance when:
+    // - there are no tasks ready to start (cannot execute anything because requirements are not satisfied), or
+    // - there are no tasks at all in the flow spec.
+    if (!this.runStatus.state.isRunning()) {
       this.runStatus.state.finished();
     }
 
