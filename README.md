@@ -41,7 +41,7 @@ Or change `latest` in the URL for any available version.
 - [Parallel execution](#parallel-execution)
 - [Dependency management](#dependency-management)
 - [Asynchronous and synchronous tasks](#asynchronous-and-synchronous-tasks)
-- [JSON based flow specifications](#json-based-flow-specifications)
+- [JSON based flows](#json-based-flow-specifications)
 - [Parametrized running](#parametrized-running)
 - [Scoped visibility for tasks](#scoped-visibility-for-tasks)
 - [Run flows from string, object, file or URL](#run-flows-from-string-object-file-or-url)
@@ -49,6 +49,8 @@ Or change `latest` in the URL for any available version.
 - [Inline parameters transformation](#inline-parameters-transformation)
 - [Cyclic flows](#cyclic-flows)
 - [Library with reusable frequently used tasks](#library-with-reusable-frequently-used-tasks)
+- [Plugin system](#plugin-system)
+- [Debugging](#debugging)
 
 
 ### Parallel execution
@@ -331,3 +333,15 @@ Or go directly to  the desired resolver details:
 - [ArrayMap](./doc/resolver-library.md#arraymap)
 - [Stop](./doc/resolver-library.md#stop)
 - [Pause](./doc/resolver-library.md#pause)
+
+
+### Plugin system
+
+Using the Flowed plugin system, any developer can add their own resolver library and easily integrate it into the flow engine.
+
+Custom resolver libraries can even be published and distributed as independent NPM packages.
+
+
+### Debugging
+
+(debugging doc coming soon...)

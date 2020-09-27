@@ -10,10 +10,12 @@ export class FlowPausing extends FlowState {
     this.setState(FlowStateEnum.Paused);
 
     if (error) {
-      this.debug(`[${this.runStatus.id}] ⏸ Flow paused with error.`);
+      this.log({ n: this.runStatus.id, m: 'Flow paused with error.', e: 'FP' });
+
       this.execFinishReject(error as Error);
     } else {
-      this.debug(`[${this.runStatus.id}] ⏸ Flow paused.`);
+      this.log({ n: this.runStatus.id, m: 'Flow paused.', e: 'FP' });
+
       this.execFinishResolve();
     }
   }

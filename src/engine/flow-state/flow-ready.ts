@@ -16,7 +16,7 @@ export class FlowReady extends FlowState {
     options: ValueMap = {},
   ): Promise<ValueMap> {
     this.setRunOptions(options);
-    this.debug(`[${this.runStatus.id}] ▶ Flow started with params: %O`, params);
+    this.log({ n: this.runStatus.id, m: 'Flow started with params: %O', mp: params, e: 'FS' });
 
     this.setState(FlowStateEnum.Running);
 

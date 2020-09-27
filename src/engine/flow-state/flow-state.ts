@@ -12,7 +12,7 @@ import {
   ThrowErrorResolver,
   WaitResolver,
 } from '../../resolver-library';
-import { AnyValue, FlowStateEnum, FlowTransitionEnum, TaskResolverClass, TaskResolverMap, ValueMap } from '../../types';
+import { AnyValue, FlowedLogEntry, FlowStateEnum, FlowTransitionEnum, TaskResolverClass, TaskResolverMap, ValueMap } from '../../types';
 import { FlowRunStatus, SerializedFlowRunStatus } from '../flow-run-status';
 import { Task } from '../task';
 import { TaskProcess } from '../task-process';
@@ -109,7 +109,7 @@ export abstract class FlowState implements IFlow {
       if (this.runStatus.options.throwErrorOnUnsolvableResult) {
         throw new Error(msg);
       } else {
-        this.debug(`Warning: ${msg}`);
+        this.log({ m: msg, l: 'w' });
       }
     }
 
@@ -139,6 +139,7 @@ export abstract class FlowState implements IFlow {
   public setRunOptions(options: ValueMap): void {
     const defaultRunOptions = {
       debugKey: 'flow',
+      instanceId: null,
     };
     this.runStatus.runOptions = Object.assign(defaultRunOptions, options);
   }
@@ -260,6 +261,7 @@ export abstract class FlowState implements IFlow {
         !!this.runStatus.options.resolverAutomapResults,
         this.runStatus.id,
         this.debug as Debugger,
+        this.log.bind(this),
       );
 
       const errorHandler = (error: Error): void => {
@@ -273,14 +275,14 @@ export abstract class FlowState implements IFlow {
         }, errorHandler)
         .catch(errorHandler);
 
-      this.debug(`[${this.runStatus.id}]   ‣ Task '${task.code}' started, params: %O`, process.getParams());
+      this.log({ n: this.runStatus.id, m: `Task '${task.code}' started, params: %O`, mp: process.getParams(), e: 'TS' });
     }
   }
 
   public setState(newState: FlowStateEnum): void {
     const prevState = this.runStatus.state.getStateCode();
     this.runStatus.state = this.getStateInstance(newState);
-    this.debug(`[${this.runStatus.id}]   ⓘ Changed flow state from '${prevState}' to '${newState}'`);
+    this.log({ n: this.runStatus.id, m: `Changed flow state from '${prevState}' to '${newState}'`, l: 'd', e: 'FC' });
   }
 
   public getSerializableState(): SerializedFlowRunStatus {
@@ -298,9 +300,9 @@ export abstract class FlowState implements IFlow {
     const hasDefaultResult = Object.prototype.hasOwnProperty.call(taskSpec, 'defaultResult');
 
     if (error) {
-      this.debug(`[${this.runStatus.id}]   ✗ Error in task '${taskCode}', results: %O`, taskResults);
+      this.log({ n: this.runStatus.id, m: `Error in task '${taskCode}', results: %O`, mp: taskResults, l: 'e', e: 'TF' });
     } else {
-      this.debug(`[${this.runStatus.id}]   ✓ Finished task '${taskCode}', results: %O`, taskResults);
+      this.log({ n: this.runStatus.id, m: `Finished task '${taskCode}', results: %O`, mp: taskResults, e: 'TF' });
     }
 
     for (const resultName of taskProvisions) {
@@ -310,11 +312,11 @@ export abstract class FlowState implements IFlow {
         // @todo add defaultResult to repeater task
         this.runStatus.state.supplyResult(resultName, taskSpec.defaultResult);
       } else {
-        this.debug(
-          `[${
-            this.runStatus.id
-          }] ⚠️ Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'. Consider using the task field 'defaultResult' to provide values by default.`,
-        );
+        this.log({
+          n: this.runStatus.id,
+          m: `Expected value '${resultName}' was not provided by task '${taskCode}' with resolver '${task.getResolverName()}'. Consider using the task field 'defaultResult' to provide values by default.`,
+          l: 'w',
+        });
       }
     }
 
@@ -335,5 +337,91 @@ export abstract class FlowState implements IFlow {
   public debug(formatter: string, ...args: AnyValue[]): void {
     const scope = this && this.runStatus && typeof this.runStatus.runOptions.debugKey === 'string' ? this.runStatus.runOptions.debugKey : 'init';
     rawDebug(scope)(formatter, ...args);
+  }
+
+  public static formatDebugMessage({ n, m, mp, l, e }: { n?: number; m: string; mp?: object; l?: string; e?: string }) {
+    const levelIcon = l === 'w' ? '⚠️ ' : '';
+    const eventIcons = { FS: '▶ ', FF: '✔ ', TS: '  ‣ ', TF: '  ✓ ', FC: '  ⓘ ', FT: '◼ ', FP: '⏸ ' };
+    let eventIcon = (eventIcons as any)[e || ''] ?? '';
+    if (e === 'TF' && ['e', 'f'].includes(l || '')) {
+      eventIcon = '  ✗';
+    } else if (e === 'FF' && ['e', 'f'].includes(l || '')) {
+      eventIcon = '✘';
+    }
+    const icon = levelIcon + eventIcon;
+
+    return `[${n}] ${icon}${m}`;
+  }
+
+  public static createLogEntry(
+    { n, m, mp, l, e }: { n?: number; m: string; mp?: object; l?: string; e?: string },
+    flowStatus: FlowRunStatus | undefined,
+  ) {
+    const formatLevel = (level: string | undefined) => {
+      switch (level) {
+        case 'f':
+          return 'fatal';
+        case 'e':
+          return 'error';
+        case 'w':
+          return 'warning';
+        case 'i':
+          return 'info';
+        case 'd':
+          return 'debug';
+        case 't':
+          return 'trace';
+        default:
+          return 'info';
+      }
+    };
+
+    const formatEvent = (event: string | undefined) => {
+      switch (event) {
+        case 'TS':
+          return 'Task.Started';
+        case 'TF':
+          return 'Task.Finished';
+        case 'FC':
+          return 'Flow.StateChanged';
+        case 'FS':
+          return 'Flow.Started';
+        case 'FF':
+          return 'Flow.Finished';
+        case 'FT':
+          return 'Flow.Stopped';
+        case 'FP':
+          return 'Flow.Paused';
+        default:
+          return 'General';
+      }
+    };
+
+    const formatMsg = (templateMsg: string, param: object | undefined) => {
+      if (param) {
+        return templateMsg.replace('%O', JSON.stringify(param));
+      }
+      return templateMsg;
+    };
+
+    const auditLogEntry: FlowedLogEntry = {
+      level: formatLevel(l),
+      eventType: formatEvent(e),
+      message: formatMsg(m, mp),
+      extra: {
+        debugId: n,
+      },
+    };
+
+    if (flowStatus) {
+      auditLogEntry.objectId = flowStatus.runOptions.instanceId;
+    }
+
+    return auditLogEntry;
+  }
+
+  public log({ n, m, mp, l, e }: { n?: number; m: string; mp?: object; l?: string; e?: string }): void {
+    this.debug(FlowState.formatDebugMessage({ n, m, mp, l, e }), [mp]);
+    FlowManager.log(FlowState.createLogEntry({ n, m, mp, l, e }, this.runStatus));
   }
 }

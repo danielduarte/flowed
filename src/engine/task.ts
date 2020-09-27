@@ -1,4 +1,4 @@
-import { TaskRunStatus, ValueMap } from '../types';
+import { LooggerFn, TaskRunStatus, ValueMap } from '../types';
 import { ResolverParamInfoTransform, ResolverParamInfoValue, TaskSpec } from './specs';
 import { ValueQueueManager } from './value-queue-manager';
 import { AnyValue } from '../types';
@@ -63,7 +63,7 @@ export class Task {
   }
 
   // @todo convert to protected
-  public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number, debug: Debugger): ValueMap {
+  public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number, debug: Debugger, log: LooggerFn): ValueMap {
     const params: ValueMap = {};
 
     let resolverParams = (this.spec.resolver ?? { name: 'flowed::Noop' }).params ?? {};
@@ -73,7 +73,7 @@ export class Task {
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with requires = []
       const automappedParams = requires.map(req => ({ [req]: req })).reduce((accum, peer) => Object.assign(accum, peer), {});
-      debug(`[${flowId}]   ⓘ Auto-mapped resolver params in task '${this.code}': %O`, automappedParams);
+      log({ n: flowId, m: `  ⓘ Auto-mapped resolver params in task '${this.code}': %O`, mp: automappedParams, l: 'd' });
       resolverParams = Object.assign(automappedParams, resolverParams);
     }
 
@@ -112,7 +112,7 @@ export class Task {
   }
 
   // @todo convert to protected
-  public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number, debug: Debugger): ValueMap {
+  public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number, debug: Debugger, log: LooggerFn): ValueMap {
     if (typeof solvedResults !== 'object') {
       throw new Error(
         `Expected resolver for task '${
@@ -130,7 +130,8 @@ export class Task {
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with provides = []
       const automappedResults = provides.map(prov => ({ [prov]: prov })).reduce((accum, peer) => Object.assign(accum, peer), {});
-      debug(`[${flowId}]   ⓘ Auto-mapped resolver results in task '${this.code}': %O`, automappedResults);
+      log({ n: flowId, m: `  ⓘ Auto-mapped resolver results in task '${this.code}': %O`, mp: automappedResults, l: 'd' });
+
       resolverResults = Object.assign(automappedResults, resolverResults);
     }
 

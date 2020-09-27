@@ -1,4 +1,4 @@
-import { TaskResolverClass, ValueMap } from '../types';
+import { LooggerFn, TaskResolverClass, ValueMap } from '../types';
 import { Task } from './task';
 import { TaskProcess } from './task-process';
 import { Debugger } from 'debug';
@@ -21,9 +21,21 @@ export class ProcessManager {
     automapResults: boolean,
     flowId: number,
     debug: Debugger,
+    log: LooggerFn,
   ): TaskProcess {
     this.nextProcessId++;
-    const process = new TaskProcess(this, this.nextProcessId, task, taskResolverConstructor, context, automapParams, automapResults, flowId, debug);
+    const process = new TaskProcess(
+      this,
+      this.nextProcessId,
+      task,
+      taskResolverConstructor,
+      context,
+      automapParams,
+      automapResults,
+      flowId,
+      debug,
+      log,
+    );
     this.processes.push(process);
 
     return process;

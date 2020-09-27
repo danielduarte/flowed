@@ -422,6 +422,6 @@ describe('the ResolverLibrary', () => {
 
   it('can create base resolver task', async () => {
     const resolver = new TaskResolver();
-    await resolver.exec({}, {}, new Task('t1', { resolver: { name: 'r1' } }), debug);
+    await resolver.exec({}, {}, new Task('t1', { resolver: { name: 'r1' } }), debug, () => {});
   });
 });

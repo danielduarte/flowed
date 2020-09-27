@@ -27,7 +27,7 @@ describe('the module interface', () => {
       },
 
       // Classes & types
-      Flow: ['constructor', 'debug', 'getSerializableState', 'getStateCode', 'pause', 'reset', 'resume', 'start', 'stop'],
+      Flow: ['constructor', 'debug', 'getSerializableState', 'getStateCode', 'log', 'pause', 'reset', 'resume', 'start', 'stop'],
       FlowManager: ['constructor'],
       Task: [
         'constructor',

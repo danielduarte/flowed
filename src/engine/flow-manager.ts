@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import { TaskResolverMap, ValueMap, FlowedPlugin } from '../types';
+import { TaskResolverMap, ValueMap, FlowedPlugin, FlowedLogger, FlowedLogEntry } from '../types';
 import { Flow } from './flow';
 import { FlowSpec } from './specs';
 import { IncomingMessage } from 'http';
@@ -12,6 +12,8 @@ export class FlowManager {
   } = {
     resolvers: {},
   };
+
+  public static logger: FlowedLogger | null = null;
 
   public static run(
     flowSpec: FlowSpec,
@@ -127,5 +129,16 @@ export class FlowManager {
         this.plugins.resolvers[name] = resolver;
       }
     }
+  }
+
+  public static installLogger(logger: FlowedLogger): void {
+    this.logger = logger;
+  }
+
+  public static log(entry: FlowedLogEntry): void {
+    if (FlowManager.logger === null) {
+      return;
+    }
+    FlowManager.logger.log(entry);
   }
 }

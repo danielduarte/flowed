@@ -107,7 +107,7 @@ export class FlowRunStatus {
 
     this.options = Object.assign({}, this.spec.configs ?? {}, this.spec.options ?? {});
     if (Object.prototype.hasOwnProperty.call(this.spec, 'configs')) {
-      this.flow.debug("⚠️ DEPRECATED: 'configs' field in flow spec. Use 'options' instead.");
+      this.flow.log({ m: "DEPRECATED: 'configs' field in flow spec. Use 'options' instead.", l: 'w' });
     }
 
     this.tasksByReq = {};

@@ -10,10 +10,10 @@ export class FlowStopping extends FlowState {
     this.setState(FlowStateEnum.Stopped);
 
     if (error) {
-      this.debug(`[${this.runStatus.id}] ◼ Flow stopped with error.`);
+      this.log({ n: this.runStatus.id, m: 'Flow stopped with error.', e: 'FT' });
       this.execFinishReject(error as Error);
     } else {
-      this.debug(`[${this.runStatus.id}] ◼ Flow stopped.`);
+      this.log({ n: this.runStatus.id, m: 'Flow stopped.', e: 'FT' });
       this.execFinishResolve();
     }
   }
