@@ -4,7 +4,14 @@ import { Task } from './task';
 import { Debugger } from 'debug';
 
 export class TaskProcess {
+  public static nextPid = 1;
+
   protected params!: ValueMap;
+
+  /**
+   * Process Id
+   */
+  public pid: number;
 
   constructor(
     public manager: ProcessManager,
@@ -17,7 +24,10 @@ export class TaskProcess {
     protected flowId: number,
     protected debug: Debugger,
     protected log: LooggerFn,
-  ) {}
+  ) {
+    this.pid = TaskProcess.nextPid;
+    TaskProcess.nextPid = (TaskProcess.nextPid + 1) % Number.MAX_SAFE_INTEGER;
+  }
 
   public getParams(): ValueMap {
     return this.params;

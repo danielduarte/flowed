@@ -275,7 +275,14 @@ export abstract class FlowState implements IFlow {
         }, errorHandler)
         .catch(errorHandler);
 
-      this.log({ n: this.runStatus.id, m: `Task '${task.code}' started, params: %O`, mp: process.getParams(), e: 'TS' });
+      this.log({
+        n: this.runStatus.id,
+        m: `Task '${task.code}(${task.getResolverName()})' started, params: %O`,
+        mp: process.getParams(),
+        e: 'TS',
+        pid: process.pid,
+        task: { code: task.code, type: task.getResolverName() },
+      });
     }
   }
 
@@ -300,9 +307,24 @@ export abstract class FlowState implements IFlow {
     const hasDefaultResult = Object.prototype.hasOwnProperty.call(taskSpec, 'defaultResult');
 
     if (error) {
-      this.log({ n: this.runStatus.id, m: `Error in task '${taskCode}', results: %O`, mp: taskResults, l: 'e', e: 'TF' });
+      this.log({
+        n: this.runStatus.id,
+        m: `Error in task '${taskCode}', results: %O`,
+        mp: taskResults,
+        l: 'e',
+        e: 'TF',
+        pid: process.pid,
+        task: { code: task.code, type: task.getResolverName() },
+      });
     } else {
-      this.log({ n: this.runStatus.id, m: `Finished task '${taskCode}', results: %O`, mp: taskResults, e: 'TF' });
+      this.log({
+        n: this.runStatus.id,
+        m: `Finished task '${taskCode}', results: %O`,
+        mp: taskResults,
+        e: 'TF',
+        pid: process.pid,
+        task: { code: task.code, type: task.getResolverName() },
+      });
     }
 
     for (const resultName of taskProvisions) {
@@ -354,7 +376,7 @@ export abstract class FlowState implements IFlow {
   }
 
   public static createLogEntry(
-    { n, m, mp, l, e }: { n?: number; m: string; mp?: object; l?: string; e?: string },
+    { n, m, mp, l, e, pid, task }: { n?: number; m: string; mp?: object; l?: string; e?: string; pid?: number; task?: any },
     flowStatus: FlowRunStatus | undefined,
   ) {
     const formatLevel = (level: string | undefined) => {
@@ -399,7 +421,8 @@ export abstract class FlowState implements IFlow {
 
     const formatMsg = (templateMsg: string, param: object | undefined) => {
       if (param) {
-        return templateMsg.replace('%O', JSON.stringify(param));
+        const paramStr = JSON.stringify(param);
+        return templateMsg.replace('%O', paramStr.length > 100 ? paramStr.slice(0, 97) + '...' : paramStr);
       }
       return templateMsg;
     };
@@ -408,8 +431,12 @@ export abstract class FlowState implements IFlow {
       level: formatLevel(l),
       eventType: formatEvent(e),
       message: formatMsg(m, mp),
+      timestamp: new Date(),
       extra: {
+        pid,
+        task,
         debugId: n,
+        values: mp,
       },
     };
 
@@ -420,8 +447,8 @@ export abstract class FlowState implements IFlow {
     return auditLogEntry;
   }
 
-  public log({ n, m, mp, l, e }: { n?: number; m: string; mp?: object; l?: string; e?: string }): void {
+  public log({ n, m, mp, l, e, pid, task }: { n?: number; m: string; mp?: object; l?: string; e?: string; pid?: number; task?: any }): void {
     this.debug(FlowState.formatDebugMessage({ n, m, mp, l, e }), [mp]);
-    FlowManager.log(FlowState.createLogEntry({ n, m, mp, l, e }, this.runStatus));
+    FlowManager.log(FlowState.createLogEntry({ n, m, mp, l, e, pid, task }, this.runStatus));
   }
 }

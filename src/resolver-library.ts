@@ -51,7 +51,14 @@ export class SubFlowResolver {
       flowResolvers = context.$flowed.getResolvers();
     }
 
-    let flowResult = await FlowManager.run(params.flowSpec, params.flowParams, params.flowExpectedResults, flowResolvers, context);
+    let flowResult = await FlowManager.run(
+      params.flowSpec,
+      params.flowParams,
+      params.flowExpectedResults,
+      flowResolvers,
+      context,
+      context.$flowed.flow.runStatus.runOptions,
+    );
 
     // @todo document param uniqueResult
     if (typeof params.uniqueResult === 'string') {

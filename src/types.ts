@@ -71,6 +71,7 @@ export interface FlowedLogger {
 }
 
 export interface FlowedLogEntry {
+  timestamp: Date;
   level: string; // 'fatal', 'error', 'warning', 'info', 'debug', 'trace'
   eventType: string;
   message: string;
