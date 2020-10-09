@@ -436,7 +436,7 @@ export abstract class FlowState implements IFlow {
         pid,
         task,
         debugId: n,
-        values: mp,
+        values: JSON.stringify(mp),
       },
     };
 

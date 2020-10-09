@@ -48,7 +48,7 @@ describe('can run a flow', function () {
     createTestServer();
 
     return FlowManager.runFromUrl(
-      'http://localhost:3000',
+      'http://localhost:3333',
       {
         param1: 'PARAM1',
         param2: 'PARAM2',
@@ -67,7 +67,7 @@ describe('can run a flow', function () {
 
     try {
       await FlowManager.runFromUrl(
-        'http://localhost:3000',
+        'http://localhost:3333',
         {
           param1: 'PARAM1',
           param2: 'PARAM2',
@@ -111,7 +111,7 @@ describe('can run a flow', function () {
   it('from a JSON got from an unknown domain and throw error', async () => {
     try {
       await FlowManager.runFromUrl(
-        'http://any-unknown-domain-here:3000',
+        'http://any-unknown-domain-here:3333',
         {
           param1: 'PARAM1',
           param2: 'PARAM2',
