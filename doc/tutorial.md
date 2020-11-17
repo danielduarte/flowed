@@ -8,7 +8,7 @@
 
 The verification procedure would be:
 - Get the current session information, where it is the basic user information and IP address.
-- Call some API to obtain the Geo locaation information, from the IP.
+- Call some API to obtain the Geo location information, from the IP.
 - Request the database to get the authorized locations for the current user.
 - Calculate the distance between the current location and the authorized user location, and check if it is close enough to be authorized.
 - Finally, store the access event details in the database, for future access.
