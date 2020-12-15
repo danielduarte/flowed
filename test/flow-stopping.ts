@@ -8,7 +8,7 @@ describe('the flow', () => {
   const text3 = '(text3)';
   const text4 = '(text4)';
 
-  let testPromiseResolve: () => void;
+  let testPromiseResolve: (value?: unknown) => void;
   let testPromiseReject: (error: any) => void;
 
   const flowSpec = {
