@@ -139,7 +139,8 @@ export abstract class FlowState implements IFlow {
   public setRunOptions(options: ValueMap): void {
     const defaultRunOptions = {
       debugKey: 'flow',
-      instanceId: null,
+      instanceId: null, // @todo check if it would be better to move this field into logFields
+      logFields: {},
     };
     this.runStatus.runOptions = Object.assign(defaultRunOptions, options);
   }
@@ -427,7 +428,7 @@ export abstract class FlowState implements IFlow {
       return templateMsg;
     };
 
-    const auditLogEntry: FlowedLogEntry = {
+    let auditLogEntry: FlowedLogEntry = {
       level: formatLevel(l),
       eventType: formatEvent(e),
       message: formatMsg(m, mp),
@@ -442,6 +443,7 @@ export abstract class FlowState implements IFlow {
 
     if (flowStatus) {
       auditLogEntry.objectId = flowStatus.runOptions.instanceId;
+      auditLogEntry = Object.assign(flowStatus.runOptions.logFields, auditLogEntry);
     }
 
     return auditLogEntry;
