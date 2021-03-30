@@ -1,11 +1,11 @@
 <p align="center"><a href="https://danielduarte.github.io/flowed/"><img width="445" height="100" src="./doc/flowed-logo.svg" alt="Flowed Logo"></a></p>
 <p align="center">A fast and reliable flow engine for orchestration and more uses in <em>Node.js</em>, <em>Deno</em> and the browser.</p>
 <p align="center">
-    <a href="https://github.com/danielduarte/flowed/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/flowed?color=%23007ec6" alt="License"></a>
+    <a href="https://github.com/danielduarte/flowed/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/flowed?color=%23007ec6" alt="License"></a>
     <a href="https://www.npmjs.com/package/flowed"><img src="https://img.shields.io/npm/v/flowed" alt="NPM Package Version"></a>
-    <a href="https://travis-ci.org/danielduarte/flowed"><img src="https://travis-ci.org/danielduarte/flowed.svg?branch=master" alt="Build Status"></a>
+    <a href="https://travis-ci.org/danielduarte/flowed"><img src="https://travis-ci.org/danielduarte/flowed.svg?branch=main" alt="Build Status"></a>
     <a href="https://app.fossa.com/attribution/e587cd9b-f7f8-4fa6-88b1-f81832d9ce07"><img src="https://app.fossa.com/api/projects/custom%2B13599%2Fgithub.com%2Fdanielduarte%2Fflowed.svg?type=shield" alt="FOSSA Status"></a>
-    <a href="https://coveralls.io/github/danielduarte/flowed?branch=master"><img src="https://coveralls.io/repos/github/danielduarte/flowed/badge.svg?branch=master" alt="Coverage Status"></a>
+    <a href="https://coveralls.io/github/danielduarte/flowed?branch=main"><img src="https://coveralls.io/repos/github/danielduarte/flowed/badge.svg?branch=main" alt="Coverage Status"></a>
     <a href="https://sonarcloud.io/dashboard?id=danielduarte_flowed"><img src="https://sonarcloud.io/api/project_badges/measure?project=danielduarte_flowed&metric=alert_status" alt="Quality Gate Status"></a>
 </p>
 
@@ -35,7 +35,7 @@ Or change `latest` in the URL for any available version.
 ## Getting Started
 
 - [Tutorial](./doc/tutorial.md)
-- [Code examples](https://github.com/danielduarte/flowed/tree/master/test/examples)
+- [Code examples](https://github.com/danielduarte/flowed/tree/main/test/examples)
 
 
 ## Main Features

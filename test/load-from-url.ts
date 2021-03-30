@@ -23,7 +23,7 @@ describe('can run a flow', function () {
 
   it('from a JSON got from an HTTPS URL', () => {
     return FlowManager.runFromUrl(
-      'https://raw.githubusercontent.com/danielduarte/flowed/master/test/examples/from-file.flowed.json',
+      'https://raw.githubusercontent.com/danielduarte/flowed/main/test/examples/from-file.flowed.json',
       {
         param1: 'PARAM1',
         param2: 'PARAM2',
@@ -40,7 +40,7 @@ describe('can run a flow', function () {
 
   it('from a JSON got from an HTTPS URL defaulting arguments', () => {
     return FlowManager.runFromUrl(
-      'https://raw.githubusercontent.com/danielduarte/flowed/master/test/examples/from-file-defaulting-arguments.flowed.json',
+      'https://raw.githubusercontent.com/danielduarte/flowed/main/test/examples/from-file-defaulting-arguments.flowed.json',
     );
   });
 
@@ -89,7 +89,7 @@ describe('can run a flow', function () {
   it('from a JSON got from an incorrect URL and throw error', async () => {
     try {
       await FlowManager.runFromUrl(
-        'https://raw.githubusercontent.com/danielduarte/flowed/master/test/examples/invented.flowed.json',
+        'https://raw.githubusercontent.com/danielduarte/flowed/main/test/examples/invented.flowed.json',
         {
           param1: 'PARAM1',
           param2: 'PARAM2',
@@ -133,7 +133,7 @@ describe('can run a flow', function () {
   it('from a JSON got from a URL with unsupported protocol and throw error', async () => {
     try {
       await FlowManager.runFromUrl(
-        'ftp://raw.githubusercontent.com/danielduarte/flowed/master/test/examples/invented.flowed.json',
+        'ftp://raw.githubusercontent.com/danielduarte/flowed/main/test/examples/invented.flowed.json',
         {
           param1: 'PARAM1',
           param2: 'PARAM2',
@@ -153,7 +153,7 @@ describe('can run a flow', function () {
   });
 
   it('from a JSON got from a URL with invalid URL and throw error', async () => {
-    const invalidUrl = 'https//raw.githubusercontent.com/danielduarte/flowed/master/test/examples/invented.flowed.json';
+    const invalidUrl = 'https//raw.githubusercontent.com/danielduarte/flowed/main/test/examples/invented.flowed.json';
     try {
       await FlowManager.runFromUrl(
         invalidUrl,
@@ -178,7 +178,7 @@ describe('can run a flow', function () {
   it('from a JSON got from a URL with invalid format and throw an error', async () => {
     try {
       await FlowManager.runFromUrl(
-        'https://raw.githubusercontent.com/danielduarte/flowed/master/test/examples/from-file.flowed.json.invalid',
+        'https://raw.githubusercontent.com/danielduarte/flowed/main/test/examples/from-file.flowed.json.invalid',
         {
           param1: 'PARAM1',
           param2: 'PARAM2',
