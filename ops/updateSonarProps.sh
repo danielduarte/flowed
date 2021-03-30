@@ -14,15 +14,6 @@
 #==============================================================================
 echo "Updating the SonarQube properties..."
 
-# Get the project name from package.json
-PACKAGE_NAME=$(cat package.json \
-  | grep name \
-  | head -1 \
-  | awk -F: '{ print $2 }' \
-  | sed 's/[",]//g' \
-  | tr -d '[[:space:]]')
-echo "Project: ${PACKAGE_NAME}"
-
 # Get the version from package.json
 PACKAGE_VERSION=$(cat package.json \
   | grep version \
@@ -36,17 +27,14 @@ echo "Version: ${PACKAGE_VERSION}"
 SONAR_FILE=$(find ./ -iname sonar*.properties -type f)
 echo "Sonar file: ${SONAR_FILE}"
 
-SED_EXTRA_OPTS="-i"
-if [[ "$OSTYPE" == "darwin" ]]; then
-  SED_EXTRA_OPTS="-i ''"
-fi
-
 # Update the version
 REPLACE='^sonar.projectVersion=.*$'
 WITH="sonar.projectVersion=${PACKAGE_VERSION}"
-sed $SED_EXTRA_OPTS -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}
 
-# Update the project name
-REPLACE='^sonar.projectName=.*$'
-WITH="sonar.projectName=${PACKAGE_NAME}"
-sed $SED_EXTRA_OPTS -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}
+OSNAME=$(uname -s)
+SED_EXTRA_OPTS="-i"
+if [[ "$OSNAME" == "Darwin" ]]; then
+    sed -i '' -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}
+else
+    sed -i -e "s/${REPLACE}/${WITH}/g" ${SONAR_FILE}
+fi
