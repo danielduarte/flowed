@@ -41,14 +41,14 @@ describe('edge cases', () => {
     // Resolver returning a Promise that does not resolve to an object
     class R1 {
       public exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
-        return Promise.resolve((undefined as unknown) as ValueMap);
+        return Promise.resolve(undefined as unknown as ValueMap);
       }
     }
 
     // Resolver returning undefined or equivalently, not returning at all
     class R2 {
       public exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
-        return (undefined as unknown) as Promise<ValueMap>;
+        return undefined as unknown as Promise<ValueMap>;
       }
     }
     const spec = {

@@ -14,7 +14,7 @@ export class ValueQueueManager {
   public static fromSerializable(serializable: ValueQueueManager): ValueQueueManager {
     const queueNames = Object.keys(serializable);
     const instance = new ValueQueueManager(queueNames);
-    instance.queues = (serializable as unknown) as ValueQueueMap;
+    instance.queues = serializable as unknown as ValueQueueMap;
     instance.nonEmptyQueues = queueNames.reduce((acc, name) => {
       if (instance.queues[name].length > 0) {
         acc.add(name);
