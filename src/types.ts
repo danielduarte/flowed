@@ -47,10 +47,14 @@ export class TaskResolver implements ITaskResolver {
   }
 }
 
+export type TaskResolverFn = (params: ValueMap, context?: ValueMap, task?: Task, debug?: Debugger, log?: LooggerFn) => ValueMap | Promise<ValueMap>;
+
 export type TaskResolverClass = typeof TaskResolver;
 
+export type TaskResolverExecutor = TaskResolverClass | TaskResolverFn;
+
 export class TaskResolverMap {
-  [key: string]: TaskResolverClass;
+  [key: string]: TaskResolverExecutor;
 }
 
 export interface TaskMap {

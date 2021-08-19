@@ -1,4 +1,4 @@
-import { LooggerFn, TaskResolverClass, ValueMap } from '../types';
+import { LooggerFn, TaskResolverClass, TaskResolverExecutor, TaskResolverFn, ValueMap } from '../types';
 import { ProcessManager } from './process-manager';
 import { Task } from './task';
 import { Debugger } from 'debug';
@@ -17,7 +17,7 @@ export class TaskProcess {
     public manager: ProcessManager,
     public id: number,
     public task: Task, // @todo convert to protected?
-    protected taskResolverConstructor: TaskResolverClass,
+    protected taskResolverExecutor: TaskResolverExecutor,
     protected context: ValueMap,
     protected automapParams: boolean,
     protected automapResults: boolean,
@@ -35,7 +35,9 @@ export class TaskProcess {
 
   public run(): Promise<ValueMap> {
     this.params = this.task.mapParamsForResolver(this.task.runStatus.solvedReqs.popAll(), this.automapParams, this.flowId, this.debug, this.log);
-    const resolver = new this.taskResolverConstructor();
+
+    const isClassResolver = this.taskResolverExecutor.prototype && this.taskResolverExecutor.prototype.exec;
+    const resolverFn = isClassResolver ? new (this.taskResolverExecutor as TaskResolverClass)().exec : (this.taskResolverExecutor as TaskResolverFn);
 
     return new Promise((resolve, reject) => {
       const onResolverSuccess = (resolverValue: ValueMap): void => {
@@ -48,22 +50,21 @@ export class TaskProcess {
         reject(error);
       };
 
-      let resolverPromise;
+      let resolverPromise; // @todo rename variable (it could be a non-Promise object)
 
       // @sonar start-ignore Ignore this block because try is required even when not await-ing for the promise
       try {
-        resolverPromise = resolver.exec(this.params, this.context, this.task, this.debug, this.log);
+        resolverPromise = resolverFn(this.params, this.context, this.task, this.debug, this.log);
       } catch (error) {
         // @todo Add test to get this error here with a sync resolver that throws error after returning the promise
         onResolverError(error);
       }
       // @sonar end-ignore
 
-      if (
-        typeof resolverPromise !== 'object' ||
-        typeof resolverPromise.constructor === 'undefined' ||
-        resolverPromise.constructor.name !== 'Promise'
-      ) {
+      const resultIsObject = typeof resolverPromise === 'object';
+      const resultIsPromise = resolverPromise && resolverPromise.constructor && resolverPromise.constructor.name === 'Promise';
+
+      if (!resultIsObject) {
         throw new Error(
           `Expected resolver for task '${
             this.task.code
@@ -71,12 +72,18 @@ export class TaskProcess {
         );
       }
 
-      resolverPromise
-        .then(
-          onResolverSuccess,
-          onResolverError, // @todo Check if this is needed even having the .catch
-        )
-        .catch(onResolverError);
+      if (resultIsPromise) {
+        // Resolver returned a Promise<ValueMap>
+        (resolverPromise as Promise<ValueMap>)
+          .then(
+            onResolverSuccess,
+            onResolverError, // @todo Check if this is needed even having the .catch
+          )
+          .catch(onResolverError);
+      } else {
+        // Resolver returned a ValueMap
+        onResolverSuccess(resolverPromise as ValueMap);
+      }
     });
   }
 }

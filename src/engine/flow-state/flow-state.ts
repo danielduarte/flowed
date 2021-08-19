@@ -12,7 +12,7 @@ import {
   ThrowErrorResolver,
   WaitResolver,
 } from '../../resolver-library';
-import { AnyValue, FlowedLogEntry, FlowStateEnum, FlowTransitionEnum, TaskResolverClass, TaskResolverMap, ValueMap } from '../../types';
+import { AnyValue, FlowedLogEntry, FlowStateEnum, FlowTransitionEnum, TaskResolverExecutor, TaskResolverMap, ValueMap } from '../../types';
 import { FlowRunStatus, SerializedFlowRunStatus } from '../flow-run-status';
 import { Task } from '../task';
 import { TaskProcess } from '../task-process';
@@ -164,7 +164,7 @@ export abstract class FlowState implements IFlow {
     return this.runStatus.finishPromise;
   }
 
-  public getResolverForTask(task: Task): TaskResolverClass {
+  public getResolverForTask(task: Task): TaskResolverExecutor {
     const name = task.getResolverName();
 
     const resolver = this.getResolverByName(name);
@@ -180,7 +180,7 @@ export abstract class FlowState implements IFlow {
     return resolver;
   }
 
-  public getResolverByName(name: string): TaskResolverClass | null {
+  public getResolverByName(name: string): TaskResolverExecutor | null {
     // Lookup for custom resolvers
     const resolvers = this.runStatus.resolvers;
     const hasCustomResolver = typeof resolvers[name] !== 'undefined';
