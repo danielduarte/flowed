@@ -54,8 +54,8 @@ describe('can run a flow', () => {
           direct: DirectResolver,
         },
       );
-    } catch (error) {
-      expect(error.message).to.be.eql('Unexpected token } in JSON at position 11');
+    } catch (err) {
+      expect((err as Error).message).to.be.eql('Unexpected token } in JSON at position 11');
     }
   });
 });

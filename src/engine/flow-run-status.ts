@@ -1,5 +1,4 @@
-import { TaskResolverMap, TaskRunStatus, ValueMap } from '../types';
-import { FlowStateEnum, TaskMap } from '../types';
+import { TaskResolverMap, TaskRunStatus, ValueMap, FlowStateEnum, TaskMap } from '../types';
 import { Flow } from './flow';
 import { FlowFinished, FlowPaused, FlowPausing, FlowReady, FlowRunning, FlowState, FlowStopped, FlowStopping } from './flow-state';
 import { ProcessManager } from './process-manager';

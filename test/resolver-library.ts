@@ -334,8 +334,8 @@ describe('the ResolverLibrary', () => {
           err: ResolverLibrary.ThrowErrorResolver,
         },
       );
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
 
     expect(msg).to.be.eql('ThrowErrorResolver resolver has thrown an error');
@@ -364,8 +364,8 @@ describe('the ResolverLibrary', () => {
           err: ResolverLibrary.ThrowErrorResolver,
         },
       );
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
 
     expect(msg).to.be.eql("Hey, I'm a custom error message!");
@@ -394,8 +394,8 @@ describe('the ResolverLibrary', () => {
           err: ResolverLibrary.ThrowErrorResolver,
         },
       );
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
 
     expect(msg).to.be.eql('');
@@ -413,8 +413,8 @@ describe('the ResolverLibrary', () => {
         [],
         { x: WaitResolver },
       );
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
 
     expect(msg).to.be.eql(`Task resolver 'r' for task 'aTask' has no definition. Defined custom resolvers are: [x].`);

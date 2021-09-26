@@ -69,8 +69,8 @@ describe('flow with non solvable results', () => {
       await FlowManager.run(flowSpec, {}, expected, {
         runner: Echo,
       });
-    } catch (error) {
-      errorMsg = error.message;
+    } catch (err) {
+      errorMsg = (err as Error).message;
       debug(errorMsg);
     }
     expect(errorMsg).to.be.eql('The results [A, C, D] are not provided by any task');
@@ -82,8 +82,8 @@ describe('flow with non solvable results', () => {
       await FlowManager.run(flowSpec, {}, expected, {
         runner: Echo,
       });
-    } catch (error) {
-      errorMsg = error.message;
+    } catch (err) {
+      errorMsg = (err as Error).message;
       debug(errorMsg);
     }
     expect(errorMsg).to.be.eql('No error');

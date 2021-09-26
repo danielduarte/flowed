@@ -1,6 +1,5 @@
 import { FlowState } from '.';
-import { TaskResolverMap, ValueMap } from '../../types';
-import { FlowStateEnum } from '../../types';
+import { TaskResolverMap, ValueMap, FlowStateEnum } from '../../types';
 import { SerializedFlowRunStatus } from '../flow-run-status';
 
 export class FlowReady extends FlowState {

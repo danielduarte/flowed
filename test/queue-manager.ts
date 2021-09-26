@@ -24,8 +24,8 @@ describe('queue manager', () => {
     let msg = 'No error';
     try {
       queueManager.push('d', 'd1');
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
     expect(msg).to.be.eql('Queue name d does not exist in queue manager. Existing queues are: [a, b, c].');
   });
@@ -69,8 +69,8 @@ describe('queue manager', () => {
     let msg = 'No error';
     try {
       queueManager.validateAllNonEmpty();
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
     expect(msg).to.be.eql('Some of the queues are empty: [c].');
   });
@@ -83,16 +83,16 @@ describe('queue manager', () => {
     let msg = 'No error';
     try {
       queueManager.topAll();
-    } catch (error) {
-      msg = error.message + ' - try 1';
+    } catch (err) {
+      msg = (err as Error).message + ' - try 1';
     }
     expect(msg).to.be.eql('Some of the queues are empty: [c]. - try 1');
 
     // Try again and get the same error
     try {
       queueManager.topAll();
-    } catch (error) {
-      msg = error.message + ' - try 2';
+    } catch (err) {
+      msg = (err as Error).message + ' - try 2';
     }
     expect(msg).to.be.eql('Some of the queues are empty: [c]. - try 2');
   });

@@ -28,7 +28,7 @@ describe('edge cases', () => {
         { R },
       );
     } catch (err) {
-      errorMsg = err.message;
+      errorMsg = (err as Error).message;
     }
 
     expect(errorMsg).to.be.eql("Requirement 'someReq' for task 'T' is not valid.");
@@ -71,7 +71,7 @@ describe('edge cases', () => {
     try {
       await FlowManager.run(spec, {}, [], { R: R1 });
     } catch (err) {
-      errorMsg = err.message;
+      errorMsg = (err as Error).message;
     }
     expect(errorMsg).to.be.eql(expectedMsg);
 
@@ -79,7 +79,7 @@ describe('edge cases', () => {
     try {
       await FlowManager.run(spec, {}, [], { R: R2 });
     } catch (err) {
-      errorMsg = err.message;
+      errorMsg = (err as Error).message;
     }
     expect(errorMsg).to.be.eql(expectedMsg);
   });

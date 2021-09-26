@@ -176,8 +176,8 @@ describe('the ResolverLibrary', () => {
           },
         },
       });
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
 
     expect(msg).to.be.eql('ThrowErrorResolver resolver has thrown an error');

@@ -56,8 +56,8 @@ describe('can run a flow', () => {
           direct: DirectResolver,
         },
       );
-    } catch (error) {
-      expect(error.message).to.be.eql(`ENOENT: no such file or directory, open '${filepath}'`);
+    } catch (err) {
+      expect((err as Error).message).to.be.eql(`ENOENT: no such file or directory, open '${filepath}'`);
     }
   });
 
@@ -78,8 +78,8 @@ describe('can run a flow', () => {
           direct: DirectResolver,
         },
       );
-    } catch (error) {
-      expect(error.message).to.be.eql('Unexpected token \n in JSON at position 474');
+    } catch (err) {
+      expect((err as Error).message).to.be.eql('Unexpected token \n in JSON at position 474');
     }
   });
 });

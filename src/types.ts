@@ -37,17 +37,17 @@ export interface ValueMap {
 export type GenericValueMap = ValueMap;
 
 export interface ITaskResolver {
-  exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LooggerFn): Promise<ValueMap>;
+  exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LoggerFn): Promise<ValueMap>;
 }
 
 export class TaskResolver implements ITaskResolver {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LooggerFn): Promise<ValueMap> {
+  public exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LoggerFn): Promise<ValueMap> {
     return Promise.resolve({});
   }
 }
 
-export type TaskResolverFn = (params: ValueMap, context?: ValueMap, task?: Task, debug?: Debugger, log?: LooggerFn) => ValueMap | Promise<ValueMap>;
+export type TaskResolverFn = (params: ValueMap, context?: ValueMap, task?: Task, debug?: Debugger, log?: LoggerFn) => ValueMap | Promise<ValueMap>;
 
 export type TaskResolverClass = typeof TaskResolver;
 
@@ -81,7 +81,7 @@ export interface FlowedLogEntry {
   message: string;
   objectId?: string; // instance Id
   tags?: string[];
-  extra?: object; // free form serializable key-value object
+  extra?: ValueMap; // free form serializable key-value object
 }
 
-export type LooggerFn = ({ n, m, mp, l, e }: { n?: number; m: string; mp?: object; l?: string; e?: string }) => void;
+export type LoggerFn = ({ n, m, mp, l, e }: { n?: number; m: string; mp?: ValueMap; l?: string; e?: string }) => void;

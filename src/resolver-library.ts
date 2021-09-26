@@ -1,6 +1,6 @@
 import { FlowManager, Task } from './engine';
 import { TaskProcess } from './engine/task-process';
-import { LooggerFn, ValueMap } from './types';
+import { LoggerFn, ValueMap } from './types';
 import { Debugger } from 'debug';
 
 // Do nothing and finish
@@ -72,7 +72,7 @@ export class SubFlowResolver {
 // Run a task multiple times and finishes returning an array with all results.
 // If one execution fails, the repeater resolver ends with an exception (this is valid for both parallel and not parallel modes).
 export class RepeaterResolver {
-  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LooggerFn): Promise<ValueMap> {
+  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LoggerFn): Promise<ValueMap> {
     const resolver = context.$flowed.getResolverByName(params.resolver);
     if (resolver === null) {
       throw new Error(`Task resolver '${params.resolver}' for inner flowed::Repeater task has no definition.`);
@@ -119,7 +119,7 @@ export class RepeaterResolver {
 }
 
 export class ArrayMapResolver {
-  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LooggerFn): Promise<ValueMap> {
+  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LoggerFn): Promise<ValueMap> {
     const resolver = context.$flowed.getResolverByName(params.resolver);
     if (resolver === null) {
       throw new Error(`Task resolver '${params.resolver}' for inner flowed::ArrayMap task has no definition.`);
@@ -167,7 +167,7 @@ export class ArrayMapResolver {
 
 // @todo document Loop resolver
 export class LoopResolver {
-  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LooggerFn): Promise<ValueMap> {
+  public async exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LoggerFn): Promise<ValueMap> {
     const resolverName = params.subtask.resolver.name;
     const resolver = context.$flowed.getResolverByName(resolverName);
     if (resolver === null) {

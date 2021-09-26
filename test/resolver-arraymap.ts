@@ -129,8 +129,8 @@ describe('resolver arraymap', () => {
         { resConcatIncorrectName: Concat },
         { separator: '-' },
       );
-    } catch (error) {
-      errorMsg = error.message;
+    } catch (err) {
+      errorMsg = (err as Error).message;
     }
 
     expect(errorMsg).to.be.eql("Task resolver 'resConcat' for inner flowed::ArrayMap task has no definition.");
@@ -154,8 +154,8 @@ describe('resolver arraymap', () => {
         { resConcatIncorrectName: Concat },
         { separator: '-' },
       );
-    } catch (error) {
-      errorMsg = error.message;
+    } catch (err) {
+      errorMsg = (err as Error).message;
     }
 
     expect(errorMsg).to.be.eql("Task resolver 'resConcat' for inner flowed::ArrayMap task has no definition.");

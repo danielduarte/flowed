@@ -1,6 +1,5 @@
 import { FlowState } from '.';
-import { ValueMap } from '../../types';
-import { FlowStateEnum } from '../../types';
+import { ValueMap, FlowStateEnum } from '../../types';
 import { SerializedFlowRunStatus } from '../flow-run-status';
 
 export class FlowPaused extends FlowState {

@@ -1,8 +1,6 @@
-import { LooggerFn, TaskRunStatus, ValueMap } from '../types';
+import { LoggerFn, TaskRunStatus, ValueMap, AnyValue } from '../types';
 import { ResolverParamInfoTransform, ResolverParamInfoValue, TaskSpec } from './specs';
 import { ValueQueueManager } from './value-queue-manager';
-import { AnyValue } from '../types';
-import { Debugger } from 'debug';
 import { SerializedFlowRunStatus } from './flow-run-status';
 // tslint:disable-next-line:no-var-requires
 const ST = require('flowed-st');
@@ -63,18 +61,18 @@ export class Task {
   }
 
   // @todo convert to protected
-  public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number, debug: Debugger, log: LooggerFn): ValueMap {
+  public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number, log: LoggerFn): ValueMap {
     const params: ValueMap = {};
 
-    let resolverParams = (this.spec.resolver ?? { name: 'flowed::Noop' }).params ?? {};
+    let resolverParams = (this.spec.resolver ?? {}).params ?? {};
 
     if (automap) {
       const requires = this.spec.requires ?? [];
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with requires = []
-      const automappedParams = requires.map(req => ({ [req]: req })).reduce((accum, peer) => Object.assign(accum, peer), {});
-      log({ n: flowId, m: `  ⓘ Auto-mapped resolver params in task '${this.code}': %O`, mp: automappedParams, l: 'd' });
-      resolverParams = Object.assign(automappedParams, resolverParams);
+      const autoMappedParams = requires.map(req => ({ [req]: req })).reduce((accum, peer) => Object.assign(accum, peer), {}); // @todo improve this expression
+      log({ n: flowId, m: `  ⓘ Auto-mapped resolver params in task '${this.code}': %O`, mp: autoMappedParams, l: 'd' });
+      resolverParams = Object.assign(autoMappedParams, resolverParams);
     }
 
     let paramValue;
@@ -112,7 +110,7 @@ export class Task {
   }
 
   // @todo convert to protected
-  public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number, debug: Debugger, log: LooggerFn): ValueMap {
+  public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number, log: LoggerFn): ValueMap {
     if (typeof solvedResults !== 'object') {
       throw new Error(
         `Expected resolver for task '${
@@ -123,16 +121,16 @@ export class Task {
 
     const results: ValueMap = {};
 
-    let resolverResults = (this.spec.resolver ?? { name: 'flowed::Noop' }).results ?? {};
+    let resolverResults = (this.spec.resolver ?? {}).results ?? {};
 
     if (automap) {
       const provides = this.spec.provides ?? [];
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with provides = []
-      const automappedResults = provides.map(prov => ({ [prov]: prov })).reduce((accum, peer) => Object.assign(accum, peer), {});
-      log({ n: flowId, m: `  ⓘ Auto-mapped resolver results in task '${this.code}': %O`, mp: automappedResults, l: 'd' });
+      const autoMappedResults = provides.map(prov => ({ [prov]: prov })).reduce((accum, peer) => Object.assign(accum, peer), {}); // @todo improve this expression
+      log({ n: flowId, m: `  ⓘ Auto-mapped resolver results in task '${this.code}': %O`, mp: autoMappedResults, l: 'd' });
 
-      resolverResults = Object.assign(automappedResults, resolverResults);
+      resolverResults = Object.assign(autoMappedResults, resolverResults);
     }
 
     for (const [resolverResultName, taskResultName] of Object.entries(resolverResults)) {

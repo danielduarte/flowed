@@ -164,8 +164,8 @@ describe('the ResolverLibrary / task repeater', () => {
           LogTextSampleError: LogTextSampleResolverError,
         },
       );
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
 
     expect(msg).to.be.eql('Intentional error in resolver');
@@ -190,8 +190,8 @@ describe('the ResolverLibrary / task repeater', () => {
           DelayedLogTextSampleError: DelayedLogTextSampleResolverError,
         },
       );
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
 
     expect(msg).to.be.eql('Intentional error in resolver');
@@ -215,8 +215,8 @@ describe('the ResolverLibrary / task repeater', () => {
           taskRepeater: ResolverLibrary.RepeaterResolver,
         },
       );
-    } catch (error) {
-      msg = error.message;
+    } catch (err) {
+      msg = (err as Error).message;
     }
 
     expect(msg).to.be.eql("Task resolver 'MissingResolver' for inner flowed::Repeater task has no definition.");

@@ -362,10 +362,10 @@ export abstract class FlowState implements IFlow {
     rawDebug(scope)(formatter, ...args);
   }
 
-  public static formatDebugMessage({ n, m, mp, l, e }: { n?: number; m: string; mp?: object; l?: string; e?: string }) {
+  public static formatDebugMessage({ n, m, l, e }: { n?: number; m: string; mp?: ValueMap; l?: string; e?: string }): string {
     const levelIcon = l === 'w' ? '⚠️ ' : '';
     const eventIcons = { FS: '▶ ', FF: '✔ ', TS: '  ‣ ', TF: '  ✓ ', FC: '  ⓘ ', FT: '◼ ', FP: '⏸ ' };
-    let eventIcon = (eventIcons as any)[e || ''] ?? '';
+    let eventIcon = (eventIcons as any)[e || ''] ?? ''; // eslint-disable-line @typescript-eslint/no-explicit-any
     if (e === 'TF' && ['e', 'f'].includes(l || '')) {
       eventIcon = '  ✗';
     } else if (e === 'FF' && ['e', 'f'].includes(l || '')) {
@@ -377,9 +377,9 @@ export abstract class FlowState implements IFlow {
   }
 
   public static createLogEntry(
-    { n, m, mp, l, e, pid, task }: { n?: number; m: string; mp?: object; l?: string; e?: string; pid?: number; task?: any },
+    { n, m, mp, l, e, pid, task }: { n?: number; m: string; mp?: ValueMap; l?: string; e?: string; pid?: number; task?: AnyValue },
     flowStatus: FlowRunStatus | undefined,
-  ) {
+  ): FlowedLogEntry {
     const formatLevel = (level: string | undefined) => {
       switch (level) {
         case 'f':
@@ -420,7 +420,7 @@ export abstract class FlowState implements IFlow {
       }
     };
 
-    const formatMsg = (templateMsg: string, param: object | undefined) => {
+    const formatMsg = (templateMsg: string, param: ValueMap | undefined) => {
       if (param) {
         const paramStr = JSON.stringify(param);
         return templateMsg.replace('%O', paramStr.length > 100 ? paramStr.slice(0, 97) + '...' : paramStr);
@@ -449,7 +449,7 @@ export abstract class FlowState implements IFlow {
     return auditLogEntry;
   }
 
-  public log({ n, m, mp, l, e, pid, task }: { n?: number; m: string; mp?: object; l?: string; e?: string; pid?: number; task?: any }): void {
+  public log({ n, m, mp, l, e, pid, task }: { n?: number; m: string; mp?: ValueMap; l?: string; e?: string; pid?: number; task?: AnyValue }): void {
     this.debug(FlowState.formatDebugMessage({ n, m, mp, l, e }), [mp]);
     FlowManager.log(FlowState.createLogEntry({ n, m, mp, l, e, pid, task }, this.runStatus));
   }

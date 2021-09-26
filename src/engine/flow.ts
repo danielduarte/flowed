@@ -51,7 +51,7 @@ export class Flow implements IFlow {
     this && this.runStatus ? this.runStatus.state.debug(formatter, ...args) : rawDebug('init')(formatter, ...args);
   }
 
-  public log({ n, m, mp, l, e }: { n?: number; m: string; mp?: object; l?: string; e?: string }): void {
+  public log({ n, m, mp, l, e }: { n?: number; m: string; mp?: ValueMap; l?: string; e?: string }): void {
     this.debug(FlowState.formatDebugMessage({ n, m, mp, l, e }), [mp]);
     FlowManager.log(FlowState.createLogEntry({ n, m, mp, l, e }, this.runStatus));
   }

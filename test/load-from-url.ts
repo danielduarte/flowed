@@ -81,8 +81,10 @@ describe('can run a flow', function () {
       );
 
       throw new Error('An error should have been thrown');
-    } catch (error) {
-      expect(error.message).to.be.eql('Invalid content-type. Expected application/json or text/plain but received some-unknown/content-format');
+    } catch (err) {
+      expect((err as Error).message).to.be.eql(
+        'Invalid content-type. Expected application/json or text/plain but received some-unknown/content-format',
+      );
     }
   });
 
@@ -103,8 +105,8 @@ describe('can run a flow', function () {
       );
 
       throw new Error('An error should have been thrown');
-    } catch (error) {
-      expect(error.message).to.be.eql('Request failed with status code: 404');
+    } catch (err) {
+      expect((err as Error).message).to.be.eql('Request failed with status code: 404');
     }
   });
 
@@ -125,8 +127,8 @@ describe('can run a flow', function () {
       );
 
       throw new Error('An error should have been thrown');
-    } catch (error) {
-      expect(error.message).to.have.string('getaddrinfo ENOTFOUND any-unknown-domain-here');
+    } catch (err) {
+      expect((err as Error).message).to.have.string('getaddrinfo ENOTFOUND any-unknown-domain-here');
     }
   });
 
@@ -147,8 +149,8 @@ describe('can run a flow', function () {
       );
 
       throw new Error('An error should have been thrown');
-    } catch (error) {
-      expect(error.message).to.be.eql(`Protocol not supported: ftp. Supported protocols are: [http, https]`);
+    } catch (err) {
+      expect((err as Error).message).to.be.eql(`Protocol not supported: ftp. Supported protocols are: [http, https]`);
     }
   });
 
@@ -170,8 +172,8 @@ describe('can run a flow', function () {
       );
 
       throw new Error('An error should have been thrown');
-    } catch (error) {
-      expect(error.message).to.be.eql(`Invalid URL: ${invalidUrl}`);
+    } catch (err) {
+      expect((err as Error).message).to.be.eql(`Invalid URL: ${invalidUrl}`);
     }
   });
 
@@ -192,8 +194,8 @@ describe('can run a flow', function () {
       );
 
       throw new Error('An error should have been thrown');
-    } catch (error) {
-      expect(error.message).to.be.eql('Unexpected token \n in JSON at position 474');
+    } catch (err) {
+      expect((err as Error).message).to.be.eql('Unexpected token \n in JSON at position 474');
     }
   });
 });
