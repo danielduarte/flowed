@@ -1,7 +1,7 @@
+import { Debugger } from 'debug';
 import { FlowManager, Task } from './engine';
 import { TaskProcess } from './engine/task-process';
 import { LoggerFn, ValueMap } from './types';
-import { Debugger } from 'debug';
 
 // Do nothing and finish
 export class NoopResolver {

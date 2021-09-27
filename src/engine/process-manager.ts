@@ -1,7 +1,7 @@
+import { Debugger } from 'debug';
 import { LoggerFn, TaskResolverExecutor, ValueMap } from '../types';
 import { Task } from './task';
 import { TaskProcess } from './task-process';
-import { Debugger } from 'debug';
 
 export class ProcessManager {
   public nextProcessId: number;

@@ -1,6 +1,6 @@
+import { Debugger } from 'debug';
 import { Task } from './engine';
 import { ValueQueueManager } from './engine/value-queue-manager';
-import { Debugger } from 'debug';
 
 export enum FlowStateEnum {
   Ready = 'Ready',

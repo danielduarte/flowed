@@ -40,14 +40,14 @@ describe('edge cases', () => {
   it('resolver not returning object throws an expressive error', async () => {
     // Resolver returning a Promise that does not resolve to an object
     class R1 {
-      public exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
+      public exec(): Promise<ValueMap> {
         return Promise.resolve(undefined as unknown as ValueMap);
       }
     }
 
     // Resolver returning undefined or equivalently, not returning at all
     class R2 {
-      public exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
+      public exec(): Promise<ValueMap> {
         return undefined as unknown as Promise<ValueMap>;
       }
     }

@@ -2,29 +2,27 @@ import { ValueMap } from '../../src';
 import { FlowManager } from '../../src/engine';
 import { ExampleFunction } from './types';
 
-namespace MathFn {
-  export class Sqr {
-    public async exec(params: ValueMap): Promise<ValueMap> {
-      return {
-        result: params.x * params.x,
-      };
-    }
+class Sqr {
+  public async exec(params: ValueMap): Promise<ValueMap> {
+    return {
+      result: params.x * params.x,
+    };
   }
+}
 
-  export class Sqrt {
-    public async exec(params: ValueMap): Promise<ValueMap> {
-      return {
-        result: Math.sqrt(params.x),
-      };
-    }
+class Sqrt {
+  public async exec(params: ValueMap): Promise<ValueMap> {
+    return {
+      result: Math.sqrt(params.x),
+    };
   }
+}
 
-  export class Sum {
-    public async exec(params: ValueMap): Promise<ValueMap> {
-      return {
-        result: params.x + params.y,
-      };
-    }
+class Sum {
+  public async exec(params: ValueMap): Promise<ValueMap> {
+    return {
+      result: params.x + params.y,
+    };
   }
 }
 
@@ -77,9 +75,9 @@ export const pythagoras: ExampleFunction = () => {
     },
     ['result'],
     {
-      sqr: MathFn.Sqr,
-      sqrt: MathFn.Sqrt,
-      sum: MathFn.Sum,
+      sqr: Sqr,
+      sqrt: Sqrt,
+      sum: Sum,
     },
   );
 };

@@ -11,7 +11,7 @@ describe('the flow', () => {
   const text4 = '(text4)';
 
   let testPromiseResolve: (value: unknown) => void;
-  let testPromiseReject: (error: any) => void;
+  let testPromiseReject: (error: Error) => void;
 
   const flowSpec = {
     tasks: {
@@ -125,8 +125,8 @@ describe('the flow', () => {
     });
 
     class AppendString {
-      public async exec(params: ValueMap, context: ValueMap, task: Task): Promise<ValueMap> {
-        return new Promise<ValueMap>((resolve, reject) => {
+      public async exec(): Promise<ValueMap> {
+        return new Promise<ValueMap>(() => {
           flow
             .pause()
             .then(() => testPromiseReject(new Error('Expected pause to fail'))) // Important: The test promise is rejected if the pause succeeds (pause is expected to fail)

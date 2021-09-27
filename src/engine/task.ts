@@ -2,7 +2,7 @@ import { LoggerFn, TaskRunStatus, ValueMap, AnyValue } from '../types';
 import { ResolverParamInfoTransform, ResolverParamInfoValue, TaskSpec } from './specs';
 import { ValueQueueManager } from './value-queue-manager';
 import { SerializedFlowRunStatus } from './flow-run-status';
-// tslint:disable-next-line:no-var-requires
+
 const ST = require('flowed-st');
 
 export class Task {

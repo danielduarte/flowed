@@ -1,10 +1,10 @@
-import * as fs from 'fs';
+import { readFile } from 'fs';
 import * as http from 'http';
 import * as https from 'https';
+import { IncomingMessage } from 'http';
 import { TaskResolverMap, ValueMap, FlowedPlugin, FlowedLogger, FlowedLogEntry } from '../types';
 import { Flow } from './flow';
 import { FlowSpec } from './specs';
-import { IncomingMessage } from 'http';
 
 export class FlowManager {
   public static plugins: {
@@ -54,7 +54,7 @@ export class FlowManager {
     options: ValueMap = {},
   ): Promise<ValueMap> {
     return new Promise<ValueMap>((resolveFlow, reject) => {
-      fs.readFile(flowSpecFilepath, 'utf8', (err, fileContents) => {
+      readFile(flowSpecFilepath, 'utf8', (err, fileContents) => {
         if (err) {
           reject(err);
         } else {

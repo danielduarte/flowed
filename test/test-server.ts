@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as http from 'http';
 const debug = rawDebug('test');
 
-export default function createTestServer(responseContentType: string = 'application/json') {
+export default function createTestServer(responseContentType = 'application/json'): void {
   let serverClosing = false;
 
   const testServer = http.createServer((request, response) => {
@@ -16,7 +16,7 @@ export default function createTestServer(responseContentType: string = 'applicat
     }
     serverClosing = true;
 
-    request.on('data', chunk => {});
+    request.on('data', () => {});
 
     request.on('error', error => {
       debug(error);

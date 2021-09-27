@@ -56,7 +56,7 @@ describe('resolver arraymap', () => {
   class Concat {
     public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
       debug('Started sub-task');
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         setImmediate(() => {
           debug('Finished sub-task');
           resolve({ result: params.x + context.separator + params.y });

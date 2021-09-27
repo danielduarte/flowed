@@ -1,3 +1,4 @@
+import { Debugger } from 'debug';
 import rawDebug from '../../debug';
 import {
   LoopResolver,
@@ -18,7 +19,6 @@ import { Task } from '../task';
 import { TaskProcess } from '../task-process';
 import { IFlow } from './iflow';
 import { FlowManager } from '../flow-manager';
-import { Debugger } from 'debug';
 import { FlowSpec } from '../specs';
 
 export abstract class FlowState implements IFlow {

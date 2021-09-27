@@ -60,14 +60,14 @@ describe('the ResolverLibrary / task repeater', () => {
   }
 
   class LogTextSampleResolverError {
-    public async exec(params: ValueMap): Promise<ValueMap> {
+    public async exec(): Promise<ValueMap> {
       throw new Error('Intentional error in resolver');
     }
   }
 
   class DelayedLogTextSampleResolverError {
-    public async exec(params: ValueMap): Promise<ValueMap> {
-      return new Promise((resolve, reject) => {
+    public async exec(): Promise<ValueMap> {
+      return new Promise(() => {
         throw new Error('Intentional error in resolver');
       });
     }
