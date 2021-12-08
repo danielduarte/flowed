@@ -39,7 +39,7 @@ describe('resolver loop', () => {
     }
   }
 
-  it('run loop resolver with single subtask', async () => {
+  it('run loop resolver with single subtask (sequential)', async () => {
     const flow = {
       tasks: {
         subflow: {
@@ -48,6 +48,51 @@ describe('resolver loop', () => {
           resolver: {
             name: 'flowed::Loop',
             params: {
+              inCollection: 'productIds',
+              inItemName: { value: 'prodId' },
+              outItemName: { value: 'product' },
+              subtask: {
+                value: {
+                  requires: ['prodId'],
+                  provides: ['product'],
+                  resolver: {
+                    name: 'CallApiProd',
+                    params: {
+                      pathParams: { transform: { id: '{{prodId}}' } },
+                      path: '/products/{id}',
+                      method: 'get',
+                      serverUrl: 'http://localhost:3003',
+                    },
+                    results: {
+                      body: 'product',
+                    },
+                  },
+                },
+              },
+            },
+            results: {
+              outCollection: 'products',
+            },
+          },
+        },
+      },
+    };
+
+    const result = await FlowManager.run(flow, { productIds: [1, 2, 3, 4] }, ['products'], { CallApiProd });
+
+    expect(result).to.be.eql({ products });
+  });
+
+  it('run loop resolver with single subtask (parallel)', async () => {
+    const flow = {
+      tasks: {
+        subflow: {
+          requires: ['productIds'],
+          provides: ['products'],
+          resolver: {
+            name: 'flowed::Loop',
+            params: {
+              parallel: { value: true },
               inCollection: 'productIds',
               inItemName: { value: 'prodId' },
               outItemName: { value: 'product' },
@@ -175,5 +220,54 @@ describe('resolver loop', () => {
     const result = await FlowManager.run(flow, { productIds: [1, 2, 3, 4] }, ['products'], { CallApiProd, CallApiPrice });
 
     expect(result).to.be.eql({ products: productsWithPrice });
+  });
+
+  it('try to run loop resolver without subtask resolver', async () => {
+    const flow = {
+      tasks: {
+        subflow: {
+          requires: ['productIds'],
+          provides: ['products'],
+          resolver: {
+            name: 'flowed::Loop',
+            params: {
+              inCollection: 'productIds',
+              inItemName: { value: 'prodId' },
+              outItemName: { value: 'product' },
+              subtask: {
+                value: {
+                  requires: ['prodId'],
+                  provides: ['product'],
+                  resolver: {
+                    name: 'CallApiProd-incorrectly-spelled',
+                    params: {
+                      pathParams: { transform: { id: '{{prodId}}' } },
+                      path: '/products/{id}',
+                      method: 'get',
+                      serverUrl: 'http://localhost:3003',
+                    },
+                    results: {
+                      body: 'product',
+                    },
+                  },
+                },
+              },
+            },
+            results: {
+              outCollection: 'products',
+            },
+          },
+        },
+      },
+    };
+
+    let errorMsg = 'No error';
+    try {
+      await FlowManager.run(flow, { productIds: [1, 2, 3, 4] }, ['products'], { CallApiProd });
+    } catch (err) {
+      errorMsg = (err as Error).message;
+    }
+
+    expect(errorMsg).to.be.eql("Task resolver 'CallApiProd-incorrectly-spelled' for inner flowed::Loop task has no definition.");
   });
 });

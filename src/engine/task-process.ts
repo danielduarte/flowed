@@ -36,13 +36,19 @@ export class TaskProcess {
   public run(): Promise<ValueMap> {
     this.params = this.task.mapParamsForResolver(this.task.runStatus.solvedReqs.popAll(), this.automapParams, this.flowId, this.log);
 
+    let resolverFn = this.taskResolverExecutor as TaskResolverFn;
+    let resolverThis: TaskResolverClass | undefined = undefined;
     const isClassResolver = this.taskResolverExecutor.prototype && this.taskResolverExecutor.prototype.exec;
-    const resolverFn = isClassResolver ? new (this.taskResolverExecutor as TaskResolverClass)().exec : (this.taskResolverExecutor as TaskResolverFn);
+    if (isClassResolver) {
+      // @todo try to remove type assertions in this code section
+      const resolverInstance = new (this.taskResolverExecutor as TaskResolverClass)();
+      resolverFn = resolverInstance.exec as TaskResolverFn;
+      resolverThis = resolverInstance as unknown as TaskResolverClass;
+    }
 
     return new Promise((resolve, reject) => {
       const onResolverSuccess = (resolverValue: ValueMap): void => {
-        const results = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId, this.log);
-        this.task.runStatus.solvedResults = results;
+        this.task.runStatus.solvedResults = this.task.mapResultsFromResolver(resolverValue, this.automapResults, this.flowId, this.log);
         resolve(this.task.runStatus.solvedResults);
       };
 
@@ -54,7 +60,7 @@ export class TaskProcess {
 
       // @sonar start-ignore Ignore this block because try is required even when not await-ing for the promise
       try {
-        resolverResult = resolverFn(this.params, this.context, this.task, this.debug, this.log);
+        resolverResult = resolverFn.call(resolverThis, this.params, this.context, this.task, this.debug, this.log);
       } catch (error) {
         // @todo Add test to get this error here with a sync resolver that throws error after returning the promise
         onResolverError(error as Error);

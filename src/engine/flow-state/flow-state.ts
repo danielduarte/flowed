@@ -19,7 +19,6 @@ import { Task } from '../task';
 import { TaskProcess } from '../task-process';
 import { IFlow } from './iflow';
 import { FlowManager } from '../flow-manager';
-import { FlowSpec } from '../specs';
 
 export abstract class FlowState implements IFlow {
   /**
@@ -149,10 +148,6 @@ export abstract class FlowState implements IFlow {
     for (const [paramCode, paramValue] of Object.entries(params)) {
       this.runStatus.state.supplyResult(paramCode, paramValue);
     }
-  }
-
-  public getSpec(): FlowSpec {
-    return this.runStatus.spec;
   }
 
   public createFinishPromise(): Promise<ValueMap> {
@@ -378,12 +373,11 @@ export abstract class FlowState implements IFlow {
 
   public static createLogEntry(
     { n, m, mp, l, e, pid, task }: { n?: number; m: string; mp?: ValueMap; l?: string; e?: string; pid?: number; task?: AnyValue },
-    flowStatus: FlowRunStatus | undefined,
+    flowStatus?: FlowRunStatus,
   ): FlowedLogEntry {
     const formatLevel = (level: string | undefined) => {
+      level = level || 'i';
       switch (level) {
-        case 'f':
-          return 'fatal';
         case 'e':
           return 'error';
         case 'w':
@@ -392,10 +386,8 @@ export abstract class FlowState implements IFlow {
           return 'info';
         case 'd':
           return 'debug';
-        case 't':
-          return 'trace';
         default:
-          return 'info';
+          throw new Error(`Not supported error level: "${level}"`);
       }
     };
 

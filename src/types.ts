@@ -41,6 +41,7 @@ export interface ITaskResolver {
 }
 
 export class TaskResolver implements ITaskResolver {
+  // @todo this method should return type ValueMap | Promise<ValueMap>
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LoggerFn): Promise<ValueMap> {
     return Promise.resolve({});
