@@ -128,7 +128,10 @@ describe('can run a flow', function () {
 
       throw new Error('An error should have been thrown');
     } catch (err) {
-      expect((err as Error).message).to.have.string('getaddrinfo ENOTFOUND any-unknown-domain-here');
+      expect((err as Error).message).to.contain.oneOf([
+        'getaddrinfo EAI_AGAIN any-unknown-domain-here',
+        'getaddrinfo ENOTFOUND any-unknown-domain-here',
+      ]);
     }
   });
 
