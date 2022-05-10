@@ -5,6 +5,7 @@ module.exports = {
   target: ["web", "es5"],
   entry: './dist/index.js',
   output: {
+    libraryTarget:"umd",
     filename: 'flowed.js',
     path: path.resolve(__dirname, 'web'),
     library: "Flowed",
