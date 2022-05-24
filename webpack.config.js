@@ -1,13 +1,16 @@
 const path = require('path');
 
 module.exports = {
-  mode: "production",
-  target: ["web", "es5"],
+  mode: 'production',
+  target: ['web', 'es5'],
   entry: './dist/index.js',
   output: {
     filename: 'flowed.js',
     path: path.resolve(__dirname, 'web'),
-    library: "Flowed",
+    library: {
+      name: 'Flowed',
+      type: 'umd',
+    },
   },
   resolve: {
     fallback: {

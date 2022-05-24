@@ -16,5 +16,7 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/interface-name-prefix': 0,
     '@typescript-eslint/no-empty-function': 0,
+    eqeqeq: 1,
+    quotes: ['error', 'single', { avoidEscape: true }],
   },
 };

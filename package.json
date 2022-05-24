@@ -1,6 +1,6 @@
 {
   "name": "flowed",
-  "version": "1.14.4",
+  "version": "1.14.5",
   "description": "A fast and reliable flow engine for orchestration and more uses in *Node.js*, *Deno* and the browser",
   "keywords": [
     "flow",
@@ -28,7 +28,7 @@
     "coverage": "nyc report",
     "coverage:send": "nyc report --reporter=text-lcov | coveralls",
     "posttest": "npm run lint",
-    "lint": "eslint src test --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "npm run lint -- --fix && prettier --write \"src/**/*.ts\" && prettier --write \"test/**/*.ts\"",
     "release:prepare": "./ops/updateSonarProps.sh && rm -rf ./dist ./node_modules package-lock.json && npm install && npm run lint:fix && npm run build && npm run bundle && npm test && git status",
     "test:size": "npm-consider install --test",

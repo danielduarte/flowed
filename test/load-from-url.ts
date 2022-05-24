@@ -153,7 +153,7 @@ describe('can run a flow', function () {
 
       throw new Error('An error should have been thrown');
     } catch (err) {
-      expect((err as Error).message).to.be.eql(`Protocol not supported: ftp. Supported protocols are: [http, https]`);
+      expect((err as Error).message).to.be.eql('Protocol not supported: ftp. Supported protocols are: [http, https]');
     }
   });
 

@@ -417,7 +417,7 @@ describe('the ResolverLibrary', () => {
       msg = (err as Error).message;
     }
 
-    expect(msg).to.be.eql(`Task resolver 'r' for task 'aTask' has no definition. Defined custom resolvers are: [x].`);
+    expect(msg).to.be.eql("Task resolver 'r' for task 'aTask' has no definition. Defined custom resolvers are: [x].");
   });
 
   it('can create base resolver task', async () => {
