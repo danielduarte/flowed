@@ -414,6 +414,7 @@ export abstract class FlowState implements IFlow {
 
     const formatMsg = (templateMsg: string, param: ValueMap | undefined) => {
       if (param) {
+        // @todo Take into account that 'param' could have circular references, hence JSON.stringify(param) could fail
         const paramStr = JSON.stringify(param);
         return templateMsg.replace('%O', paramStr.length > 100 ? paramStr.slice(0, 97) + '...' : paramStr);
       }
