@@ -57,7 +57,8 @@ describe('can run a flow', () => {
         },
       );
     } catch (err) {
-      expect((err as Error).message).to.be.eql(`ENOENT: no such file or directory, open '${filepath}'`);
+      expect((err as Error).message).to.be.contain('ENOENT: no such file or directory, open');
+      expect((err as Error).message).to.be.contain('nowhere.flowed.json');
     }
   });
 
