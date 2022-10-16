@@ -1,6 +1,6 @@
 {
   "name": "flowed",
-  "version": "1.14.6",
+  "version": "1.14.7",
   "description": "A fast and reliable flow engine for orchestration and more uses in *Node.js*, *Deno* and the browser",
   "keywords": [
     "flow",
@@ -30,11 +30,11 @@
     "posttest": "npm run lint",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "npm run lint -- --fix && prettier --write \"src/**/*.ts\" && prettier --write \"test/**/*.ts\"",
-    "release:prepare": "./ops/updateSonarProps.sh && rm -rf ./dist ./node_modules package-lock.json && npm install && npm run lint:fix && npm run build && npm run bundle && npm test && git status",
+    "release:prepare": "node ops/updateSonarProps.js && rm -rf ./dist ./node_modules package-lock.json && npm install && npm run lint:fix && npm run build && npm run bundle && npm test && git status",
     "test:size": "npm-consider install --test",
     "prebundle": "npm run build",
     "bundle": "webpack",
-    "postbundle": "mkdir -p dist/lib && cp web/flowed.js dist/lib/flowed.js"
+    "postbundle": "node ops/postBundle.js"
   },
   "config": {
     "maxPackagesNumber": 620,
