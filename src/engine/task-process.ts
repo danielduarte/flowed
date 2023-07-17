@@ -40,9 +40,9 @@ export class TaskProcess {
     let resolverThis: TaskResolverClass | undefined = undefined;
     const isClassResolver = this.taskResolverExecutor.prototype && this.taskResolverExecutor.prototype.exec;
     if (isClassResolver) {
-      // @todo try to remove type assertions in this code section
+      // @todo try to remove type casts in this code section
       const resolverInstance = new (this.taskResolverExecutor as TaskResolverClass)();
-      resolverFn = resolverInstance.exec as TaskResolverFn;
+      resolverFn = resolverInstance.exec;
       resolverThis = resolverInstance as unknown as TaskResolverClass;
     }
 

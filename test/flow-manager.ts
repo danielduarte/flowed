@@ -114,7 +114,7 @@ describe('the FlowManager', () => {
         sqrt: Sqrt,
         sum: Sum,
       },
-    ).then(result => {
+    ).then((result: ValueMap) => {
       expect(result.h).to.equal(h);
     });
   });

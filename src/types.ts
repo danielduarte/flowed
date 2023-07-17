@@ -23,11 +23,11 @@ export enum FlowTransitionEnum {
   Stopped = 'Stopped',
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyValue = any;
+export type AnyValue = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TransformTemplate = any;
+export type TransformTemplate = AnyValue;
+
+export type OptPromise<T> = T | Promise<T>;
 
 export interface ValueMap {
   [key: string]: AnyValue;
@@ -37,18 +37,16 @@ export interface ValueMap {
 export type GenericValueMap = ValueMap;
 
 export interface ITaskResolver {
-  exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LoggerFn): Promise<ValueMap>;
+  exec(params: ValueMap, context?: ValueMap, task?: Task, debug?: Debugger, log?: LoggerFn): OptPromise<ValueMap>;
 }
 
 export class TaskResolver implements ITaskResolver {
-  // @todo this method should return type ValueMap | Promise<ValueMap>
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public exec(params: ValueMap, context: ValueMap, task: Task, debug: Debugger, log: LoggerFn): Promise<ValueMap> {
-    return Promise.resolve({});
+  public exec(_params: ValueMap, _context?: ValueMap, _task?: Task, _debug?: Debugger, _log?: LoggerFn): OptPromise<ValueMap> {
+    return {};
   }
 }
 
-export type TaskResolverFn = (params: ValueMap, context?: ValueMap, task?: Task, debug?: Debugger, log?: LoggerFn) => ValueMap | Promise<ValueMap>;
+export type TaskResolverFn = (params: ValueMap, context?: ValueMap, task?: Task, debug?: Debugger, log?: LoggerFn) => OptPromise<ValueMap>;
 
 export type TaskResolverClass = typeof TaskResolver;
 

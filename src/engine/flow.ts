@@ -23,23 +23,23 @@ export class Flow implements IFlow {
     resolvers: TaskResolverMap = {},
     context: ValueMap = {},
     options: ValueMap = {},
-  ): Promise<ValueMap> {
+  ) {
     return this.runStatus.state.start(params, expectedResults, resolvers, context, options);
   }
 
-  public pause(): Promise<ValueMap> {
+  public pause() {
     return this.runStatus.state.pause();
   }
 
-  public resume(): Promise<ValueMap> {
+  public resume() {
     return this.runStatus.state.resume();
   }
 
-  public stop(): Promise<ValueMap> {
+  public stop() {
     return this.runStatus.state.stop();
   }
 
-  public reset(): void {
+  public reset() {
     this.runStatus.state.reset();
   }
 
@@ -48,7 +48,7 @@ export class Flow implements IFlow {
   }
 
   public debug(formatter: string, ...args: AnyValue[]): void {
-    this && this.runStatus ? this.runStatus.state.debug(formatter, ...args) : rawDebug('init')(formatter, ...args);
+    this?.runStatus ? this.runStatus.state.debug(formatter, ...args) : rawDebug('init')(formatter, ...args);
   }
 
   public log({ n, m, mp, l, e }: { n?: number; m: string; mp?: ValueMap; l?: string; e?: string }): void {

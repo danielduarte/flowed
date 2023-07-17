@@ -34,7 +34,7 @@ describe('error thrown in tasks', () => {
       {
         throwError: AlwaysErrorThrown,
       },
-    ).catch(error => {
+    ).catch((error: Error) => {
       errorMsg = error.message;
       debug(errorMsg);
     });
@@ -60,7 +60,7 @@ describe('error thrown in tasks', () => {
       {
         throwError: AlwaysRejectPromise,
       },
-    ).catch(error => {
+    ).catch((error: Error) => {
       errorMsg = error.message;
       debug(errorMsg);
     });

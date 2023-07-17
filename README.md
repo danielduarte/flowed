@@ -23,7 +23,7 @@ npm i flowed
 <script src="https://cdn.jsdelivr.net/npm/flowed@latest/dist/lib/flowed.js" charset="utf-8"></script>
 ```
 
-Or change `latest` in the URL for any available version.
+Or replace `latest` in the URL for your desired version.
 
 **From package**
 

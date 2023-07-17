@@ -20,8 +20,7 @@ export class FlowPausing extends FlowState {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean): void {
+  protected postProcessFinished(error: Error | boolean, _stopFlowExecutionOnError: boolean): void {
     this.runStatus.state.paused(error);
   }
 }

@@ -13,9 +13,10 @@ module.exports = {
     'prettier',
   ],
   rules: {
-    '@typescript-eslint/no-var-requires': 0,
-    '@typescript-eslint/interface-name-prefix': 0,
-    '@typescript-eslint/no-empty-function': 0,
+    '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/interface-name-prefix': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_'}],
     eqeqeq: 1,
     quotes: ['error', 'single', { avoidEscape: true }],
   },

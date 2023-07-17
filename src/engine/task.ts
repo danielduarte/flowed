@@ -60,26 +60,23 @@ export class Task {
     }
   }
 
-  // @todo convert to protected
   public mapParamsForResolver(solvedReqs: ValueMap, automap: boolean, flowId: number, log: LoggerFn): ValueMap {
     const params: ValueMap = {};
 
-    let resolverParams = (this.spec.resolver ?? {}).params ?? {};
+    let resolverParams = this.spec.resolver?.params ?? {};
 
     if (automap) {
       const requires = this.spec.requires ?? [];
       // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with requires = []
-      const autoMappedParams = requires.map(req => ({ [req]: req })).reduce((accum, peer) => Object.assign(accum, peer), {}); // @todo improve this expression
+      const autoMappedParams = requires.map(req => ({ [req]: req })).reduce((accum, peer) => Object.assign(accum, peer), {});
       log({ n: flowId, m: `  ⓘ Auto-mapped resolver params in task '${this.code}': %O`, mp: autoMappedParams, l: 'd' });
       resolverParams = Object.assign(autoMappedParams, resolverParams);
     }
 
     let paramValue;
     for (const [resolverParamName, paramSolvingInfo] of Object.entries(resolverParams)) {
-      // @todo Add test to check the case when a loop round does not set anything and make sure next value is undefined by default
-      // Added to make sure default value is undefined
-      paramValue = undefined;
+      // @todo Add test to check the case when a loop round does not set anything and make sure next value (`paramValue`) is undefined by default
 
       // If it is string, it is a task param name
       if (typeof paramSolvingInfo === 'string') {
@@ -109,7 +106,6 @@ export class Task {
     return params;
   }
 
-  // @todo convert to protected
   public mapResultsFromResolver(solvedResults: ValueMap, automap: boolean, flowId: number, log: LoggerFn): ValueMap {
     if (typeof solvedResults !== 'object') {
       throw new Error(
@@ -125,9 +121,8 @@ export class Task {
 
     if (automap) {
       const provides = this.spec.provides ?? [];
-      // When `Object.fromEntries()` is available in ES, use it instead of the following solution
       // @todo Add test with provides = []
-      const autoMappedResults = provides.map(prov => ({ [prov]: prov })).reduce((accum, peer) => Object.assign(accum, peer), {}); // @todo improve this expression
+      const autoMappedResults = provides.reduce((acc: ValueMap, prov) => Object.assign(acc, { [prov]: prov }), {});
       log({ n: flowId, m: `  ⓘ Auto-mapped resolver results in task '${this.code}': %O`, mp: autoMappedResults, l: 'd' });
 
       resolverResults = Object.assign(autoMappedResults, resolverResults);

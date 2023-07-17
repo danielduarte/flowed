@@ -1,4 +1,3 @@
-// @todo Check if this could be the same as ValueMap
 import { AnyValue, ValueMap } from '../types';
 
 export type ValueQueue = AnyValue[];

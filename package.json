@@ -82,9 +82,10 @@
     "all": true,
     "exclude": [
       "test",
-      "coverage",
+      "ops",
       "dist",
-      "*.js",
+      ".eslintrc.js",
+      "webpack.config.js",
       "web/flowed.js"
     ],
     "check-coverage": true,

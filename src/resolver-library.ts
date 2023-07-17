@@ -5,32 +5,32 @@ import { LoggerFn, ValueMap } from './types';
 
 // Do nothing and finish
 export class NoopResolver {
-  public async exec(): Promise<ValueMap> {
+  public exec(): ValueMap {
     return {};
   }
 }
 
 export class EchoResolver {
-  public async exec(params: ValueMap): Promise<ValueMap> {
+  public exec(params: ValueMap): ValueMap {
     return { out: params.in };
   }
 }
 
 export class ThrowErrorResolver {
-  public async exec(params: ValueMap): Promise<ValueMap> {
+  public exec(params: ValueMap): ValueMap {
     throw new Error(typeof params.message !== 'undefined' ? params.message : 'ThrowErrorResolver resolver has thrown an error');
   }
 }
 
 export class ConditionalResolver {
-  public async exec(params: ValueMap): Promise<ValueMap> {
+  public exec(params: ValueMap): ValueMap {
     return params.condition ? { onTrue: params.trueResult } : { onFalse: params.falseResult };
   }
 }
 
 // Wait for 'ms' milliseconds and finish
 export class WaitResolver {
-  public async exec(params: ValueMap): Promise<ValueMap> {
+  public exec(params: ValueMap): ValueMap {
     return new Promise<ValueMap>(resolve => {
       setTimeout(() => {
         resolve({ result: params.result });
@@ -219,13 +219,13 @@ export class LoopResolver {
 }
 
 export class StopResolver {
-  public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
+  public exec(params: ValueMap, context: ValueMap): ValueMap {
     return { promise: context.$flowed.flow.stop() };
   }
 }
 
 export class PauseResolver {
-  public async exec(params: ValueMap, context: ValueMap): Promise<ValueMap> {
+  public exec(params: ValueMap, context: ValueMap): ValueMap {
     return { promise: context.$flowed.flow.pause() };
   }
 }

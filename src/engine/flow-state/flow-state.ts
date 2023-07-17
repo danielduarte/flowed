@@ -13,7 +13,16 @@ import {
   ThrowErrorResolver,
   WaitResolver,
 } from '../../resolver-library';
-import { AnyValue, FlowedLogEntry, FlowStateEnum, FlowTransitionEnum, TaskResolverExecutor, TaskResolverMap, ValueMap } from '../../types';
+import {
+  AnyValue,
+  FlowedLogEntry,
+  FlowStateEnum,
+  FlowTransitionEnum,
+  OptPromise,
+  TaskResolverExecutor,
+  TaskResolverMap,
+  ValueMap,
+} from '../../types';
 import { FlowRunStatus, SerializedFlowRunStatus } from '../flow-run-status';
 import { Task } from '../task';
 import { TaskProcess } from '../task-process';
@@ -50,13 +59,12 @@ export abstract class FlowState implements IFlow {
     expectedResults: string[],
     resolvers: TaskResolverMap,
     context: ValueMap,
-    options: ValueMap = {}, // eslint-disable-line @typescript-eslint/no-unused-vars
-  ): Promise<ValueMap> {
+    _options: ValueMap = {},
+  ): OptPromise<ValueMap> {
     throw this.createTransitionError(FlowTransitionEnum.Start);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public finished(error: Error | boolean = false): void {
+  public finished(_error: Error | boolean = false): void {
     throw this.createTransitionError(FlowTransitionEnum.Finished);
   }
 
@@ -64,8 +72,7 @@ export abstract class FlowState implements IFlow {
     throw this.createTransitionError(FlowTransitionEnum.Pause);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public paused(error: Error | boolean = false): void {
+  public paused(_error: Error | boolean = false): void {
     throw this.createTransitionError(FlowTransitionEnum.Paused);
   }
 
@@ -77,8 +84,7 @@ export abstract class FlowState implements IFlow {
     throw this.createTransitionError(FlowTransitionEnum.Stop);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public stopped(error: Error | boolean = false): void {
+  public stopped(_error: Error | boolean = false): void {
     throw this.createTransitionError(FlowTransitionEnum.Stopped);
   }
 
@@ -341,8 +347,7 @@ export abstract class FlowState implements IFlow {
     this.runStatus.state.postProcessFinished(error, stopFlowExecutionOnError);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected postProcessFinished(error: Error | boolean, stopFlowExecutionOnError: boolean): void {}
+  protected postProcessFinished(_error: Error | boolean, _stopFlowExecutionOnError: boolean): void {}
 
   protected createTransitionError(transition: string): Error {
     return new Error(`Cannot execute transition ${transition} in current state ${this.getStateCode()}.`);
@@ -353,7 +358,7 @@ export abstract class FlowState implements IFlow {
   }
 
   public debug(formatter: string, ...args: AnyValue[]): void {
-    const scope = this && this.runStatus && typeof this.runStatus.runOptions.debugKey === 'string' ? this.runStatus.runOptions.debugKey : 'init';
+    const scope = this?.runStatus && typeof this.runStatus.runOptions.debugKey === 'string' ? this.runStatus.runOptions.debugKey : 'init';
     rawDebug(scope)(formatter, ...args);
   }
 

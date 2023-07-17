@@ -2,7 +2,7 @@ import { readFile } from 'fs';
 import * as http from 'http';
 import * as https from 'https';
 import { IncomingMessage } from 'http';
-import { TaskResolverMap, ValueMap, FlowedPlugin, FlowedLogger, FlowedLogEntry } from '../types';
+import { TaskResolverMap, ValueMap, FlowedPlugin, FlowedLogger, FlowedLogEntry, OptPromise } from '../types';
 import { Flow } from './flow';
 import { FlowSpec } from './specs';
 
@@ -22,7 +22,7 @@ export class FlowManager {
     resolvers: TaskResolverMap = {},
     context: ValueMap = {},
     options: ValueMap = {},
-  ): Promise<ValueMap> {
+  ): OptPromise<ValueMap> {
     const flow = new Flow(flowSpec);
     return flow.start(params, expectedResults, resolvers, context, options);
   }
@@ -91,10 +91,10 @@ export class FlowManager {
     }
 
     return new Promise<ValueMap>((resolveFlow, reject) => {
-      (client || https)
+      client! // eslint-disable-line @typescript-eslint/no-non-null-assertion
         .get(flowSpecUrl, (res: IncomingMessage) => {
           const { statusCode } = res;
-          const contentType = res.headers['content-type'] || 'application/json';
+          const contentType = res.headers['content-type'] ?? 'application/json';
 
           let error;
           if (statusCode !== 200) {

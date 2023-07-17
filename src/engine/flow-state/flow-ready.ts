@@ -7,13 +7,7 @@ export class FlowReady extends FlowState {
     return FlowStateEnum.Ready;
   }
 
-  public start(
-    params: ValueMap,
-    expectedResults: string[],
-    resolvers: TaskResolverMap,
-    context: ValueMap,
-    options: ValueMap = {},
-  ): Promise<ValueMap> {
+  public start(params: ValueMap, expectedResults: string[], resolvers: TaskResolverMap, context: ValueMap, options: ValueMap = {}) {
     this.setRunOptions(options);
     this.log({ n: this.runStatus.id, m: 'Flow started with params: %O', mp: params, e: 'FS' });
 
