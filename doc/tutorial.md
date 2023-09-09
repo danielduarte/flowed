@@ -1,6 +1,6 @@
 # Use Case
 
-> A system needs to verify user locations to limit the access to certail features.
+> A system needs to verify user locations to limit the access to certain features.
 > Depending on the user location, she/he is authorized or not.
 
 
@@ -312,7 +312,7 @@ In real world, database access, HTTP requests, file operations, etc. will not be
 
 So in our example class `LoadAuthLocations`, we wouldn't actually run that way.
 Instead, you'd need to use the Flowed support for async tasks.
-In order to support asynchronic tasks, Flowed takes advantage of `Promise`s.
+In order to support asynchronous tasks, Flowed takes advantage of `Promise`s.
 
 And that's as easy as returning a Promise that resolves to the expected results.
 
@@ -330,10 +330,10 @@ class LoadAuthLocations {
 Note that we've added the `async` keyword to `exec`, and we've used the `await` syntax.
 Also remember that all `async`  functions returns a Promise, even when it is not explicit.
 
-According to each flow tasks' dependences, Flowed will run concurrently as many tasks as possible, letting the OS parallelize all the I/O opertions maximizing the performance and abstracting the programmer to manage the tasks dependences and concurrency.
+According to each flow tasks' dependencies, Flowed will run concurrently as many tasks as possible, letting the OS parallelize all the I/O operations maximizing the performance and abstracting the programmer to manage the tasks dependencies and concurrency.
 
 
-## Connect with the outsite
+## Connect with the outside
 
 To make this thing really useful, we need a way to connect with the outside of the flow.
 Even when a flow can execute useful tasks without giving a explicit output (writing to databases, etc), it is very usual to get some direct output from the flow.
@@ -343,7 +343,7 @@ For example, in this case we want to know if the user is authorized, which is th
 We will run the flow then, indicating that the expected results are `['isAuthorized']`.
 
 
-In a similar way, it is very important for flexibility and reusability purposes to provide some way of parametrization for the flows.
+In a similar way, it is very important for flexibility and re-usability purposes to provide some way of parametrization for the flows.
 Analyzing the flow in this example, we can easily see that no task is providing the `'sessionId'`. This is because it will be given from the outside, at the time of the execution.
 That is, it is a flow parameter.
 We provide parameters as a name-value mapping like this:

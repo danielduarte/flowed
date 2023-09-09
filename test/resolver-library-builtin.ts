@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { ValueMap } from '../src';
-import { FlowManager } from '../src/engine';
+import { FlowManager } from '../src';
 
 describe('the ResolverLibrary', () => {
   it('runs noop resolver without mapping', () => {
@@ -105,7 +105,7 @@ describe('the ResolverLibrary', () => {
     }
 
     const runFlow = async (testCondition: boolean) => {
-      return await FlowManager.run(
+      return FlowManager.run(
         {
           tasks: {
             if: {

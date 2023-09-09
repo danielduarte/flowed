@@ -1,5 +1,5 @@
 import { ValueMap } from '../../src';
-import { FlowManager } from '../../src/engine';
+import { FlowManager } from '../../src';
 import { ExampleFunction } from './types';
 
 class Sqr {

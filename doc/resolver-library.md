@@ -109,7 +109,7 @@ Note that the context is not passed as parameter because it is shared from the o
 **params**:
 - `flowSpec`: Flow spec to be run as a sub-flow.
 - `flowParams`: Key-Value object to be used as parameters for the sub-flow.
-- `flowExpectedResults`: String array to specified the expected results.
+- `flowExpectedResults`: String array to specify the expected results.
 - `flowResolvers`: Resolvers map to run the sub-flow.
 
 **results**:
@@ -133,8 +133,8 @@ If one execution fails, the resolver ends with an exception (in both parallel an
 - `count`: Number of times the task is going to be executed.
 - `taskParams`: Array of Key-Value objects with params.
 - `resolverAutomapParams`: Boolean to indicate if params in task are going to be auto-mapped or need explicit mapping. Defaults to false.
-- `resolverAutomapResults`: Boolean to indicate if resuts in task are going to be auto-mapped or need explicit mapping. Defaults to false.
-- `flowId`: Flow Id to be used in debugging messages.
+- `resolverAutomapResults`: Boolean to indicate if results in task are going to be auto-mapped or need explicit mapping. Defaults to false.
+- `flowId`: Flow id to be used in debugging messages.
 - `parallel`: Boolean to specify if the task instances can run in parallel or in sequence (waiting one to finish before starting the next one).
 
 **results**:
@@ -157,8 +157,8 @@ The task instances can be run in parallel or in sequence. In both cases the orde
 - `spec`: Task spec.
 - `params`: Array of Key-Value objects with params.
 - `automapParams`: Boolean to indicate if params in task are going to be auto-mapped or need explicit mapping. Defaults to false.
-- `automapResults`: Boolean to indicate if resuts in task are going to be auto-mapped or need explicit mapping. Defaults to false.
-- `flowId`: Flow Id to be used in debugging messages.
+- `automapResults`: Boolean to indicate if results in task are going to be auto-mapped or need explicit mapping. Defaults to false.
+- `flowId`: Flow id to be used in debugging messages.
 - `parallel`: Boolean to specify if the task instances can run in parallel or in sequence (waiting one to finish before starting the next one).
 
 **results**:

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Flow } from '../src/engine';
+import { Flow } from '../src';
 
 // @todo Add test to pause flow without tasks
 // @todo Add test to stop flow without tasks

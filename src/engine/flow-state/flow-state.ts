@@ -156,13 +156,11 @@ export abstract class FlowState implements IFlow {
     }
   }
 
-  public createFinishPromise(): Promise<ValueMap> {
+  public createFinishPromise() {
     this.runStatus.finishPromise = new Promise<ValueMap>((resolve, reject) => {
       this.runStatus.finishResolve = resolve;
       this.runStatus.finishReject = reject;
     });
-
-    return this.runStatus.finishPromise;
   }
 
   public getResolverForTask(task: Task): TaskResolverExecutor {

@@ -18,7 +18,7 @@ describe('resolvers with automap', () => {
   // @todo Add test for cases where some results mapping is provided and some is automatic
 
   const runFlow = async (automapParams?: boolean, automapResults?: boolean) => {
-    return await FlowManager.run(
+    return FlowManager.run(
       {
         tasks: {
           T1: {

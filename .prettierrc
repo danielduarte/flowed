@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json.schemastore.org/prettierrc",
+  "$schema": "https://json.schemastore.org/prettierrc",
   "printWidth": 150,
   "trailingComma": "all",
   "singleQuote": true,
@@ -10,7 +10,6 @@
   "requirePragma": false,
   "proseWrap": "preserve",
   "plugins": [],
-  "pluginSearchDirs": [],
   "insertPragma": false,
   "endOfLine": "auto",
   "arrowParens": "avoid",

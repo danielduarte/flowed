@@ -78,7 +78,7 @@ export interface FlowedLogEntry {
   level: string; // 'fatal', 'error', 'warning', 'info', 'debug', 'trace'
   eventType: string;
   message: string;
-  objectId?: string; // instance Id
+  objectId?: string; // instance id
   tags?: string[];
   extra?: ValueMap; // free form serializable key-value object
 }

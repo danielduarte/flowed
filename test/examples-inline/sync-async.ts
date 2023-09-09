@@ -1,4 +1,4 @@
-import { FlowManager } from '../../src/engine';
+import { FlowManager } from '../../src';
 import { ExampleFunction } from '../examples/types';
 
 // noinspection JSUnusedGlobalSymbols

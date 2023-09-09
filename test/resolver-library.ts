@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { Task, ValueMap, WaitResolver } from '../src';
-import { FlowManager } from '../src/engine';
+import { FlowManager } from '../src';
 import * as ResolverLibrary from '../src/resolver-library';
-import { TaskResolver } from '../src/types';
+import { TaskResolver } from '../src';
 import rawDebug from '../src/debug';
 const debug = rawDebug('test');
 
@@ -115,7 +115,7 @@ describe('the ResolverLibrary', () => {
     }
 
     const runFlow = async (testCondition: boolean) => {
-      return await FlowManager.run(
+      return FlowManager.run(
         {
           tasks: {
             if: {
@@ -188,7 +188,7 @@ describe('the ResolverLibrary', () => {
     }
 
     const runFlow = async (testCondition: boolean) => {
-      return await FlowManager.run(
+      return FlowManager.run(
         {
           tasks: {
             if: {
@@ -259,7 +259,7 @@ describe('the ResolverLibrary', () => {
     }
 
     const runFlow = async (testCondition: boolean) => {
-      return await FlowManager.run(
+      return FlowManager.run(
         {
           tasks: {
             if: {

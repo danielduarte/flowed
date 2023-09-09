@@ -73,6 +73,7 @@ export class FlowManager {
     options: ValueMap = {},
   ): Promise<ValueMap> {
     let client: typeof import('http') | typeof import('https') | null = null;
+    // noinspection HttpUrlsUsage
     if (flowSpecUrl.startsWith('http://')) {
       client = http;
     } else if (flowSpecUrl.startsWith('https://')) {

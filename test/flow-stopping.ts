@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { ValueMap } from '../src';
-import { Flow, Task } from '../src/engine';
+import { Flow, Task } from '../src';
 
 describe('the flow', () => {
   const text1 = '(text1)';

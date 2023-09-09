@@ -8,7 +8,10 @@ const ST = require('flowed-st');
 export class Task {
   public runStatus!: TaskRunStatus;
 
-  public constructor(public code: string, public spec: TaskSpec) {
+  public constructor(
+    public code: string,
+    public spec: TaskSpec,
+  ) {
     this.parseSpec();
   }
 

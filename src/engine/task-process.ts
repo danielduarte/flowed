@@ -9,7 +9,7 @@ export class TaskProcess {
   protected params!: ValueMap;
 
   /**
-   * Process Id
+   * Process id
    */
   public pid: number;
 

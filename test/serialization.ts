@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import rawDebug from '../src/debug';
 import { Flow, ValueMap } from '../src';
-import { Task } from '../src/engine';
+import { Task } from '../src';
 const debug = rawDebug('test');
 
 describe('a flow state can be', () => {

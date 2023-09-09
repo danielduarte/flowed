@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import rawDebug from '../src/debug';
 import { ValueMap } from '../src';
-import { FlowManager } from '../src/engine';
+import { FlowManager } from '../src';
 import * as ResolverLibrary from '../src/resolver-library';
 const debug = rawDebug('test');
 
@@ -51,10 +51,13 @@ describe('the ResolverLibrary / task repeater', () => {
       debug('Starts', rnd);
 
       return new Promise(resolve => {
-        setTimeout(() => {
-          debug('This is a delayed text:', params.someValue, rnd);
-          resolve({});
-        }, Math.ceil(Math.random() * 20));
+        setTimeout(
+          () => {
+            debug('This is a delayed text:', params.someValue, rnd);
+            resolve({});
+          },
+          Math.ceil(Math.random() * 20),
+        );
       });
     }
   }
