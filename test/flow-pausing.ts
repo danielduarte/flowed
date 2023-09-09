@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import rawDebug from '../src/debug';
-import { ValueMap } from '../src';
-import { Flow, Task } from '../src';
+import { ValueMap, Flow, Task } from '../src';
 const debug = rawDebug('test');
 
 describe('the flow', () => {

@@ -104,7 +104,8 @@ export class FlowRunStatus {
     // To be used later to check if expectedResults can be fulfilled.
     this.taskProvisions = Array.from(new Set(provisions));
 
-    this.options = Object.assign({}, this.spec.configs ?? {}, this.spec.options ?? {});
+    this.options = { ...this.spec.configs, ...this.spec.options };
+
     if (Object.prototype.hasOwnProperty.call(this.spec, 'configs')) {
       this.flow.log({ m: "DEPRECATED: 'configs' field in flow spec. Use 'options' instead.", l: 'w' });
     }
@@ -174,7 +175,7 @@ export class FlowRunStatus {
       taskStatuses: {},
     };
 
-    const serializableContext = Object.assign({}, this.context);
+    const serializableContext = { ...this.context };
     delete serializableContext.$flowed;
     serialized.context = JSON.parse(JSON.stringify(serializableContext));
 

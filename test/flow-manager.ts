@@ -1,7 +1,5 @@
 import { expect } from 'chai';
-import { TaskResolverMap, ValueMap } from '../src';
-import { FlowManager } from '../src';
-import { FlowSpec } from '../src';
+import { TaskResolverMap, ValueMap, FlowManager, FlowSpec } from '../src';
 
 class DummyResolver {
   public async exec(): Promise<ValueMap> {

@@ -1,5 +1,4 @@
-import { ValueMap } from '../../src';
-import { FlowManager } from '../../src';
+import { ValueMap, FlowManager } from '../../src';
 import { ExampleFunction } from '../examples/types';
 
 // Example of named function used as resolver

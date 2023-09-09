@@ -365,10 +365,10 @@ export abstract class FlowState implements IFlow {
   public static formatDebugMessage({ n, m, l, e }: { n?: number; m: string; mp?: ValueMap; l?: string; e?: string }): string {
     const levelIcon = l === 'w' ? '⚠️ ' : '';
     const eventIcons = { FS: '▶ ', FF: '✔ ', TS: '  ‣ ', TF: '  ✓ ', FC: '  ⓘ ', FT: '◼ ', FP: '⏸ ' };
-    let eventIcon = (eventIcons as any)[e || ''] ?? ''; // eslint-disable-line @typescript-eslint/no-explicit-any
-    if (e === 'TF' && ['e', 'f'].includes(l || '')) {
+    let eventIcon = (eventIcons as any)[e ?? ''] ?? ''; // eslint-disable-line @typescript-eslint/no-explicit-any
+    if (e === 'TF' && ['e', 'f'].includes(l ?? '')) {
       eventIcon = '  ✗';
-    } else if (e === 'FF' && ['e', 'f'].includes(l || '')) {
+    } else if (e === 'FF' && ['e', 'f'].includes(l ?? '')) {
       eventIcon = '✘';
     }
     const icon = levelIcon + eventIcon;

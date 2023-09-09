@@ -1,5 +1,4 @@
-import { ValueMap } from '../../src';
-import { FlowManager } from '../../src';
+import { ValueMap, FlowManager } from '../../src';
 import { ExampleFunction } from '../examples/types';
 
 const callMicroservice = (params: ValueMap) => {
@@ -23,7 +22,7 @@ const callMicroservice = (params: ValueMap) => {
 };
 
 const simpleMerge = (params: ValueMap) => ({
-  result: Object.assign({}, params.obj1, params.obj2),
+  result: {  ...params.obj1, ...params.obj2 },
 });
 
 // noinspection JSUnusedGlobalSymbols

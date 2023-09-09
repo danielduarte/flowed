@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import { FlowManager, ValueMap } from '../src';
-import { Task } from '../src';
+import { FlowManager, ValueMap, Task } from '../src';
 
 describe('edge cases', () => {
   it('manually provide unexpected requirement to task must throw an error', async () => {

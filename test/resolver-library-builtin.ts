@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import { ValueMap } from '../src';
-import { FlowManager } from '../src';
+import { ValueMap, FlowManager } from '../src';
 
 describe('the ResolverLibrary', () => {
   it('runs noop resolver without mapping', () => {

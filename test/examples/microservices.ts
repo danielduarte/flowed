@@ -1,5 +1,4 @@
-import { ValueMap } from '../../src';
-import { FlowManager } from '../../src';
+import { ValueMap, FlowManager } from '../../src';
 import { ExampleFunction } from './types';
 
 class CallMicroservice {
@@ -27,7 +26,7 @@ class CallMicroservice {
 class SimpleMerge {
   public async exec(params: ValueMap): Promise<ValueMap> {
     return {
-      result: Object.assign({}, params.obj1, params.obj2),
+      result: { ...params.obj1, ...params.obj2 },
     };
   }
 }

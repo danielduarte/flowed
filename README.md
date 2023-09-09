@@ -1,6 +1,6 @@
-<p style="text-align: center"><a href="https://danielduarte.github.io/flowed/"><img width="445" height="100" src="./doc/flowed-logo.svg" alt="Flowed Logo"></a></p>
-<p style="text-align: center">A fast and reliable flow engine for orchestration and more uses in <em>Node.js</em>, <em>Deno</em> and the browser.</p>
-<p style="text-align: center">
+<p align="center"><a href="https://danielduarte.github.io/flowed/"><img width="445" height="100" src="./doc/flowed-logo.svg" alt="Flowed Logo"></a></p>
+<p align="center">A fast and reliable flow engine for orchestration and more uses in <em>Node.js</em>, <em>Deno</em> and the browser.</p>
+<p align="center">
     <a href="https://github.com/danielduarte/flowed/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/flowed?color=%23007ec6" alt="License"></a>
     <a href="https://www.npmjs.com/package/flowed"><img src="https://img.shields.io/npm/v/flowed" alt="NPM Package Version"></a>
     <a href="https://app.fossa.com/attribution/e587cd9b-f7f8-4fa6-88b1-f81832d9ce07"><img src="https://app.fossa.com/api/projects/custom%2B13599%2Fgithub.com%2Fdanielduarte%2Fflowed.svg?type=shield" alt="FOSSA Status"></a>

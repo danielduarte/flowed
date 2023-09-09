@@ -1,8 +1,6 @@
 import { expect } from 'chai';
-import { Task, ValueMap, WaitResolver } from '../src';
-import { FlowManager } from '../src';
+import { Task, ValueMap, WaitResolver, FlowManager, TaskResolver } from '../src';
 import * as ResolverLibrary from '../src/resolver-library';
-import { TaskResolver } from '../src';
 import rawDebug from '../src/debug';
 const debug = rawDebug('test');
 

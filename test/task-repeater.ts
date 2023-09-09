@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import rawDebug from '../src/debug';
-import { ValueMap } from '../src';
-import { FlowManager } from '../src';
+import { ValueMap, FlowManager } from '../src';
 import * as ResolverLibrary from '../src/resolver-library';
 const debug = rawDebug('test');
 
