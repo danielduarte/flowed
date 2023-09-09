@@ -38,7 +38,7 @@ export class TaskProcess {
 
     let resolverFn = this.taskResolverExecutor as TaskResolverFn;
     let resolverThis: TaskResolverClass | undefined = undefined;
-    const isClassResolver = this.taskResolverExecutor.prototype && this.taskResolverExecutor.prototype.exec;
+    const isClassResolver = this.taskResolverExecutor.prototype?.exec;
     if (isClassResolver) {
       // @todo try to remove type casts in this code section
       const resolverInstance = new (this.taskResolverExecutor as TaskResolverClass)();
@@ -68,7 +68,7 @@ export class TaskProcess {
       // @sonar end-ignore
 
       const resultIsObject = typeof resolverResult === 'object';
-      const resultIsPromise = resolverResult && resolverResult.constructor && resolverResult.constructor.name === 'Promise';
+      const resultIsPromise = resolverResult?.constructor?.name === 'Promise';
 
       if (!resultIsObject) {
         throw new Error(

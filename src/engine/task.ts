@@ -81,26 +81,19 @@ export class Task {
     for (const [resolverParamName, paramSolvingInfo] of Object.entries(resolverParams)) {
       // @todo Add test to check the case when a loop round does not set anything and make sure next value (`paramValue`) is undefined by default
 
-      // If it is string, it is a task param name
       if (typeof paramSolvingInfo === 'string') {
-        const taskParamName = paramSolvingInfo;
-        paramValue = solvedReqs[taskParamName];
-      }
-
-      // If it is an object, expect the format { [value: <some value>], [transform: <some template>] }
-      else {
-        // Implicit case: if (typeof paramSolvingInfo === 'object' && paramSolvingInfo !== null)
+        // If it is string, it is a task param name
+        paramValue = solvedReqs[paramSolvingInfo];
+      } else if (Object.prototype.hasOwnProperty.call(paramSolvingInfo, 'value')) {
+        // If it is an object, expect the format { value: <some value> } or { transform: <some template> }
+        // Implicit condition: typeof paramSolvingInfo === 'object' && paramSolvingInfo !== null
         // Direct value pre-processor
-        if (Object.prototype.hasOwnProperty.call(paramSolvingInfo, 'value')) {
-          paramValue = (paramSolvingInfo as ResolverParamInfoValue).value;
-        }
-
+        paramValue = (paramSolvingInfo as ResolverParamInfoValue).value;
+      } else {
         // Template transform pre-processor
-        else {
-          // Implicit case: if (paramSolvingInfo.hasOwnProperty('transform'))
-          const template = (paramSolvingInfo as ResolverParamInfoTransform).transform;
-          paramValue = ST.select(solvedReqs).transformWith(template).root();
-        }
+        // Implicit condition: paramSolvingInfo.hasOwnProperty('transform')
+        const template = (paramSolvingInfo as ResolverParamInfoTransform).transform;
+        paramValue = ST.select(solvedReqs).transformWith(template).root();
       }
 
       params[resolverParamName] = paramValue;
@@ -120,7 +113,7 @@ export class Task {
 
     const results: ValueMap = {};
 
-    let resolverResults = (this.spec.resolver ?? {}).results ?? {};
+    let resolverResults = this.spec.resolver?.results ?? {};
 
     if (automap) {
       const provides = this.spec.provides ?? [];

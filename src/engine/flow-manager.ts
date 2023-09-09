@@ -100,8 +100,8 @@ export class FlowManager {
           let error;
           if (statusCode !== 200) {
             error = new Error(`Request failed with status code: ${statusCode}`);
-          } else if (!(/^application\/json/.test(contentType) || /^text\/plain/.test(contentType))) {
-            error = new Error(`Invalid content-type. Expected application/json or text/plain but received ${contentType}`);
+          } else if (!(contentType.startsWith('application/json') || contentType.startsWith('text/plain'))) {
+            error = new Error(`Invalid content-type: Expected 'application/json' or 'text/plain' but received '${contentType}'`);
           }
 
           if (error) {

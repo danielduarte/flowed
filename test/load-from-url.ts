@@ -83,7 +83,7 @@ describe('can run a flow', function () {
       throw new Error('An error should have been thrown');
     } catch (err) {
       expect((err as Error).message).to.be.eql(
-        'Invalid content-type. Expected application/json or text/plain but received some-unknown/content-format',
+        "Invalid content-type: Expected 'application/json' or 'text/plain' but received 'some-unknown/content-format'",
       );
     }
   });

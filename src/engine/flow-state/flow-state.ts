@@ -345,7 +345,9 @@ export abstract class FlowState implements IFlow {
     this.runStatus.state.postProcessFinished(error, stopFlowExecutionOnError);
   }
 
-  protected postProcessFinished(_error: Error | boolean, _stopFlowExecutionOnError: boolean): void {}
+  protected postProcessFinished(_error: Error | boolean, _stopFlowExecutionOnError: boolean): void {
+    // Default empty implementation to be overridden when applies.
+  }
 
   protected createTransitionError(transition: string): Error {
     return new Error(`Cannot execute transition ${transition} in current state ${this.getStateCode()}.`);
