@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-        node-version: [12.x, 14.x, 16.x, 18.x]
+        node-version: [16.x, 18.x, 20.x, 22.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
         cache: 'npm'
 
     - name: Install
-      run: npm ci
+      run: npm ci # @todo check why `npm ci` does not work for 12.x and 14.x Node.js versions
 
     - name: Build
       run: npm run build
