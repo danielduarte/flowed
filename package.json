@@ -97,5 +97,8 @@
     "functions": 50,
     "lines": 85,
     "statements": 85
+  },
+  "testen": {
+    "node": ">=13 && <23"
   }
 }

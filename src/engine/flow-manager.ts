@@ -93,7 +93,7 @@ export class FlowManager {
 
     return new Promise<ValueMap>((resolveFlow, reject) => {
       client! // eslint-disable-line @typescript-eslint/no-non-null-assertion
-        .get(flowSpecUrl, (res: IncomingMessage) => {
+        .get(flowSpecUrl, { agent: false }, (res: IncomingMessage) => {
           const { statusCode } = res;
           const contentType = res.headers['content-type'] ?? 'application/json';
 
