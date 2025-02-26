@@ -22,7 +22,7 @@ const callMicroservice = (params: ValueMap) => {
 };
 
 const simpleMerge = (params: ValueMap) => ({
-  result: {  ...params.obj1, ...params.obj2 },
+  result: { ...params.obj1, ...params.obj2 },
 });
 
 // noinspection JSUnusedGlobalSymbols
