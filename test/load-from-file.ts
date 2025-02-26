@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { FlowManager, ValueMap } from '../src';
+import { getMajorNodeVersion } from './utils/node-version';
 
 class TimerResolver {
   public async exec(): Promise<ValueMap> {
@@ -80,7 +81,14 @@ describe('can run a flow', () => {
         },
       );
     } catch (err) {
-      expect((err as Error).message).to.be.eql('Unexpected token \n in JSON at position 474');
+      const nodeVersion = getMajorNodeVersion();
+      if (nodeVersion <= 18) {
+        expect((err as Error).message).to.be.eql('Unexpected token \n in JSON at position 474'); // Node.js 18
+      } else if (nodeVersion <= 20) {
+        expect((err as Error).message).to.be.eql('Bad control character in string literal in JSON at position 474'); // Node.js 19, 20
+      } else {
+        expect((err as Error).message).to.be.eql('Bad control character in string literal in JSON at position 474 (line 24 column 19)'); // Node.js 21, 22
+      }
     }
   });
 });

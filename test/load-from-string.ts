@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { FlowManager, ValueMap } from '../src';
+import { getMajorNodeVersion } from './utils/node-version';
 
 class TimerResolver {
   public async exec(): Promise<ValueMap> {
@@ -55,7 +56,12 @@ describe('can run a flow', () => {
         },
       );
     } catch (err) {
-      expect((err as Error).message).to.be.eql('Unexpected token } in JSON at position 11');
+      const nodeVersion = getMajorNodeVersion();
+      if (nodeVersion <= 18) {
+        expect((err as Error).message).to.be.eql('Unexpected token } in JSON at position 11'); // Node.js 18
+      } else {
+        expect((err as Error).message).to.be.eql('Unexpected token \'}\', "{ "tasks": } }" is not valid JSON'); // Node.js 19, 20, 21, 22
+      }
     }
   });
 });
